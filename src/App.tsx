@@ -1,4 +1,3 @@
-/// <reference path="../typings/tsd.d.ts" />
 
 import React = require("react");
 import ContentPage from "./Components/ContentPage/ContentPage";

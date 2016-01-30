@@ -5,13 +5,13 @@ var webpack = require('webpack-stream');
 gulp.task('default', ['watch-tslint']);
 
 gulp.task('tslint', function(){
-  return gulp.src(['App/**/*.ts', 'App/**/*.tsx'])
+  return gulp.src(['src/**/*.ts', 'src/**/*.tsx'])
     .pipe(tslint())
     .pipe(tslint.report('verbose'));
 });
 
 gulp.task('tslint-watch', function() {
-  gulp.watch(['App/**/*.ts', 'App/**/*.tsx'], ['tslint']);
+  gulp.watch(['src/**/*.ts', 'src/**/*.tsx'], ['tslint']);
 });
 
 gulp.task('webpack-watch', function() {

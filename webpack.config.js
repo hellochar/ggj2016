@@ -17,7 +17,7 @@ var config = {
       'react-dom'
     ],
     app: [
-      path.join(__dirname, 'App', 'Index.tsx')
+      path.join(__dirname, 'src', 'Index.tsx')
     ]
   },
 
@@ -43,17 +43,17 @@ var config = {
 
   module: {
     preLoaders: [
-      { test: /\.ts(x?)$/, loader: "tslint", include: path.resolve(__dirname, "App") },
+      { test: /\.ts(x?)$/, loader: "tslint", include: path.resolve(__dirname, "src") },
     ],
     noParse: [],
     loaders: [
-      { test: /\.ts(x?)$/, loader: 'ts-loader?instance=jsx', include: path.resolve(__dirname, "App") },
-      { test: /\.css$/,  loader: ExtractTextPlugin.extract("style-loader", "css-loader?minimize"), include: path.resolve(__dirname, "App") },
-      { test: /\.less$/, exclude: /\.module\.less$/, loader: ExtractTextPlugin.extract("style-loader", "css-loader?minimize!less-loader?compress"), include: path.resolve(__dirname, "App") },
+      { test: /\.ts(x?)$/, loader: 'ts-loader?instance=jsx', include: path.resolve(__dirname, "src") },
+      { test: /\.css$/,  loader: ExtractTextPlugin.extract("style-loader", "css-loader?minimize"), include: path.resolve(__dirname, "src") },
+      { test: /\.less$/, exclude: /\.module\.less$/, loader: ExtractTextPlugin.extract("style-loader", "css-loader?minimize!less-loader?compress"), include: path.resolve(__dirname, "src") },
       { test: /\.module\.less$/,
         loader: ExtractTextPlugin.extract("style-loader","css-loader?minimize&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!less-loader?-compress"),
-        include: path.resolve(__dirname, "App") },
-      { test: /\.(jpg|png|woff|eot|ttf|svg|gif)$/, loader: "file-loader?name=[name]_[hash].[ext]", include: path.resolve(__dirname, "App") }
+        include: path.resolve(__dirname, "src") },
+      { test: /\.(jpg|png|woff|eot|ttf|svg|gif)$/, loader: "file-loader?name=[name]_[hash].[ext]", include: path.resolve(__dirname, "src") }
     ]
   },
 
