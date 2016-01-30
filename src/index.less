@@ -1,13 +1,19 @@
+@size: 25px;
+
+html {
+    overflow: visible;
+}
+
 .wrapper {
     position: relative;
 
     .row {
-        height: 20px;
+        height: @size;
 
         .tile {
-            width: 20px;
-            height: 20px;
-            font-size: 20px;
+            width: @size;
+            height: @size;
+            font-size: @size;
         }
     }
 
@@ -19,5 +25,9 @@
 
     .invisible {
         opacity: 0.1;
+    }
+
+    .user {
+        color: red;
     }
 }
