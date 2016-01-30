@@ -22,20 +22,7 @@
     "compileOnSave": true,
     "buildOnSave": false,
     "files": [
-        "src/ActionCreators/CommonActionCreators.ts",
-        "src/Actions/AppLoadedAction.ts",
-        "src/Actions/IAction.ts",
-        "src/Actions/SayHelloAction.ts",
-        "src/Dispatcher/Dispatcher.ts",
-        "src/Log/ActionLogEntry.ts",
-        "src/Log/ActionLogger.ts",
-        "src/Stores/BaseStore.ts",
-        "src/Stores/CommonStore.ts",
-        "src/App.tsx",
-        "src/Components/ContentPage/__tests__/ContentPage-test.tsx",
-        "src/Components/ContentPage/ContentBody/ContentBody.tsx",
-        "src/Components/ContentPage/ContentHeader/ContentHeader.tsx",
-        "src/Components/ContentPage/ContentPage.tsx",
+        "src/action.tsx",
         "src/Index.tsx"
     ],
     "atom": {

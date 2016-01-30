@@ -14,7 +14,8 @@ var config = {
     vendors: [
       'flux',
       'react',
-      'react-dom'
+      'react-dom',
+      'react-redux'
     ],
     app: [
       path.join(__dirname, 'src', 'Index.tsx')
