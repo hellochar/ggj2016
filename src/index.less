@@ -4,30 +4,60 @@ html {
     overflow: visible;
 }
 
-.wrapper {
+body {
+    margin: 0;
+}
+
+.game {
     position: relative;
 
-    .row {
-        height: @size;
+    .hud {
+        display: inline-block;
+        position: absolute;
+        right: 0;
+        left: calc(@size * 60);
+        top: 0;
+        padding: 10px;
 
-        .tile {
-            width: @size;
-            height: @size;
-            font-size: @size;
+        .history {
+            list-style-type: circle;
+            list-style-position: outside;
+            padding: 5px 25px;
         }
     }
 
-    .entity {
-        .row .tile;
+    .map {
+        display: inline-block;
+        position: relative;
+        margin: 0;
 
-        position: absolute;
-    }
+        .row {
+            height: @size;
 
-    .invisible {
-        opacity: 0.1;
-    }
+            .tile {
+                width: @size;
+                height: @size;
+                font-size: @size;
+                text-align: center;
+            }
+        }
 
-    .user {
-        color: red;
+        .entity {
+            .row .tile;
+
+            position: absolute;
+        }
+
+        .space {
+            opacity: 0.1;
+        }
+
+        .unexplored {
+            background-color: #ddd;
+        }
+
+        .user {
+            color: red;
+        }
     }
 }
