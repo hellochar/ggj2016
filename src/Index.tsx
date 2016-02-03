@@ -7,9 +7,9 @@ import * as React from "react";
 import * as Redux from "redux";
 import { connect, Provider } from "react-redux";
 
-import { Position } from "./math";
+import { forEachOnLineInGrid, Position } from "./math";
 import { IEntity, EntityType } from "./entity";
-import { ILevel, Tile, TileType } from "./level";
+import { ILevel, Tile, TileType, generateMap } from "./level";
 import {repeat, clone} from "./util";
 
 import "./index.less";
@@ -43,200 +43,11 @@ function updateUserLevel(state: IState, update: (ILevel) => ILevel) {
     }
 }
 
-
-class LifeLikeCA {
-    public map: Tile[][];
-    public survive: boolean[];
-    public birth: boolean[];
-
-    constructor(map: Tile[][], surviveBirth: string) {
-        // deep clone map
-        this.map = clone(map);
-        const [surviveString, birthString] = surviveBirth.split("/");
-        this.survive = [];
-        this.birth = [];
-        for(let i = 0; i <= 8; i++) {
-            if (surviveString.indexOf(`${i}`) !== -1) {
-                this.survive[i] = true;
-            } else {
-                this.survive[i] = false;
-            }
-
-            if (birthString.indexOf(`${i}`) !== -1) {
-                this.birth[i] = true;
-            } else {
-                this.birth[i] = false;
-            }
-        }
-    }
-
-    get width() {
-        return this.map[0].length;
-    }
-
-    get height() {
-        return this.map.length;
-    }
-
-    private getNumAliveNeighbors(x: number, y: number) {
-        let numAlive = 0;
-        for(let yi = y - 1; yi <= y + 1; yi += 1) {
-            if (this.map[yi] != null) {
-                for(let xi = x - 1; xi <= x + 1; xi += 1) {
-                    if (!(yi === y && xi === x) && this.map[yi][xi] != null && this.map[yi][xi].type === TileType.WALL) {
-                        numAlive += 1;
-                    }
-                }
-            }
-        }
-        return numAlive;
-    }
-
-    private computeNextState(x: number, y: number): Tile {
-        const currentState = this.map[y][x];
-        const aliveNeighbors = this.getNumAliveNeighbors(x, y);
-        let type: TileType = currentState.type;
-        switch(currentState.type) {
-            case TileType.SPACE:
-                if (this.birth[aliveNeighbors] == true) {
-                    type = TileType.WALL;
-                } else {
-                    type = TileType.SPACE;
-                }
-                break;
-            case TileType.WALL:
-                if (this.survive[aliveNeighbors] == true) {
-                    type = TileType.WALL;
-                } else {
-                    type = TileType.SPACE;
-                }
-                break;
-        }
-        return {
-            visible: currentState.visible,
-            type: type
-        };
-    }
-
-    simulate(): Tile[][] {
-        const {width, height} = this;
-        // clone map
-        const newMap = clone(this.map);
-        for(let y = 0; y < height; y += 1) {
-            for(let x = 0; x < width; x += 1) {
-                const nextState = this.computeNextState(x, y);
-                newMap[y][x] = nextState;
-            }
-        }
-        this.map = newMap;
-        return this.map;
-    }
-}
-
-function generateRandomWalls(width: number, height: number, percentage: number) {
-    const map: Tile[][] = [];
-    for(let y = 0; y < height; y += 1) {
-        const row = [];
-        for(let x = 0; x < width; x += 1) {
-            row.push({
-                visible: false,
-                type: Math.random() < percentage ? TileType.WALL : TileType.SPACE
-            });
-        }
-        map.push(row);
-    }
-    const downstairsX = Math.floor(Math.random() * width);
-    const downstairsY = Math.floor(Math.random() * height);
-    map[downstairsY][downstairsX].type = TileType.DOWNSTAIRS;
-    return map;
-}
-
-// inline mutation
-function outlineRectWithWalls(map: Tile[][],
-                              topLeft: Position = {x: 0, y: 0},
-                              bottomRight: Position = {x: map[0].length - 1, y: map.length - 1}) {
-    const setToWall = (p: Position) => {
-        map[p.y][p.x].type = TileType.WALL;
-        return false;
-    }
-    forEachOnLineInGrid(topLeft, {x: topLeft.x, y: bottomRight.y}, setToWall);
-    forEachOnLineInGrid({x: topLeft.x, y: bottomRight.y}, bottomRight, setToWall);
-    forEachOnLineInGrid(bottomRight, {x: bottomRight.x, y: topLeft.y}, setToWall);
-    forEachOnLineInGrid({x: bottomRight.x, y: topLeft.y}, topLeft, setToWall);
-}
-
-// ignores the first start position. callback should return TRUE if we should stop iteration
-function forEachOnLineInGrid(start: Position, end: Position, callback: (Position) => boolean) {
-    let x0 = start.x;
-    let y0 = start.y;
-
-    const x1 = end.x;
-    const y1 = end.y;
-
-    // bresenham's (http://stackoverflow.com/a/4672319)
-    var dx = Math.abs(x1-x0);
-    var dy = Math.abs(y1-y0);
-    var sx = (x0 < x1) ? 1 : -1;
-    var sy = (y0 < y1) ? 1 : -1;
-    var err = dx-dy;
-
-    while(true){
-      if ((x0==x1) && (y0==y1)) break;
-      var e2 = 2*err;
-      if (e2 >-dy){ err -= dy; x0  += sx; }
-      if (e2 < dx){ err += dx; y0  += sy; }
-
-      const shouldStop = callback({x: x0, y: y0});
-      if (shouldStop) break;
-    }
-}
-
-// In-place mutation of map.
-function giveVision(map: Tile[][], center: Position, radius: number): string[] {
-    const discoveryTexts: string[] = [];
-    for(let y = center.y - radius; y <= center.y + radius; y += 1) {
-        if (map[y] != null) {
-            for(let x = center.x - radius; x <= center.x + radius; x += 1) {
-                const isInCircle = (x - center.x) * (x - center.x) + (y - center.y) * (y - center.y) < radius*radius;
-                const tile = map[y][x];
-                if (tile != null && isInCircle && !tile.visible) {
-                    // raycast towards center; if you hit a wall, then don't be visible. otherwise, be visible.
-                    var isVisionBlocked = false;
-                    forEachOnLineInGrid({x, y}, center, (position) => {
-                        if (map[position.y][position.x].type === TileType.WALL) {
-                            isVisionBlocked = true;
-                            return true;
-                        }
-                    });
-                    tile.visible = !isVisionBlocked;
-                    if (tile.visible && tile.type === TileType.DOWNSTAIRS) {
-                        discoveryTexts.push("You discover a pathway down!");
-                    }
-                }
-            }
-        }
-    }
-    return discoveryTexts;
-}
-
-function generateMap() {
-    let initialMap = generateRandomWalls(60, 30, 0.25);
-    const caStep0 = new LifeLikeCA(initialMap, "1234/3");
-    repeat(5, () => caStep0.simulate());
-    const caStep1 = new LifeLikeCA(caStep0.map, "45678/3");
-    repeat(100, () => caStep1.simulate());
-    const caStep2 = new LifeLikeCA(caStep1.map, "1234/3");
-    repeat(7, () => caStep2.simulate());
-    const map = caStep2.map;
-    outlineRectWithWalls(map);
-    return map;
-}
-
-const initialMap = generateMap();
-giveVision(initialMap, {x: 30, y: 15}, 7);
+const level0 = generateMap();
+level0.giveVision({x: 30, y: 15}, 7);
 const INITIAL_STATE: IState = {
     levels: [{
-        map: initialMap,
+        map: level0,
         entities: [
             {
                 type: EntityType.USER,
@@ -332,7 +143,7 @@ function handleMoveAction(state: IState, action: IMoveAction): IState {
 
     const {levels, textHistory} = updateUserLevel(state, (userLevel) => {
         const user = userLevel.entities[0];
-        if (userLevel.map[user.y + action.direction.y][user.x + action.direction.x].type === TileType.WALL) {
+        if (userLevel.map.tiles[user.y + action.direction.y][user.x + action.direction.x].type === TileType.WALL) {
             return userLevel;
         } else {
             const newUser: IEntity = {
@@ -343,8 +154,8 @@ function handleMoveAction(state: IState, action: IMoveAction): IState {
                 maxHealth: user.maxHealth,
                 name: user.name
             };
-            const newMap = clone(userLevel.map);
-            discoveryTexts = giveVision(newMap, newUser, 7);
+            const newMap = userLevel.map.clone();
+            discoveryTexts = newMap.giveVision(newUser, 7);
             return {
                 map: newMap,
                 entities: [newUser, ...userLevel.entities.slice(1)]
@@ -370,8 +181,8 @@ function createMapEvolveAction(ruleset: string): IMapEvolveAction {
 
 function handleMapEvolveAction(state: IState, action: IMapEvolveAction): IState {
     return updateUserLevel(state, (level: ILevel) => {
-        const ca = new LifeLikeCA(level.map, action.ruleset);
-        const newMap = ca.simulate();
+        const newMap = level.map.clone();
+        newMap.lifelikeEvolve(action.ruleset);
         return {
             map: newMap,
             entities: level.entities
@@ -401,8 +212,8 @@ function handleChangeLevelAction(state: IState, action: IChangeLevelAction) {
         };
     });
 
-    const newMap = levels[newLevelIndex].map;
-    const discoveryTexts = giveVision(newMap, user, 7);
+    const newMap = levels[newLevelIndex].map.clone();
+    const discoveryTexts = newMap.giveVision(user, 7);
     const newLevel: ILevel = {
         map: newMap,
         entities: [user, ...levels[newLevelIndex].entities.slice(1)]
@@ -479,7 +290,7 @@ class PureLevel extends React.Component<{level: ILevel}, {}> {
 
     render() {
         return <pre className="map">
-            {this.props.level.map.map((row) => {
+            {this.props.level.map.tiles.map((row) => {
                 return (
                     <div className="row">
                         {row.map((tile) => this.elementForTile(tile))}
