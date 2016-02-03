@@ -22,6 +22,9 @@
     "compileOnSave": true,
     "buildOnSave": false,
     "files": [
+        "src/entity.ts",
+        "src/level.ts",
+        "src/math.ts",
         "src/util.ts",
         "src/action.tsx",
         "src/Index.tsx"

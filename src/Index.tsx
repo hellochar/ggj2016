@@ -6,55 +6,16 @@ import ReactDOM = require("react-dom");
 import * as React from "react";
 import * as Redux from "redux";
 import { connect, Provider } from "react-redux";
-// import {repeat, clone} from "./util";
 
-function repeat(times: number, f: Function): void {
-    for (let x: number = 0; x < times; x += 1) {
-        f();
-    }
-}
-
-function clone<T>(t: T): T {
-    return JSON.parse(JSON.stringify(t));
-}
+import { Position } from "./math";
+import { IEntity, EntityType } from "./entity";
+import { ILevel, Tile, TileType } from "./level";
+import {repeat, clone} from "./util";
 
 import "./index.less";
 
 interface IAction {
     type: string;
-}
-
-interface Position {
-    x: number;
-    y: number;
-}
-
-enum EntityType {
-    USER,
-    MERCURY
-}
-
-interface IEntity extends Position {
-    health: number;
-    maxHealth: number;
-    type: EntityType;
-    name?: string;
-}
-
-enum TileType {
-    SPACE = 0,
-    WALL = 1,
-    DOWNSTAIRS = 2
-}
-
-interface Tile {
-    visible: boolean;
-    type: TileType;
-}
-
-interface ILevel {
-    map: Tile[][];
-    entities: IEntity[];
 }
 
 interface IState {
