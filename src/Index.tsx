@@ -190,6 +190,20 @@ function generateRandomWalls(width: number, height: number, percentage: number) 
     return map;
 }
 
+// inline mutation
+function outlineRectWithWalls(map: Tile[][],
+                              topLeft: Position = {x: 0, y: 0},
+                              bottomRight: Position = {x: map[0].length - 1, y: map.length - 1}) {
+    const setToWall = (p: Position) => {
+        map[p.y][p.x].type = TileType.WALL;
+        return false;
+    }
+    forEachOnLineInGrid(topLeft, {x: topLeft.x, y: bottomRight.y}, setToWall);
+    forEachOnLineInGrid({x: topLeft.x, y: bottomRight.y}, bottomRight, setToWall);
+    forEachOnLineInGrid(bottomRight, {x: bottomRight.x, y: topLeft.y}, setToWall);
+    forEachOnLineInGrid({x: bottomRight.x, y: topLeft.y}, topLeft, setToWall);
+}
+
 // ignores the first start position. callback should return TRUE if we should stop iteration
 function forEachOnLineInGrid(start: Position, end: Position, callback: (Position) => boolean) {
     let x0 = start.x;
@@ -252,7 +266,9 @@ function generateMap() {
     repeat(100, () => caStep1.simulate());
     const caStep2 = new LifeLikeCA(caStep1.map, "1234/3");
     repeat(7, () => caStep2.simulate());
-    return caStep2.map;
+    const map = caStep2.map;
+    outlineRectWithWalls(map);
+    return map;
 }
 
 const initialMap = generateMap();
@@ -278,6 +294,26 @@ const INITIAL_STATE: IState = {
                 name: "Mercury"
             }
         ],
+    },
+    {
+        map: generateMap(),
+        entities: []
+    },
+    {
+        map: generateMap(),
+        entities: []
+    },
+    {
+        map: generateMap(),
+        entities: []
+    },
+    {
+        map: generateMap(),
+        entities: []
+    },
+    {
+        map: generateMap(),
+        entities: []
     },
     {
         map: generateMap(),
@@ -335,20 +371,24 @@ function handleMoveAction(state: IState, action: IMoveAction): IState {
 
     const {levels, textHistory} = updateUserLevel(state, (userLevel) => {
         const user = userLevel.entities[0];
-        const newUser: IEntity = {
-            type: user.type,
-            x: user.x + action.direction.x,
-            y: user.y + action.direction.y,
-            health: user.health,
-            maxHealth: user.maxHealth,
-            name: user.name
-        };
-        const newMap = clone(userLevel.map);
-        discoveryTexts = giveVision(newMap, newUser, 7);
-        return {
-            map: newMap,
-            entities: [newUser, ...userLevel.entities.slice(1)]
-        };
+        if (userLevel.map[user.y + action.direction.y][user.x + action.direction.x].type === TileType.WALL) {
+            return userLevel;
+        } else {
+            const newUser: IEntity = {
+                type: user.type,
+                x: user.x + action.direction.x,
+                y: user.y + action.direction.y,
+                health: user.health,
+                maxHealth: user.maxHealth,
+                name: user.name
+            };
+            const newMap = clone(userLevel.map);
+            discoveryTexts = giveVision(newMap, newUser, 7);
+            return {
+                map: newMap,
+                entities: [newUser, ...userLevel.entities.slice(1)]
+            };
+        }
     });
 
     return {
