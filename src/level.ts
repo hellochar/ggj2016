@@ -1,13 +1,15 @@
 /* tslint:disable */
 
-import { forEachOnLineInGrid, Position } from "./math";
+import { forEachOnLineInGrid, forEachInRect, Position } from "./math";
 import { IEntity } from "./entity";
 import { clone, repeat } from "./util";
 
 export enum TileType {
     SPACE = 0,
     WALL = 1,
-    DOWNSTAIRS = 2
+    DOWNSTAIRS = 2,
+    UPSTAIRS = 3,
+    DECORATIVE_SPACE = 4
 }
 
 export interface Tile {
@@ -80,6 +82,23 @@ export class Map {
         ca.simulate();
     }
 
+    public getDownstairsPosition(): Position {
+        for(let y = 0; y < this.height; y += 1) {
+            for(let x = 0; x < this.width; x += 1) {
+                if (this.tiles[y][x].type === TileType.DOWNSTAIRS) {
+                    return {x, y};
+                }
+            }
+        }
+    }
+
+    public setImportantTile(p: Position, type: TileType) {
+        forEachInRect({x: p.x - 1, y: p.y - 1},
+                      {x: p.x + 1, y: p.y + 1},
+                      (p) => this.tiles[p.y][p.x].type = TileType.DECORATIVE_SPACE);
+        this.tiles[p.y][p.x].type = type;
+    }
+
     static generateRandomWalls(width: number, height: number, percentage: number): Map {
         const map: Tile[][] = [];
         for(let y = 0; y < height; y += 1) {
@@ -92,9 +111,6 @@ export class Map {
             }
             map.push(row);
         }
-        const downstairsX = Math.floor(Math.random() * width);
-        const downstairsY = Math.floor(Math.random() * height);
-        map[downstairsY][downstairsX].type = TileType.DOWNSTAIRS;
         return new Map(map);
     }
 }
@@ -183,11 +199,21 @@ class LifeLikeCA {
     }
 }
 
-export function generateMap() {
-    let map = Map.generateRandomWalls(60, 30, 0.25);
+export function generateMap(upstairs: Position) {
+    const width = 60,
+          height = 30;
+    let map = Map.generateRandomWalls(width, height, 0.25);
+
     repeat(5, () => map.lifelikeEvolve("1234/3"));
     repeat(100, () => map.lifelikeEvolve("45678/3"));
     repeat(7, () => map.lifelikeEvolve("1234/3"));
+
+    const inset = 3;
+    const downstairsX = inset + Math.floor(Math.random() * (width - inset*2));
+    const downstairsY = inset + Math.floor(Math.random() * (height - inset*2));
+    map.setImportantTile({x: downstairsX, y: downstairsY}, TileType.DOWNSTAIRS);
+    map.setImportantTile(upstairs, TileType.UPSTAIRS);
+
     map.outlineRectWithWalls();
     return map;
 }

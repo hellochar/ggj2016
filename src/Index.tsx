@@ -43,16 +43,15 @@ function updateUserLevel(state: IState, update: (ILevel) => ILevel) {
     }
 }
 
-const level0 = generateMap();
-level0.giveVision({x: 30, y: 15}, 7);
-const INITIAL_STATE: IState = {
-    levels: [{
-        map: level0,
+function buildLevels() {
+    const center = {x: 30, y: 15};
+    const level0: ILevel = {
+        map: generateMap(center),
         entities: [
             {
                 type: EntityType.USER,
-                x: 30,
-                y: 15,
+                x: center.x,
+                y: center.y,
                 health: 10,
                 maxHealth: 10,
                 name: "hellochar"
@@ -65,44 +64,22 @@ const INITIAL_STATE: IState = {
                 maxHealth: 25,
                 name: "Mercury"
             }
-        ],
-    },
-    {
-        map: generateMap(),
-        entities: []
-    },
-    {
-        map: generateMap(),
-        entities: []
-    },
-    {
-        map: generateMap(),
-        entities: []
-    },
-    {
-        map: generateMap(),
-        entities: []
-    },
-    {
-        map: generateMap(),
-        entities: []
-    },
-    {
-        map: generateMap(),
-        entities: []
-    },
-    {
-        map: generateMap(),
-        entities: []
-    },
-    {
-        map: generateMap(),
-        entities: []
-    },
-    {
-        map: generateMap(),
-        entities: []
-    }],
+        ]
+    };
+    level0.map.giveVision(center, 7);
+    const levels = [level0];
+    for(let depth = 1; depth < 10; depth += 1) {
+        const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
+        const currentLevel = {
+            map: newMap,
+            entities: []
+        };
+        levels[depth] = currentLevel;
+    }
+    return levels;
+}
+const INITIAL_STATE: IState = {
+    levels: buildLevels(),
     textHistory: [
         "Welcome, hellochar, to the Peregrin Caves! You hear the light trickling of water nearby. The damp moss crunches underneath your feet. The dungeon glows with an eerie light.",
         "Mercury is on this level!"
@@ -262,6 +239,8 @@ class PureLevel extends React.Component<{level: ILevel}, {}> {
             case TileType.SPACE: return 'fa-square-o space';
             case TileType.WALL: return 'fa-stop';
             case TileType.DOWNSTAIRS: return 'fa-chevron-down';
+            case TileType.UPSTAIRS: return 'fa-chevron-up';
+            case TileType.DECORATIVE_SPACE: return 'fa-slack space';
         }
     }
 

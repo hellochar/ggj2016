@@ -29,3 +29,11 @@ export function forEachOnLineInGrid(start: Position, end: Position, callback: (P
       if (shouldStop) break;
     }
 }
+
+export function forEachInRect(topLeft: Position, bottomRight: Position, cb: (Position) => any) {
+    for(let x = topLeft.x; x <= bottomRight.x; x += 1) {
+        for(let y = topLeft.y; y <= bottomRight.y; y += 1) {
+            cb({x: x, y: y});
+        }
+    }
+}
