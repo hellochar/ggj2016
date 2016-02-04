@@ -9,7 +9,7 @@ import { connect, Provider } from "react-redux";
 
 import { forEachOnLineInGrid, Position } from "./math";
 import { IEntity, EntityType } from "./entity";
-import { ILevel, Tile, TileType, generateMap } from "./level";
+import { Level, Tile, TileType, generateMap } from "./level";
 import {repeat, clone} from "./util";
 
 import "./index.less";
@@ -19,15 +19,15 @@ interface IAction {
 }
 
 interface IState {
-    levels: ILevel[];
+    levels: Level[];
     textHistory: string[];
 }
 
-function findUserLevel(levels: ILevel[]) {
+function findUserLevel(levels: Level[]) {
     return levels.filter((level) => level.entities.some((entity) => entity.type === EntityType.USER))[0];
 }
 
-function updateUserLevel(state: IState, update: (ILevel) => ILevel) {
+function updateUserLevel(state: IState, update: (Level) => Level) {
     const userLevel = findUserLevel(state.levels),
           userLevelIndex = state.levels.indexOf(userLevel);
 
@@ -45,9 +45,8 @@ function updateUserLevel(state: IState, update: (ILevel) => ILevel) {
 
 function buildLevels() {
     const center = {x: 30, y: 15};
-    const level0: ILevel = {
-        map: generateMap(center),
-        entities: [
+    const level0 = new Level(generateMap(center),
+        [
             {
                 type: EntityType.USER,
                 x: center.x,
@@ -65,17 +64,26 @@ function buildLevels() {
                 name: "Mercury"
             }
         ]
-    };
+    );
     level0.map.giveVision(center, 7);
     const levels = [level0];
-    for(let depth = 1; depth < 10; depth += 1) {
+    for(let depth = 1; depth < 1; depth += 1) {
         const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
-        const currentLevel = {
-            map: newMap,
-            entities: []
-        };
+        const currentLevel = new Level(newMap, []);
         levels[depth] = currentLevel;
     }
+    const lastLevel = levels[levels.length - 1];
+    const ringPosition = lastLevel.map.getDownstairsPosition();
+    lastLevel.map.setImportantTile(ringPosition, TileType.DECORATIVE_SPACE);
+    const ringEntity: IEntity = {
+        x: ringPosition.x,
+        y: ringPosition.y,
+        health: 1,
+        maxHealth: 1,
+        type: EntityType.RING,
+        name: "Ring"
+    }
+    lastLevel.entities.push(ringEntity);
     return levels;
 }
 const INITIAL_STATE: IState = {
@@ -133,10 +141,7 @@ function handleMoveAction(state: IState, action: IMoveAction): IState {
             };
             const newMap = userLevel.map.clone();
             discoveryTexts = newMap.giveVision(newUser, 7);
-            return {
-                map: newMap,
-                entities: [newUser, ...userLevel.entities.slice(1)]
-            };
+            return new Level(newMap, [newUser, ...userLevel.entities.slice(1)]);
         }
     });
 
@@ -157,13 +162,10 @@ function createMapEvolveAction(ruleset: string): IMapEvolveAction {
 }
 
 function handleMapEvolveAction(state: IState, action: IMapEvolveAction): IState {
-    return updateUserLevel(state, (level: ILevel) => {
+    return updateUserLevel(state, (level: Level) => {
         const newMap = level.map.clone();
         newMap.lifelikeEvolve(action.ruleset);
-        return {
-            map: newMap,
-            entities: level.entities
-        };
+        return new Level(newMap, level.entities);
     });
 }
 
@@ -181,20 +183,14 @@ function handleChangeLevelAction(state: IState, action: IChangeLevelAction) {
     // delete entity from old level
     const newLevelIndex = action.newLevel;
     let user: IEntity;
-    const {levels, textHistory} = updateUserLevel(state, (level: ILevel) => {
+    const {levels, textHistory} = updateUserLevel(state, (level: Level) => {
         user = level.entities[0];
-        return {
-            map: level.map,
-            entities: level.entities.slice(1)
-        };
+        return new Level(level.map, level.entities.slice(1));
     });
 
     const newMap = levels[newLevelIndex].map.clone();
     const discoveryTexts = newMap.giveVision(user, 7);
-    const newLevel: ILevel = {
-        map: newMap,
-        entities: [user, ...levels[newLevelIndex].entities.slice(1)]
-    }
+    const newLevel = new Level(newMap, [user, ...levels[newLevelIndex].entities.slice(1)]);
 
     const newLevels = [
         ...levels.slice(0, newLevelIndex),
@@ -233,7 +229,7 @@ class PureEntityInfo extends React.Component<{entity: IEntity, floor: number}, {
     }
 }
 
-class PureLevel extends React.Component<{level: ILevel}, {}> {
+class PureLevel extends React.Component<{level: Level}, {}> {
     iconClassForTile(tile: TileType) {
         switch(tile) {
             case TileType.SPACE: return 'fa-square-o space';
@@ -256,6 +252,10 @@ class PureLevel extends React.Component<{level: ILevel}, {}> {
         switch(entity.type) {
             case EntityType.USER: return 'fa-user user';
             case EntityType.MERCURY: return 'fa-mercury';
+            case EntityType.PIED_PIPER: return 'fa-pied-piper-alt';
+            case EntityType.POWERMAN: return 'fa-odnoklassniki'; // see also fa-odnoklassniki-square for an alternate version
+            case EntityType.RING: return 'fa-circle-o-notch item important';
+
         }
     }
 
@@ -269,14 +269,20 @@ class PureLevel extends React.Component<{level: ILevel}, {}> {
 
     render() {
         return <pre className="map">
-            {this.props.level.map.tiles.map((row) => {
+            {this.props.level.map.getTiles().map((row) => {
                 return (
                     <div className="row">
                         {row.map((tile) => this.elementForTile(tile))}
                     </div>
                 );
             })}
-            {this.props.level.entities.map((entity) => this.elementForEntity(entity))}
+            {this.props.level.entities.map((entity) => {
+                if (this.props.level.isVisible(entity)) {
+                    return this.elementForEntity(entity);
+                } else {
+                    return null;
+                }
+            })}
         </pre>;
     }
 }
@@ -284,7 +290,7 @@ class PureLevel extends React.Component<{level: ILevel}, {}> {
 interface IGameProps extends React.Props<{}> {
     dispatch?: Redux.Dispatch;
 
-    levels?: ILevel[];
+    levels?: Level[];
     textHistory?: string[];
 }
 
@@ -306,10 +312,18 @@ class PureGame extends React.Component<IGameProps, {}> {
         const userLevel = findUserLevel(this.props.levels),
               userLevelIndex = this.props.levels.indexOf(userLevel);
         if (event.code === "KeyQ") {
-            this.props.dispatch(createChangeLevelAction(userLevelIndex - 1));
+            const user = userLevel.entities[0];
+            const currentTile = userLevel.map.get(user.x, user.y);
+            if (currentTile.type === TileType.UPSTAIRS) {
+                this.props.dispatch(createChangeLevelAction(userLevelIndex - 1));
+            }
         }
         if (event.code === "KeyE") {
-            this.props.dispatch(createChangeLevelAction(userLevelIndex + 1));
+            const user = userLevel.entities[0];
+            const currentTile = userLevel.map.get(user.x, user.y);
+            if (currentTile.type === TileType.DOWNSTAIRS) {
+                this.props.dispatch(createChangeLevelAction(userLevelIndex + 1));
+            }
         }
         if (mapping[event.code]) {
             this.props.dispatch(createMoveAction(mapping[event.code]));
@@ -333,9 +347,6 @@ class PureGame extends React.Component<IGameProps, {}> {
                     <ul className="history">
                         {this.props.textHistory.map((text) => <li>{text}</li>)}
                     </ul>
-                    <pre>
-                    {this.props.levels.length}
-                    </pre>
                 </div>
             </div>
         );

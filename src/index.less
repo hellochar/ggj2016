@@ -39,6 +39,8 @@ body {
                 height: @size;
                 font-size: @size;
                 text-align: center;
+
+                transition: top 0.05s, left 0.05s, opacity 0.05s;
             }
         }
 
@@ -46,6 +48,38 @@ body {
             .row .tile;
 
             position: absolute;
+            animation-name: active;
+            animation-duration: 2s;
+            animation-timing-function: steps(2);
+            animation-iteration-count: infinite;
+            @keyframes active {
+                from {
+                    margin-top: -3px;
+                }
+
+                to {
+                    margin-top: 0px;
+                }
+            }
+        }
+
+        .item {
+            transform: scale(0.65);
+            animation-duration: 1s;
+            animation-name: bobble;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+            animation-timing-function: ease-in-out;
+
+            @keyframes bobble {
+                from {
+                    margin-top: -5px;
+                }
+
+                to {
+                    margin-top: 3px;
+                }
+            }
         }
 
         .space {

@@ -23,7 +23,7 @@ export interface Tile {
  * it back to Redux.
  */
 export class Map {
-    constructor(public tiles: Tile[][]) {}
+    constructor(private tiles: Tile[][]) {}
 
     clone(): Map {
         return new Map(clone(this.tiles));
@@ -35,6 +35,21 @@ export class Map {
 
     get height() {
         return this.tiles.length;
+    }
+
+    public get(x: number, y: number, then?: (Tile) => void): Tile {
+        const row = this.tiles[y];
+        if (row != null) {
+            const tile = row[x];
+            if (tile != null && then != null) {
+                then(tile);
+            }
+            return tile;
+        }
+    }
+
+    public getTiles() {
+        return this.tiles;
     }
 
     // inline mutation
@@ -79,7 +94,7 @@ export class Map {
 
     public lifelikeEvolve(ruleset: string) {
         const ca = new LifeLikeCA(this, ruleset);
-        ca.simulate();
+        this.tiles = ca.simulate();
     }
 
     public getDownstairsPosition(): Position {
@@ -115,9 +130,12 @@ export class Map {
     }
 }
 
-export interface ILevel {
-    map: Map;
-    entities: IEntity[];
+export class Level {
+    constructor(public map: Map, public entities: IEntity[]) {}
+
+    public isVisible(entity: IEntity) {
+        return this.map.get(entity.x, entity.y).visible;
+    }
 }
 
 class LifeLikeCA {
@@ -147,20 +165,20 @@ class LifeLikeCA {
 
     private getNumAliveNeighbors(x: number, y: number) {
         let numAlive = 0;
-        for(let yi = y - 1; yi <= y + 1; yi += 1) {
-            if (this.map.tiles[yi] != null) {
-                for(let xi = x - 1; xi <= x + 1; xi += 1) {
-                    if (!(yi === y && xi === x) && this.map.tiles[yi][xi] != null && this.map.tiles[yi][xi].type === TileType.WALL) {
+        for(var yi = y - 1; yi <= y + 1; yi += 1) {
+            for(var xi = x - 1; xi <= x + 1; xi += 1) {
+                this.map.get(xi, yi, (tile) => {
+                    if (!(yi === y && xi === x) && tile.type === TileType.WALL) {
                         numAlive += 1;
                     }
-                }
+                });
             }
         }
         return numAlive;
     }
 
     private computeNextState(x: number, y: number): Tile {
-        const currentState = this.map.tiles[y][x];
+        const currentState = this.map.get(x, y);
         const aliveNeighbors = this.getNumAliveNeighbors(x, y);
         let type: TileType = currentState.type;
         switch(currentState.type) {
@@ -188,14 +206,14 @@ class LifeLikeCA {
     simulate() {
         const {width, height} = this.map;
         // clone map
-        const newTiles = clone(this.map.tiles);
+        const newTiles = clone(this.map.getTiles());
         for(let y = 0; y < height; y += 1) {
             for(let x = 0; x < width; x += 1) {
                 const nextState = this.computeNextState(x, y);
                 newTiles[y][x] = nextState;
             }
         }
-        this.map.tiles = newTiles;
+        return newTiles;
     }
 }
 
