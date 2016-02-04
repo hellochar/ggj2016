@@ -140,6 +140,7 @@ function handleMoveAction(state: IState, action: IMoveAction): IState {
                 name: user.name
             };
             const newMap = userLevel.map.clone();
+            newMap.removeVision(user, 7);
             discoveryTexts = newMap.giveVision(newUser, 7);
             return new Level(newMap, [newUser, ...userLevel.entities.slice(1)]);
         }
@@ -242,9 +243,11 @@ class PureLevel extends React.Component<{level: Level}, {}> {
 
     elementForTile(tile: Tile) {
         if (tile.visible) {
-            return <i className={`fa tile ${this.iconClassForTile(tile.type)}`}></i>;
+            return <i className={`fa tile tile-visible ${this.iconClassForTile(tile.type)}`}></i>;
+        } if (tile.explored) {
+            return <i className={`fa tile tile-remembered ${this.iconClassForTile(tile.type)}`}></i>;
         } else {
-            return <i className="fa tile unexplored"> </i>;
+            return <i className="fa tile tile-unexplored"> </i>;
         }
     }
 

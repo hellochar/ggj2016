@@ -37,3 +37,15 @@ export function forEachInRect(topLeft: Position, bottomRight: Position, cb: (Pos
         }
     }
 }
+
+export function forEachInCircle(center: Position, radius: number, cb: (Position) => any) {
+    forEachInRect({x: center.x - radius, y: center.y - radius},
+                  {x: center.x + radius, y: center.y + radius},
+                  (p) => {
+                      const {x, y} = p;
+                      const isInCircle = (x - center.x) * (x - center.x) + (y - center.y) * (y - center.y) < radius*radius;
+                      if (isInCircle) {
+                          cb(p);
+                      }
+                  });
+}

@@ -6,6 +6,7 @@ html {
 
 body {
     margin: 0;
+    background: url(http://www.bittbox.com/wp-content/uploads/2011/06/noise_pattern_1.jpg);
 }
 
 .game {
@@ -18,6 +19,7 @@ body {
         left: calc(@size * 60);
         top: 0;
         padding: 10px;
+        color: #f3f4f9;
 
         .history {
             list-style-type: circle;
@@ -31,21 +33,44 @@ body {
         position: relative;
         margin: 0;
 
+        .fa-square-o:before {
+            position: relative;
+            top: 1.2px;
+        }
+
         .row {
             height: @size;
+        }
 
-            .tile {
-                width: @size;
-                height: @size;
-                font-size: @size;
-                text-align: center;
+        .tile {
+            width: @size;
+            height: @size;
+            font-size: @size;
+            text-align: center;
 
-                transition: top 0.05s, left 0.05s, opacity 0.05s;
+            transition: top 0.05s, left 0.05s, opacity 0.05s;
+
+            &.tile-remembered {
+                color: rgba(0.5,0.5,0.5,0.75);
+                background-color: #999;
+
+                &.space {
+                    color: rgba(0.9,0.9,0.5, 0.1);
+                }
+            }
+
+            &.tile-visible {
+                background: white;
+            }
+
+            &.tile-unexplored {
+                background-color: #323134;
+                opacity: 0;
             }
         }
 
         .entity {
-            .row .tile;
+            .tile;
 
             position: absolute;
             animation-name: active;
@@ -83,11 +108,7 @@ body {
         }
 
         .space {
-            opacity: 0.1;
-        }
-
-        .unexplored {
-            background-color: #ddd;
+            color: rgba(1,1,1, 0.12);
         }
 
         .user {

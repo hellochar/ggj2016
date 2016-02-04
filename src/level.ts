@@ -1,6 +1,6 @@
 /* tslint:disable */
 
-import { forEachOnLineInGrid, forEachInRect, Position } from "./math";
+import { forEachOnLineInGrid, forEachInRect, forEachInCircle, Position } from "./math";
 import { IEntity } from "./entity";
 import { clone, repeat } from "./util";
 
@@ -14,6 +14,7 @@ export enum TileType {
 
 export interface Tile {
     visible: boolean;
+    explored: boolean;
     type: TileType;
 }
 
@@ -65,30 +66,37 @@ export class Map {
         forEachOnLineInGrid({x: bottomRight.x, y: topLeft.y}, topLeft, setToWall);
     }
 
+    // lose immediate sight of the given area (turning any visible areas into just explored areas)
+    public removeVision(center: Position, radius: number) {
+        forEachInCircle(center, radius, ({x, y}) => {
+            this.get(x, y, (tile) => {
+                tile.visible = false;
+            });
+        });
+    }
+
     public giveVision(center: Position, radius: number): string[] {
         const discoveryTexts: string[] = [];
-        for(let y = center.y - radius; y <= center.y + radius; y += 1) {
-            if (this.tiles[y] != null) {
-                for(let x = center.x - radius; x <= center.x + radius; x += 1) {
-                    const isInCircle = (x - center.x) * (x - center.x) + (y - center.y) * (y - center.y) < radius*radius;
-                    const tile = this.tiles[y][x];
-                    if (tile != null && isInCircle && !tile.visible) {
-                        // raycast towards center; if you hit a wall, then don't be visible. otherwise, be visible.
-                        var isVisionBlocked = false;
-                        forEachOnLineInGrid({x, y}, center, (position) => {
-                            if (this.tiles[position.y][position.x].type === TileType.WALL) {
-                                isVisionBlocked = true;
-                                return true;
-                            }
-                        });
-                        tile.visible = !isVisionBlocked;
-                        if (tile.visible && tile.type === TileType.DOWNSTAIRS) {
-                            discoveryTexts.push("You discover a pathway down!");
+        forEachInCircle(center, radius, ({x, y}) => {
+            this.get(x, y, (tile) => {
+                if (!tile.visible) {
+                    var isVisionBlocked = false;
+                    forEachOnLineInGrid({x, y}, center, (position) => {
+                        if (this.tiles[position.y][position.x].type === TileType.WALL) {
+                            isVisionBlocked = true;
+                            return true;
                         }
+                    });
+                    tile.visible = !isVisionBlocked;
+                    if (tile.visible) {
+                        tile.explored = true;
+                    }
+                    if (tile.visible && tile.type === TileType.DOWNSTAIRS) {
+                        discoveryTexts.push("You discover a pathway down!");
                     }
                 }
-            }
-        }
+            });
+        });
         return discoveryTexts;
     }
 
@@ -199,6 +207,7 @@ class LifeLikeCA {
         }
         return {
             visible: currentState.visible,
+            explored: currentState.explored,
             type: type
         };
     }
