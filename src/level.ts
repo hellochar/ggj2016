@@ -1,7 +1,7 @@
 /* tslint:disable */
 
 import { forEachOnLineInGrid, forEachInRect, forEachInCircle, Position } from "./math";
-import { IEntity } from "./entity";
+import { Entity } from "./entity";
 import { clone, repeat } from "./util";
 
 export enum TileType {
@@ -139,10 +139,15 @@ export class Map {
 }
 
 export class Level {
-    constructor(public map: Map, public entities: IEntity[]) {}
+    constructor(public map: Map, public entities: Entity[]) {}
 
-    public isVisible(entity: IEntity) {
-        return this.map.get(entity.x, entity.y).visible;
+    public isVisible(entity: Entity) {
+        return this.map.get(entity.position.x, entity.position.y).visible;
+    }
+
+    // perform AI update on each entity that isn't the user
+    update() {
+        // this.entities.map()
     }
 }
 

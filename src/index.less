@@ -6,7 +6,7 @@ html {
 
 body {
     margin: 0;
-    background: url(http://www.bittbox.com/wp-content/uploads/2011/06/noise_pattern_1.jpg);
+    background: #323134;
 }
 
 .game {
@@ -48,7 +48,7 @@ body {
             font-size: @size;
             text-align: center;
 
-            transition: top 0.05s, left 0.05s, opacity 0.05s;
+            // transition: top 0.05s, left 0.05s, opacity 0.05s;
 
             &.tile-remembered {
                 color: rgba(0.5,0.5,0.5,0.75);
@@ -64,8 +64,6 @@ body {
             }
 
             &.tile-unexplored {
-                background-color: #323134;
-                opacity: 0;
             }
         }
 

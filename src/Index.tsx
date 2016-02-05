@@ -8,7 +8,7 @@ import * as Redux from "redux";
 import { connect, Provider } from "react-redux";
 
 import { forEachOnLineInGrid, Position } from "./math";
-import { IEntity, EntityType } from "./entity";
+import * as Entity from "./entity";
 import { Level, Tile, TileType, generateMap } from "./level";
 import {repeat, clone} from "./util";
 
@@ -24,10 +24,10 @@ interface IState {
 }
 
 function findUserLevel(levels: Level[]) {
-    return levels.filter((level) => level.entities.some((entity) => entity.type === EntityType.USER))[0];
+    return levels.filter((level) => level.entities.some((entity) => entity instanceof Entity.User))[0];
 }
 
-function updateUserLevel(state: IState, update: (Level) => Level) {
+function updateUserLevel(state: IState, update: (level: Level) => Level) {
     const userLevel = findUserLevel(state.levels),
           userLevelIndex = state.levels.indexOf(userLevel);
 
@@ -47,22 +47,8 @@ function buildLevels() {
     const center = {x: 30, y: 15};
     const level0 = new Level(generateMap(center),
         [
-            {
-                type: EntityType.USER,
-                x: center.x,
-                y: center.y,
-                health: 10,
-                maxHealth: 10,
-                name: "hellochar"
-            },
-            {
-                type: EntityType.MERCURY,
-                x: 2,
-                y: 1,
-                health: 25,
-                maxHealth: 25,
-                name: "Mercury"
-            }
+            new Entity.User(center),
+            new Entity.Mercury({x:2, y: 2})
         ]
     );
     level0.map.giveVision(center, 7);
@@ -75,14 +61,7 @@ function buildLevels() {
     const lastLevel = levels[levels.length - 1];
     const ringPosition = lastLevel.map.getDownstairsPosition();
     lastLevel.map.setImportantTile(ringPosition, TileType.DECORATIVE_SPACE);
-    const ringEntity: IEntity = {
-        x: ringPosition.x,
-        y: ringPosition.y,
-        health: 1,
-        maxHealth: 1,
-        type: EntityType.RING,
-        name: "Ring"
-    }
+    const ringEntity = new Entity.Ring(ringPosition);
     lastLevel.entities.push(ringEntity);
     return levels;
 }
@@ -127,21 +106,18 @@ function handleMoveAction(state: IState, action: IMoveAction): IState {
     let discoveryTexts: string[] = [];
 
     const {levels, textHistory} = updateUserLevel(state, (userLevel) => {
-        const user = userLevel.entities[0];
-        if (userLevel.map.tiles[user.y + action.direction.y][user.x + action.direction.x].type === TileType.WALL) {
+        const user: Entity.User = userLevel.entities[0];
+        const newPositionTile = userLevel.map.get(user.position.x + action.direction.x, user.position.y + action.direction.y);
+        if (newPositionTile == null || newPositionTile.type === TileType.WALL) {
             return userLevel;
         } else {
-            const newUser: IEntity = {
-                type: user.type,
-                x: user.x + action.direction.x,
-                y: user.y + action.direction.y,
-                health: user.health,
-                maxHealth: user.maxHealth,
-                name: user.name
-            };
+            const newUser = user.clone();
+            newUser.move(action.direction);
+
             const newMap = userLevel.map.clone();
-            newMap.removeVision(user, 7);
-            discoveryTexts = newMap.giveVision(newUser, 7);
+            newMap.removeVision(user.position, 7);
+            discoveryTexts = newMap.giveVision(newUser.position, 7);
+
             return new Level(newMap, [newUser, ...userLevel.entities.slice(1)]);
         }
     });
@@ -183,14 +159,14 @@ function createChangeLevelAction(newLevel: number): IChangeLevelAction {
 function handleChangeLevelAction(state: IState, action: IChangeLevelAction) {
     // delete entity from old level
     const newLevelIndex = action.newLevel;
-    let user: IEntity;
-    const {levels, textHistory} = updateUserLevel(state, (level: Level) => {
+    let user: Entity.User;
+    const {levels, textHistory} = updateUserLevel(state, (level) => {
         user = level.entities[0];
         return new Level(level.map, level.entities.slice(1));
     });
 
     const newMap = levels[newLevelIndex].map.clone();
-    const discoveryTexts = newMap.giveVision(user, 7);
+    const discoveryTexts = newMap.giveVision(user.position, 7);
     const newLevel = new Level(newMap, [user, ...levels[newLevelIndex].entities.slice(1)]);
 
     const newLevels = [
@@ -220,7 +196,7 @@ function reducer(state: IState = INITIAL_STATE, action: IAction) {
 const store = Redux.createStore(reducer);
 
 
-class PureEntityInfo extends React.Component<{entity: IEntity, floor: number}, {}> {
+class PureEntityInfo extends React.Component<{entity: Entity.Entity, floor: number}, {}> {
     render() {
         const {entity} = this.props;
         return <div className="entity-info">
@@ -251,23 +227,12 @@ class PureLevel extends React.Component<{level: Level}, {}> {
         }
     }
 
-    iconClassForEntity(entity: IEntity) {
-        switch(entity.type) {
-            case EntityType.USER: return 'fa-user user';
-            case EntityType.MERCURY: return 'fa-mercury';
-            case EntityType.PIED_PIPER: return 'fa-pied-piper-alt';
-            case EntityType.POWERMAN: return 'fa-odnoklassniki'; // see also fa-odnoklassniki-square for an alternate version
-            case EntityType.RING: return 'fa-circle-o-notch item important';
-
-        }
-    }
-
-    elementForEntity(entity: IEntity) {
+    elementForEntity(entity: Entity.Entity) {
         const style = {
-            left: entity.x * 25,
-            top: entity.y * 25
+            left: entity.position.x * 25,
+            top: entity.position.y * 25
         };
-        return <i style={style} className={`fa entity ${this.iconClassForEntity(entity)}`}></i>
+        return <i style={style} className={`fa entity ${entity.iconClass()}`}></i>
     }
 
     render() {
@@ -316,14 +281,14 @@ class PureGame extends React.Component<IGameProps, {}> {
               userLevelIndex = this.props.levels.indexOf(userLevel);
         if (event.code === "KeyQ") {
             const user = userLevel.entities[0];
-            const currentTile = userLevel.map.get(user.x, user.y);
+            const currentTile = userLevel.map.get(user.position.x, user.position.y);
             if (currentTile.type === TileType.UPSTAIRS) {
                 this.props.dispatch(createChangeLevelAction(userLevelIndex - 1));
             }
         }
         if (event.code === "KeyE") {
             const user = userLevel.entities[0];
-            const currentTile = userLevel.map.get(user.x, user.y);
+            const currentTile = userLevel.map.get(user.position.x, user.position.y);
             if (currentTile.type === TileType.DOWNSTAIRS) {
                 this.props.dispatch(createChangeLevelAction(userLevelIndex + 1));
             }
