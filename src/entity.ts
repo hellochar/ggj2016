@@ -23,6 +23,7 @@ fa-500px, fa-deviantart, fa-forumbee, fa-gg, fa-opencart
 
 import { Position } from "./math";
 import { clone } from "./util";
+import { IState } from "./state";
 
 // An Entity is really just a bag of properties. To clone one, you just
 // need to copy all its properties to a new object. The contract for Entities
@@ -39,6 +40,8 @@ export abstract class Entity {
 
     abstract iconClass(): string;
 
+    abstract decideNextAction(state: IState): void;
+
     move(offset: Position) {
         this.position = {
             x: this.position.x + offset.x,
@@ -53,6 +56,10 @@ export class User extends Entity {
     }
 
     iconClass() { return 'fa-user user'; }
+
+    decideNextAction(state: IState) {
+        // do nothing
+    }
 
     clone() {
         const newUser = new User(clone(this.position));
@@ -70,6 +77,10 @@ export class Mercury extends Entity {
 
     iconClass() { return 'fa-mercury'; }
 
+    decideNextAction(state: IState) {
+        // do nothing
+    }
+
     clone() {
         const newMercury = new Mercury(clone(this.position));
         newMercury.health = this.health;
@@ -85,6 +96,10 @@ export class Ring extends Entity {
     }
 
     iconClass() { return 'fa-circle-o-notch item important'; }
+
+    decideNextAction(state: IState) {
+        // do nothing
+    }
 
     clone() {
         const newRing = new Ring(clone(this.position));

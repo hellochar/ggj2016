@@ -22,11 +22,12 @@
     "compileOnSave": true,
     "buildOnSave": false,
     "files": [
+        "src/action.ts",
         "src/entity.ts",
         "src/level.ts",
         "src/math.ts",
+        "src/state.ts",
         "src/util.ts",
-        "src/action.tsx",
         "src/Index.tsx"
     ],
     "atom": {

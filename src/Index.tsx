@@ -10,38 +10,11 @@ import { connect, Provider } from "react-redux";
 import { forEachOnLineInGrid, Position } from "./math";
 import * as Entity from "./entity";
 import { Level, Tile, TileType, generateMap } from "./level";
+import { IState } from "./state";
 import {repeat, clone} from "./util";
+import { IAction, findUserLevel } from "./action";
 
 import "./index.less";
-
-interface IAction {
-    type: string;
-}
-
-interface IState {
-    levels: Level[];
-    textHistory: string[];
-}
-
-function findUserLevel(levels: Level[]) {
-    return levels.filter((level) => level.entities.some((entity) => entity instanceof Entity.User))[0];
-}
-
-function updateUserLevel(state: IState, update: (level: Level) => Level) {
-    const userLevel = findUserLevel(state.levels),
-          userLevelIndex = state.levels.indexOf(userLevel);
-
-    const newLevel = update(userLevel);
-
-    return {
-        levels: [
-            ...state.levels.slice(0, userLevelIndex),
-            newLevel,
-            ...state.levels.slice(userLevelIndex + 1)
-        ],
-        textHistory: state.textHistory
-    }
-}
 
 function buildLevels() {
     const center = {x: 30, y: 15};
@@ -92,95 +65,7 @@ const Direction = {
     }
 }
 
-interface IMoveAction extends IAction {
-    direction: Position;
-}
-function createMoveAction(direction: Position): IMoveAction {
-    return {
-        direction: direction,
-        type: "MOVE_ACTION"
-    };
-}
-
-function handleMoveAction(state: IState, action: IMoveAction): IState {
-    let discoveryTexts: string[] = [];
-
-    const {levels, textHistory} = updateUserLevel(state, (userLevel) => {
-        const user: Entity.User = userLevel.entities[0];
-        const newPositionTile = userLevel.map.get(user.position.x + action.direction.x, user.position.y + action.direction.y);
-        if (newPositionTile == null || newPositionTile.type === TileType.WALL) {
-            return userLevel;
-        } else {
-            const newUser = user.clone();
-            newUser.move(action.direction);
-
-            const newMap = userLevel.map.clone();
-            newMap.removeVision(user.position, 7);
-            discoveryTexts = newMap.giveVision(newUser.position, 7);
-
-            return new Level(newMap, [newUser, ...userLevel.entities.slice(1)]);
-        }
-    });
-
-    return {
-        levels,
-        textHistory: [...textHistory, ...discoveryTexts]
-    };
-}
-
-interface IMapEvolveAction extends IAction {
-    ruleset: string;
-}
-function createMapEvolveAction(ruleset: string): IMapEvolveAction {
-    return {
-        ruleset,
-        type: "MAP_EVOLVE"
-    };
-}
-
-function handleMapEvolveAction(state: IState, action: IMapEvolveAction): IState {
-    return updateUserLevel(state, (level: Level) => {
-        const newMap = level.map.clone();
-        newMap.lifelikeEvolve(action.ruleset);
-        return new Level(newMap, level.entities);
-    });
-}
-
-interface IChangeLevelAction extends IAction {
-    newLevel: number;
-}
-function createChangeLevelAction(newLevel: number): IChangeLevelAction {
-    return {
-        newLevel,
-        type: "CHANGE_LEVEL"
-    }
-}
-
-function handleChangeLevelAction(state: IState, action: IChangeLevelAction) {
-    // delete entity from old level
-    const newLevelIndex = action.newLevel;
-    let user: Entity.User;
-    const {levels, textHistory} = updateUserLevel(state, (level) => {
-        user = level.entities[0];
-        return new Level(level.map, level.entities.slice(1));
-    });
-
-    const newMap = levels[newLevelIndex].map.clone();
-    const discoveryTexts = newMap.giveVision(user.position, 7);
-    const newLevel = new Level(newMap, [user, ...levels[newLevelIndex].entities.slice(1)]);
-
-    const newLevels = [
-        ...levels.slice(0, newLevelIndex),
-        newLevel,
-        ...levels.slice(newLevelIndex + 1)
-    ];
-
-    return {
-        levels: newLevels,
-        textHistory: [...textHistory, `You have entered floor ${newLevelIndex + 1}.`, ...discoveryTexts]
-    };
-}
-
+import { handleMoveAction, IMoveAction, IMapEvolveAction, createMoveAction,createMapEvolveAction,handleMapEvolveAction,IChangeLevelAction,createChangeLevelAction,handleChangeLevelAction } from "./action";
 function reducer(state: IState = INITIAL_STATE, action: IAction) {
     if (action.type === "MOVE_ACTION") {
         return handleMoveAction(state, action as IMoveAction);
