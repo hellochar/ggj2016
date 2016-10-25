@@ -102,7 +102,7 @@ export function handleChangeLevelAction(state: IState, action: IChangeLevelActio
     });
 
     const newMap = levels[newLevelIndex].map.clone();
-    const discoveryTexts = newMap.giveVision(user.position, 7);
+    newMap.giveVision(user.position, 7);
     const newLevel = new Level(newMap, [user, ...levels[newLevelIndex].entities.slice(1)]);
 
     const newLevels = [

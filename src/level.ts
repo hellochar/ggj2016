@@ -241,21 +241,47 @@ export function generateMap(upstairs: Position) {
           height = 30;
     let map = Map.generateRandomWalls(width, height, 0.25);
 
+    function randomX() {
+        return inset + Math.floor(Math.random() * (width - inset*2));
+    }
+
+    function randomY() {
+        return inset + Math.floor(Math.random() * (height - inset*2));
+    }
+
     repeat(5, () => map.lifelikeEvolve("1234/3"));
     repeat(100, () => map.lifelikeEvolve("45678/3"));
     repeat(7, () => map.lifelikeEvolve("1234/3"));
 
     const inset = 3;
     const downstairs = {
-        x: inset + Math.floor(Math.random() * (width - inset*2)),
-        y: inset + Math.floor(Math.random() * (height - inset*2)),
+        x: randomX(),
+        y: randomY(),
     };
-    // draw a path from upstairs to downstairs
-    const lineSegments = [
-        upstairs,
-        { x: upstairs.x, y: downstairs.y },
-        downstairs
-    ];
+    // generate a random path from upstairs to downstairs
+    const lineSegments = [ upstairs ];
+    for (let k = 0 ; k < 3 || Math.random() < 0.8 && k % 2 === 0; k++) {
+        const { x: oldX, y: oldY } = lineSegments[lineSegments.length - 1];
+        let x = oldX;
+        let y = oldY;
+        // change either the x or y dimension
+        if (k % 2 === 0) {
+            while (Math.abs(x - oldX) < 2) {
+                x = randomX();
+            }
+        } else {
+            while (Math.abs(y - oldY) < 2) {
+                y = randomY();
+            }
+        }
+        lineSegments.push({x, y});
+    }
+    // connect smoothly to the downstairs
+    lineSegments.push({
+        x: lineSegments[lineSegments.length - 1].x,
+        y: downstairs.y
+    });
+    lineSegments.push(downstairs);
     map.drawPathBetween(lineSegments);
     map.setImportantTile(downstairs, TileType.DOWNSTAIRS);
     map.setImportantTile(upstairs, TileType.UPSTAIRS);
