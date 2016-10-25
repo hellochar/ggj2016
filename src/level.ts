@@ -75,8 +75,7 @@ export class Map {
         });
     }
 
-    public giveVision(center: Position, radius: number): string[] {
-        const discoveryTexts: string[] = [];
+    public giveVision(center: Position, radius: number) {
         forEachInCircle(center, radius, ({x, y}) => {
             this.get(x, y, (tile) => {
                 if (!tile.visible) {
@@ -91,13 +90,9 @@ export class Map {
                     if (tile.visible) {
                         tile.explored = true;
                     }
-                    if (tile.visible && tile.type === TileType.DOWNSTAIRS) {
-                        discoveryTexts.push("You discover a pathway down!");
-                    }
                 }
             });
         });
-        return discoveryTexts;
     }
 
     public lifelikeEvolve(ruleset: string) {

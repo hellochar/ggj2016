@@ -21,29 +21,25 @@ function buildLevels() {
     const level0 = new Level(generateMap(center),
         [
             new Entity.User(center),
-            new Entity.Mercury({x:2, y: 2})
+            new Entity.Mercury({x: 2, y: 2})
         ]
     );
     level0.map.giveVision(center, 7);
     const levels = [level0];
-    for(let depth = 1; depth < 1; depth += 1) {
+    for(let depth = 1; depth < 5; depth += 1) {
         const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
         const currentLevel = new Level(newMap, []);
         levels[depth] = currentLevel;
     }
-    const lastLevel = levels[levels.length - 1];
-    const ringPosition = lastLevel.map.getDownstairsPosition();
-    lastLevel.map.setImportantTile(ringPosition, TileType.DECORATIVE_SPACE);
-    const ringEntity = new Entity.Ring(ringPosition);
-    lastLevel.entities.push(ringEntity);
+    // const lastLevel = levels[levels.length - 1];
+    // const ringPosition = lastLevel.map.getDownstairsPosition();
+    // lastLevel.map.setImportantTile(ringPosition, TileType.DECORATIVE_SPACE);
+    // const ringEntity = new Entity.Ring(ringPosition);
+    // lastLevel.entities.push(ringEntity);
     return levels;
 }
 const INITIAL_STATE: IState = {
-    levels: buildLevels(),
-    textHistory: [
-        "Welcome, hellochar, to the Peregrin Caves! You hear the light trickling of water nearby. The damp moss crunches underneath your feet. The dungeon glows with an eerie light.",
-        "Mercury is on this level!"
-    ]
+    levels: buildLevels()
 };
 
 const Direction = {
@@ -144,7 +140,6 @@ interface IGameProps extends React.Props<{}> {
     dispatch?: Redux.Dispatch;
 
     levels?: Level[];
-    textHistory?: string[];
 }
 
 class PureGame extends React.Component<IGameProps, {}> {
@@ -197,9 +192,6 @@ class PureGame extends React.Component<IGameProps, {}> {
                 <div className="hud">
                     <PureEntityInfo entity={userLevel.entities[0]}
                                     floor={userLevelIndex}/>
-                    <ul className="history">
-                        {this.props.textHistory.map((text) => <li>{text}</li>)}
-                    </ul>
                 </div>
             </div>
         );

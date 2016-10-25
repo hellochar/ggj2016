@@ -21,7 +21,6 @@ export function updateUserLevel(state: IState, update: (level: Level) => Level) 
             newLevel,
             ...state.levels.slice(userLevelIndex + 1)
         ],
-        textHistory: state.textHistory
     }
 }
 
@@ -41,9 +40,8 @@ export function createMoveAction(direction: Position): IMoveAction {
 }
 
 export function handleMoveAction(state: IState, action: IMoveAction): IState {
-    let discoveryTexts: string[] = [];
 
-    const {levels, textHistory} = updateUserLevel(state, (userLevel) => {
+    const {levels} = updateUserLevel(state, (userLevel) => {
         const user: Entity.User = userLevel.entities[0];
         const newPositionTile = userLevel.map.get(user.position.x + action.direction.x,
                                                   user.position.y + action.direction.y);
@@ -55,15 +53,14 @@ export function handleMoveAction(state: IState, action: IMoveAction): IState {
 
             const newMap = userLevel.map.clone();
             newMap.removeVision(user.position, 7);
-            discoveryTexts = newMap.giveVision(newUser.position, 7);
+            newMap.giveVision(newUser.position, 7);
 
             return new Level(newMap, [newUser, ...userLevel.entities.slice(1)]);
         }
     });
 
     return {
-        levels,
-        textHistory: [...textHistory, ...discoveryTexts]
+        levels
     };
 }
 
@@ -99,7 +96,7 @@ export function handleChangeLevelAction(state: IState, action: IChangeLevelActio
     // delete entity from old level
     const newLevelIndex = action.newLevel;
     let user: Entity.User;
-    const {levels, textHistory} = updateUserLevel(state, (level) => {
+    const { levels } = updateUserLevel(state, (level) => {
         user = level.entities[0];
         return new Level(level.map, level.entities.slice(1));
     });
@@ -114,8 +111,5 @@ export function handleChangeLevelAction(state: IState, action: IChangeLevelActio
         ...levels.slice(newLevelIndex + 1)
     ];
 
-    return {
-        levels: newLevels,
-        textHistory: [...textHistory, `You have entered floor ${newLevelIndex + 1}.`, ...discoveryTexts]
-    };
+    return { levels: newLevels };
 }
