@@ -5,7 +5,7 @@ export interface Position {
 }
 
 // ignores the first start position. callback should return TRUE if we should stop iteration
-export function forEachOnLineInGrid(start: Position, end: Position, callback: (Position) => boolean) {
+export function forEachOnLineInGrid(start: Position, end: Position, callback: (Position) => boolean | void) {
     let x0 = start.x;
     let y0 = start.y;
 

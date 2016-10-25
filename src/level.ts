@@ -9,7 +9,7 @@ export enum TileType {
     WALL = 1,
     DOWNSTAIRS = 2,
     UPSTAIRS = 3,
-    DECORATIVE_SPACE = 4
+    DECORATIVE_SPACE = 4,
 }
 
 export interface Tile {
@@ -64,6 +64,16 @@ export class Map {
         forEachOnLineInGrid({x: topLeft.x, y: bottomRight.y}, bottomRight, setToWall);
         forEachOnLineInGrid(bottomRight, {x: bottomRight.x, y: topLeft.y}, setToWall);
         forEachOnLineInGrid({x: bottomRight.x, y: topLeft.y}, topLeft, setToWall);
+    }
+
+    public drawPathBetween(lineSegments: Position[]) {
+        for ( let k = 0; k < lineSegments.length - 1; k++ ) {
+            const from = lineSegments[k];
+            const to = lineSegments[k+1];
+            forEachOnLineInGrid(from, to, ({x, y}) => {
+                this.tiles[y][x].type = TileType.DECORATIVE_SPACE;
+            });
+        }
     }
 
     // lose immediate sight of the given area (turning any visible areas into just explored areas)
@@ -236,9 +246,18 @@ export function generateMap(upstairs: Position) {
     repeat(7, () => map.lifelikeEvolve("1234/3"));
 
     const inset = 3;
-    const downstairsX = inset + Math.floor(Math.random() * (width - inset*2));
-    const downstairsY = inset + Math.floor(Math.random() * (height - inset*2));
-    map.setImportantTile({x: downstairsX, y: downstairsY}, TileType.DOWNSTAIRS);
+    const downstairs = {
+        x: inset + Math.floor(Math.random() * (width - inset*2)),
+        y: inset + Math.floor(Math.random() * (height - inset*2)),
+    };
+    // draw a path from upstairs to downstairs
+    const lineSegments = [
+        upstairs,
+        { x: upstairs.x, y: downstairs.y },
+        downstairs
+    ];
+    map.drawPathBetween(lineSegments);
+    map.setImportantTile(downstairs, TileType.DOWNSTAIRS);
     map.setImportantTile(upstairs, TileType.UPSTAIRS);
 
     map.outlineRectWithWalls();
