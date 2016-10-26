@@ -11,6 +11,7 @@
     "test-browser-debug": "karma start karma.conf.js --browsers=Chrome --single-run=false --debug --auto-watch"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "react": "~0.14.3",
     "react-dom": "~0.14.3",
     "react-redux": "^4.1.2",

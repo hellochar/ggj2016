@@ -3,6 +3,7 @@
 
 import ReactDOM = require("react-dom");
 
+import * as classnames from "classnames";
 import * as React from "react";
 import * as Redux from "redux";
 import { connect, Provider } from "react-redux";
@@ -88,7 +89,7 @@ class PureEntityInfo extends React.Component<{entity: Entity.Entity, floor: numb
 }
 
 class PureLevel extends React.Component<{level: Level}, {}> {
-    iconClassForTile(tile: TileType) {
+    public iconClassForTile(tile: TileType) {
         switch(tile) {
             case TileType.SPACE: return 'fa-square-o space';
             case TileType.WALL: return 'fa-stop';
@@ -98,17 +99,20 @@ class PureLevel extends React.Component<{level: Level}, {}> {
         }
     }
 
-    elementForTile(tile: Tile) {
+    public elementForTile(tile: Tile) {
+        let visibilityClasses: string;
         if (tile.visible) {
-            return <i className={`fa tile tile-visible ${this.iconClassForTile(tile.type)}`}></i>;
-        } if (tile.explored) {
-            return <i className={`fa tile tile-remembered ${this.iconClassForTile(tile.type)}`}></i>;
+            visibilityClasses = `tile-visible ${this.iconClassForTile(tile.type)}`;
+        } else if (tile.explored) {
+            visibilityClasses = `tile-remembered ${this.iconClassForTile(tile.type)}`;
         } else {
-            return <i className="fa tile tile-unexplored"> </i>;
+            visibilityClasses = "tile-unexplored";
         }
+        const className = classnames("fa", "tile", visibilityClasses);
+        return <i className={className}></i>;
     }
 
-    elementForEntity(entity: Entity.Entity) {
+    public elementForEntity(entity: Entity.Entity) {
         const style = {
             left: entity.position.x * 25,
             top: entity.position.y * 25
@@ -116,7 +120,7 @@ class PureLevel extends React.Component<{level: Level}, {}> {
         return <i style={style} className={`fa entity ${entity.iconClass()}`}></i>
     }
 
-    render() {
+    public render() {
         return <pre className="map">
             {this.props.level.map.getTiles().map((row) => {
                 return (
