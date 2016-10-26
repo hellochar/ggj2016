@@ -237,8 +237,8 @@ class LifeLikeCA {
 }
 
 export function generateMap(upstairs: Position) {
-    const width = 60,
-          height = 30;
+    const width = 200,
+          height = 100;
     let map = Map.generateRandomWalls(width, height, 0.25);
 
     function randomX() {
@@ -254,10 +254,14 @@ export function generateMap(upstairs: Position) {
     repeat(7, () => map.lifelikeEvolve("1234/3"));
 
     const inset = 3;
-    const downstairs = {
-        x: randomX(),
-        y: randomY(),
-    };
+    let downstairs: Position;
+    do {
+        downstairs = {
+            x: randomX(),
+            y: randomY(),
+        };
+    } while (Math.abs(downstairs.x - upstairs.x) < 2 && Math.abs(downstairs.y - upstairs.y) < 2);
+    map.setImportantTile(downstairs, TileType.DOWNSTAIRS);
     // generate a random path from upstairs to downstairs
     const lineSegments = [ upstairs ];
     for (let k = 0 ; k < 3 || Math.random() < 0.8 && k % 2 === 0; k++) {

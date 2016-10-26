@@ -19,7 +19,7 @@
         "src/**/*.tsx",
         "!node_modules/**"
     ],
-    "compileOnSave": true,
+    "compileOnSave": false,
     "buildOnSave": false,
     "files": [
         "src/action.ts",
