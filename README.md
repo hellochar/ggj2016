@@ -1,4 +1,4 @@
-# typescript-webpack-react-flux-boilerplate
+# ggj2016
 This boilerplate combines:
 * [Typescript](https://github.com/Microsoft/TypeScript)
 * [React](https://github.com/facebook/react)
