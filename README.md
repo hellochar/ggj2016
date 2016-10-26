@@ -2,7 +2,6 @@
 This boilerplate combines:
 * [Typescript](https://github.com/Microsoft/TypeScript)
 * [React](https://github.com/facebook/react)
-* [Flux](https://github.com/facebook/flux)
 * [Webpack](https://github.com/webpack/webpack)
 * [Jasmine](https://github.com/jasmine/jasmine)
 * [Karma](https://github.com/karma-runner/karma)

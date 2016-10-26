@@ -12,7 +12,6 @@ var config = {
   // entry points - each will produce one bundled js file and one css file if there is any css in dependency tree
   entry: {
     vendors: [
-      'flux',
       'react',
       'react-dom',
       'react-redux'
@@ -33,7 +32,6 @@ var config = {
     alias: {
       'react': path.join(nodeModulesPath, 'react', 'react.js'),
       'react-dom': path.join(nodeModulesPath, 'react-dom', 'dist', 'react-dom.js'),
-      'flux': path.join(nodeModulesPath, 'flux', 'index.js')
     }
   },
 
