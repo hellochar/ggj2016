@@ -99,7 +99,7 @@ class PureLevel extends React.Component<{level: Level}, {}> {
         }
     }
 
-    public elementForTile(tile: Tile) {
+    public elementForTile(tile: Tile, x: number, y: number) {
         let visibilityClasses: string;
         if (tile.visible) {
             visibilityClasses = `tile-visible ${this.iconClassForTile(tile.type)}`;
@@ -109,7 +109,7 @@ class PureLevel extends React.Component<{level: Level}, {}> {
             visibilityClasses = "tile-unexplored";
         }
         const className = classnames("fa", "tile", visibilityClasses);
-        return <i className={className}></i>;
+        return <i className={className} key={`${x},${y}`}></i>;
     }
 
     public elementForEntity(entity: Entity.Entity) {
@@ -122,10 +122,10 @@ class PureLevel extends React.Component<{level: Level}, {}> {
 
     public render() {
         return <pre className="map">
-            {this.props.level.map.getTiles().map((row) => {
+            {this.props.level.map.getTiles().map((row, y) => {
                 return (
                     <div className="row">
-                        {row.map((tile) => this.elementForTile(tile))}
+                        {row.map((tile, x) => this.elementForTile(tile, x, y))}
                     </div>
                 );
             })}
