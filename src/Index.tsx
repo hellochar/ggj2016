@@ -192,10 +192,15 @@ class PureGame extends React.Component<IGameProps, {}> {
             this.props.dispatch(createMoveAction(mapping[event.code]));
         }
     };
-    private throttledHandleKeyPress = _.throttle(this.handleKeyPress, 100, { trailing: false });
+    private throttledHandleKeyPress = _.throttle(this.handleKeyPress, 100);
 
     public componentDidMount() {
-        document.addEventListener("keypress", this.throttledHandleKeyPress, false);
+        // document.addEventListener("keypress", this.throttledHandleKeyPress, false);
+        document.addEventListener("keydown", this.throttledHandleKeyPress, false);
+        document.addEventListener("keyup", () => {
+            this.throttledHandleKeyPress.flush();
+            this.throttledHandleKeyPress.cancel();
+        }, false);
     }
 
     render() {
