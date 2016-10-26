@@ -1,116 +1,143 @@
+@import "../node_modules/normalize.css";
+
 @size: 25px;
 
+* {
+    box-sizing: border-box;
+}
+
 html {
-    overflow: visible;
+    width: 100%;
+    height: 100%;
 }
 
 body {
     margin: 0;
     background: #323134;
+    width: 100%;
+    height: 100%;
 }
 
-.game {
+.rg-game {
     position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
 
-    .hud {
-        display: inline-block;
-        position: absolute;
-        right: 0;
-        left: calc(@size * 60);
-        top: 0;
-        padding: 10px;
-        color: #f3f4f9;
+.rg-viewport {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
 
-        .history {
-            list-style-type: circle;
-            list-style-position: outside;
-            padding: 5px 25px;
+.rg-hud {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    left: calc(@size * 60);
+    top: 0;
+    padding: 10px;
+    color: #f3f4f9;
+
+    .history {
+        list-style-type: circle;
+        list-style-position: outside;
+        padding: 5px 25px;
+    }
+}
+
+.rg-map {
+    margin: 0;
+    position: relative;
+    transform: translate(50%, 50%);
+
+    .fa-square-o:before {
+        position: relative;
+        top: 1.2px;
+    }
+
+    .row {
+        height: @size;
+    }
+
+    .tile {
+        width: @size;
+        height: @size;
+        font-size: @size;
+        text-align: center;
+
+        // transition: top 0.05s, left 0.05s, opacity 0.05s;
+
+        &.tile-remembered {
+            color: rgba(0.5,0.5,0.5,0.75);
+            background-color: #999;
+
+            &.space {
+                color: rgba(0.9,0.9,0.5, 0.1);
+            }
+        }
+
+        &.tile-visible {
+            background: white;
+        }
+
+        &.tile-unexplored {
+            &::before {
+                // add space character to fix bug where unexplored tiles weren't
+                // aligned with the other tiles properly
+                content: " ";
+            }
         }
     }
 
-    .map {
-        display: inline-block;
-        position: relative;
-        margin: 0;
+    .entity {
+        .tile;
 
-        .fa-square-o:before {
-            position: relative;
-            top: 1.2px;
-        }
-
-        .row {
-            height: @size;
-        }
-
-        .tile {
-            width: @size;
-            height: @size;
-            font-size: @size;
-            text-align: center;
-
-            // transition: top 0.05s, left 0.05s, opacity 0.05s;
-
-            &.tile-remembered {
-                color: rgba(0.5,0.5,0.5,0.75);
-                background-color: #999;
-
-                &.space {
-                    color: rgba(0.9,0.9,0.5, 0.1);
-                }
+        position: absolute;
+        animation-name: active;
+        animation-duration: 2s;
+        animation-timing-function: steps(2);
+        animation-iteration-count: infinite;
+        @keyframes active {
+            from {
+                margin-top: -3px;
             }
 
-            &.tile-visible {
-                background: white;
-            }
-
-            &.tile-unexplored {
+            to {
+                margin-top: 0px;
             }
         }
+    }
 
-        .entity {
-            .tile;
+    .item {
+        transform: scale(0.65);
+        animation-duration: 1s;
+        animation-name: bobble;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+        animation-timing-function: ease-in-out;
 
-            position: absolute;
-            animation-name: active;
-            animation-duration: 2s;
-            animation-timing-function: steps(2);
-            animation-iteration-count: infinite;
-            @keyframes active {
-                from {
-                    margin-top: -3px;
-                }
+        @keyframes bobble {
+            from {
+                margin-top: -5px;
+            }
 
-                to {
-                    margin-top: 0px;
-                }
+            to {
+                margin-top: 3px;
             }
         }
+    }
 
-        .item {
-            transform: scale(0.65);
-            animation-duration: 1s;
-            animation-name: bobble;
-            animation-iteration-count: infinite;
-            animation-direction: alternate;
-            animation-timing-function: ease-in-out;
+    .space {
+        color: rgba(1,1,1, 0.12);
+    }
 
-            @keyframes bobble {
-                from {
-                    margin-top: -5px;
-                }
-
-                to {
-                    margin-top: 3px;
-                }
-            }
-        }
-
-        .space {
-            color: rgba(1,1,1, 0.12);
-        }
-
-        .user {
-            color: red;
-        }
+    .user {
+        color: red;
     }
 }

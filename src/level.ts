@@ -237,8 +237,8 @@ class LifeLikeCA {
 }
 
 export function generateMap(upstairs: Position) {
-    const width = 200,
-          height = 100;
+    const width = 40,
+          height = 20;
     let map = Map.generateRandomWalls(width, height, 0.25);
 
     function randomX() {

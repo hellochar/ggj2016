@@ -75,9 +75,6 @@ function reducer(state: IState = INITIAL_STATE, action: IAction) {
     }
 }
 
-const store = Redux.createStore(reducer);
-
-
 class PureEntityInfo extends React.Component<{entity: Entity.Entity, floor: number}, {}> {
     render() {
         const {entity} = this.props;
@@ -88,7 +85,12 @@ class PureEntityInfo extends React.Component<{entity: Entity.Entity, floor: numb
     }
 }
 
-class PureLevel extends React.Component<{level: Level}, {}> {
+interface ILevelProps {
+    level: Level;
+    center: Position;
+}
+
+class PureLevel extends React.Component<ILevelProps, {}> {
     public iconClassForTile(tile: TileType) {
         switch(tile) {
             case TileType.SPACE: return 'fa-square-o space';
@@ -117,14 +119,22 @@ class PureLevel extends React.Component<{level: Level}, {}> {
             left: entity.position.x * 25,
             top: entity.position.y * 25
         };
-        return <i style={style} className={`fa entity ${entity.iconClass()}`}></i>
+        return <i
+            style={style}
+            className={`fa entity ${entity.iconClass()}`}
+            key={entity.name}>
+            </i>;
     }
 
     public render() {
-        return <pre className="map">
+        const style = {
+            top: `-${this.props.center.y * 25}px`,
+            left: `-${this.props.center.x * 25}px`,
+        };
+        return <pre className="rg-map" style={style}>
             {this.props.level.map.getTiles().map((row, y) => {
                 return (
-                    <div className="row">
+                    <div className="row" key={y}>
                         {row.map((tile, x) => this.elementForTile(tile, x, y))}
                     </div>
                 );
@@ -187,15 +197,14 @@ class PureGame extends React.Component<IGameProps, {}> {
     }
 
     render() {
-        const userLevel = findUserLevel(this.props.levels),
-              userLevelIndex = this.props.levels.indexOf(userLevel);
+        const userLevel = findUserLevel(this.props.levels);
+        const userLevelIndex = this.props.levels.indexOf(userLevel);
+        const user = userLevel.entities[0];
 
         return (
-            <div className="game">
-                <PureLevel level={userLevel} />
-                <div className="hud">
-                    <PureEntityInfo entity={userLevel.entities[0]}
-                                    floor={userLevelIndex}/>
+            <div className="rg-game">
+                <div className="rg-viewport">
+                    <PureLevel center={user.position} level={userLevel} />
                 </div>
             </div>
         );
@@ -206,6 +215,7 @@ const Game = connect((state: IState) => {
     return state;
 })(PureGame);
 
+const store = Redux.createStore(reducer);
 ReactDOM.render(
     <Provider store={store}>
         <Game />
