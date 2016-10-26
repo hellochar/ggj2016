@@ -22,6 +22,12 @@
     },
     "react/react.d.ts": {
       "commit": "efd40e67ff323f7147651bdbef03c03ead7b1675"
+    },
+    "lodash/lodash.d.ts": {
+      "commit": "403268fecf3a207a3b933c9bb24cdbf5430e3359"
+    },
+    "classnames/classnames.d.ts": {
+      "commit": "403268fecf3a207a3b933c9bb24cdbf5430e3359"
     }
   }
 }

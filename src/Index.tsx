@@ -4,6 +4,7 @@
 import ReactDOM = require("react-dom");
 
 import * as classnames from "classnames";
+import * as _ from "lodash";
 import * as React from "react";
 import * as Redux from "redux";
 import { connect, Provider } from "react-redux";
@@ -157,7 +158,7 @@ interface IGameProps extends React.Props<{}> {
 }
 
 class PureGame extends React.Component<IGameProps, {}> {
-    onKeyPress(event: any) {
+    private handleKeyPress = (event: any) => {
         const mapping = {
             KeyW: Direction.UP,
             KeyA: Direction.LEFT,
@@ -190,10 +191,11 @@ class PureGame extends React.Component<IGameProps, {}> {
         if (mapping[event.code]) {
             this.props.dispatch(createMoveAction(mapping[event.code]));
         }
-    }
+    };
+    private throttledHandleKeyPress = _.throttle(this.handleKeyPress, 100, { trailing: false });
 
     public componentDidMount() {
-        document.addEventListener("keypress", (event) => this.onKeyPress(event), false);
+        document.addEventListener("keypress", this.throttledHandleKeyPress, false);
     }
 
     render() {
