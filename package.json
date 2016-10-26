@@ -14,8 +14,7 @@
     "react": "~0.14.3",
     "react-dom": "~0.14.3",
     "react-redux": "^4.1.2",
-    "redux": "^3.1.4",
-    "typescript": "^2.0.6"
+    "redux": "^3.1.4"
   },
   "devDependencies": {
     "css-loader": "~0.23.0",
@@ -40,7 +39,7 @@
     "style-loader": "~0.13.0",
     "ts-loader": "~0.7.1",
     "tslint-loader": "~1.0.2",
-    "typescript": "^1.7.5",
+    "typescript": "^2.0.6",
     "webpack": "~1.12.8",
     "webpack-config": "~2.3.0",
     "webpack-dev-server": "~1.12.1",
