@@ -1,6 +1,6 @@
 /* tslint:disable */
 
-import { Level } from "./level";
+import { Level } from "./model/level";
 
 export interface IState {
     levels: Level[];

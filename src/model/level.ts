@@ -1,8 +1,8 @@
 /* tslint:disable */
 
-import { forEachOnLineInGrid, forEachInRect, forEachInCircle, Position } from "./math";
 import { Entity, Leaf } from "./entity";
-import { clone, repeat } from "./util";
+import { forEachOnLineInGrid, forEachInRect, forEachInCircle, Position } from "../math";
+import { clone, repeat } from "../util";
 
 export enum TileType {
     SPACE = 0,

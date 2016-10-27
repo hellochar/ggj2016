@@ -1,7 +1,7 @@
 /* tslint:disable */
 
-import * as Entity from "./entity";
-import { Level, TileType } from "./level";
+import * as Entity from "./model/entity";
+import { Level, TileType } from "./model/level";
 import { IState } from "./state";
 import { Position } from "./math";
 

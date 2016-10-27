@@ -21,9 +21,9 @@ fa-500px, fa-deviantart, fa-forumbee, fa-gg, fa-opencart
 
 */
 
-import { Position } from "./math";
-import { clone } from "./util";
-import { IState } from "./state";
+import { Position } from "../math";
+import { clone } from "../util";
+import { IState } from "../state";
 
 // An Entity is really just a bag of properties. To clone one, you just
 // need to copy all its properties to a new object. The contract for Entities

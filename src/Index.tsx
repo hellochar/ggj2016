@@ -10,8 +10,8 @@ import * as Redux from "redux";
 import { connect, Provider } from "react-redux";
 
 import { forEachOnLineInGrid, Position } from "./math";
-import * as Entity from "./entity";
-import { Level, Tile, TileType, generateMap } from "./level";
+import * as Entity from "./model/entity";
+import { Level, Tile, TileType, generateMap } from "./model/level";
 import { IState } from "./state";
 import {repeat, clone} from "./util";
 import { IAction, findUserLevel } from "./action";
