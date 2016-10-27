@@ -15,19 +15,25 @@
       "commit": "b95d6bea8041db86ccee30ef1ef97e4358432311"
     },
     "react/react-dom.d.ts": {
-      "commit": "efd40e67ff323f7147651bdbef03c03ead7b1675"
+      "commit": "9a792f184cbd916cc24ab8964cfd3a04f9f1101b"
     },
     "react/react-addons-test-utils.d.ts": {
-      "commit": "efd40e67ff323f7147651bdbef03c03ead7b1675"
+      "commit": "9a792f184cbd916cc24ab8964cfd3a04f9f1101b"
     },
     "react/react.d.ts": {
-      "commit": "efd40e67ff323f7147651bdbef03c03ead7b1675"
+      "commit": "9a792f184cbd916cc24ab8964cfd3a04f9f1101b"
     },
     "lodash/lodash.d.ts": {
       "commit": "403268fecf3a207a3b933c9bb24cdbf5430e3359"
     },
     "classnames/classnames.d.ts": {
       "commit": "403268fecf3a207a3b933c9bb24cdbf5430e3359"
+    },
+    "react-redux/react-redux.d.ts": {
+      "commit": "9a792f184cbd916cc24ab8964cfd3a04f9f1101b"
+    },
+    "redux/redux.d.ts": {
+      "commit": "9a792f184cbd916cc24ab8964cfd3a04f9f1101b"
     }
   }
 }

@@ -151,10 +151,9 @@ class PureLevel extends React.Component<ILevelProps, {}> {
     }
 }
 
-interface IGameProps extends React.Props<{}> {
-    dispatch?: Redux.Dispatch;
-
-    levels?: Level[];
+interface IGameProps {
+    dispatch: Redux.Dispatch<IState>;
+    levels: Level[];
 }
 
 class PureGame extends React.Component<IGameProps, {}> {
@@ -213,14 +212,22 @@ class PureGame extends React.Component<IGameProps, {}> {
                 <div className="rg-viewport">
                     <PureLevel center={user.position} level={userLevel} />
                 </div>
+                <HeadsUpDisplay />
             </div>
         );
     }
 }
 
-const Game = connect((state: IState) => {
-    return state;
-})(PureGame);
+const Game = connect(
+    (state: IState) => {
+        return {
+            levels: state.levels,
+        };
+    },
+    (dispatch: Redux.Dispatch<IState>) => {
+        return { dispatch }
+    }
+)(PureGame);
 
 const store = Redux.createStore(reducer);
 ReactDOM.render(
