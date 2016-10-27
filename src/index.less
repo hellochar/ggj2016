@@ -36,18 +36,37 @@ body {
 }
 
 .rg-hud {
-    display: inline-block;
-    position: absolute;
-    right: 0;
-    left: calc(@size * 60);
-    top: 0;
-    padding: 10px;
     color: #f3f4f9;
+    position: relative;
+    background: rgba(0, 0, 0, 0.25);
+}
 
-    .history {
-        list-style-type: circle;
-        list-style-position: outside;
-        padding: 5px 25px;
+.rg-entity-info {
+    padding: 10px;
+
+    .rg-entity-info-name {
+        font-weight: bold;
+    }
+
+    .rg-entity-info-health {
+        padding-left: 10px;
+        margin: 0;
+
+        &.good {
+            color: green;
+        }
+
+        &.ok {
+            color: yellow;
+        }
+
+        &.bad {
+            color: red;
+        }
+    }
+
+    .rg-entity-info-floor {
+        float: right;
     }
 }
 
@@ -71,7 +90,7 @@ body {
         height: @size;
         font-size: @size;
         text-align: center;
-        transition: color 0.3s, background 0.3s;
+        transition: color 0.1s, background 0.1s;
 
         // transition: top 0.05s, left 0.05s, opacity 0.05s;
 

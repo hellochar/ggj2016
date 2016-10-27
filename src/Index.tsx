@@ -80,13 +80,51 @@ function reducer(state: IState = INITIAL_STATE, action: IAction) {
 
 class PureEntityInfo extends React.Component<{entity: Entity.Entity, floor: number}, {}> {
     render() {
-        const {entity} = this.props;
-        return <div className="entity-info">
-            <h3>{entity.name} (floor {this.props.floor + 1})</h3>
-            <p>{entity.health} / {entity.maxHealth}</p>
-        </div>;
+        const { entity } = this.props;
+        entity.health = Math.random() * entity.maxHealth;
+        const healthPercentage = entity.health / entity.maxHealth;
+        const healthIndicatorClassnames = classnames("rg-entity-info-health", {
+            "good": healthPercentage >= 0.7,
+            "ok": healthPercentage < 0.7 && healthPercentage >= 0.2,
+            "bad": healthPercentage <= 0.2
+        });
+        return (
+            <div className="rg-entity-info">
+                <span className="rg-entity-info-name">{entity.name}</span>
+                <span className={healthIndicatorClassnames}>{entity.health} / {entity.maxHealth}</span>
+                <span className="rg-entity-info-floor">floor {this.props.floor + 1}</span>
+            </div>
+        );
     }
 }
+
+interface IPureHeadsUpDisplayProps {
+    user: Entity.User;
+    userLevel: Level;
+    userFloor: number;
+}
+
+class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps, {}> {
+    public render() {
+        return (
+            <div className="rg-hud">
+                <PureEntityInfo entity={this.props.user} floor={this.props.userFloor} />
+            </div>
+        )
+    }
+}
+
+function mapStateToProps(state: IState): IPureHeadsUpDisplayProps {
+    const userLevel = findUserLevel(state.levels);
+    const userFloor = state.levels.indexOf(userLevel);
+    return {
+        user: userLevel.entities[0],
+        userLevel,
+        userFloor,
+    };
+}
+
+const HeadsUpDisplay = connect(mapStateToProps)(PureHeadsUpDisplay);
 
 interface ILevelProps {
     level: Level;
