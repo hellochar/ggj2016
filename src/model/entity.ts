@@ -25,6 +25,15 @@ import { Position } from "../math";
 import { clone } from "../util";
 import { IState } from "../state";
 
+/**
+ * 1. Make entities only move by returning Redux Actions.
+
+ * Worry: we're mixing game actions (such as open/close the UI) with game-model actions (such as entity moves).
+ * solution: Each entity has its own Redux Store which accepts game-model actions.
+ *
+ * Separately, we have the global game store which, as part of its state, holds all of the individual entities' states.
+ */
+
 // An Entity is really just a bag of properties. To clone one, you just
 // need to copy all its properties to a new object. The contract for Entities
 // is that their constructors can have no side effects. All methods do is either

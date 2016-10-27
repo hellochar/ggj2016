@@ -3,5 +3,9 @@
 import { Level } from "./model/level";
 
 export interface IState {
-    levels: Level[];
+    /** Array of levelIds. */
+    levelOrder: string[];
+    levels: {
+        [levelId: string]: Level;
+    };
 }

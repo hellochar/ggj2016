@@ -144,7 +144,7 @@ export class Map {
 }
 
 export class Level {
-    constructor(public map: Map, public entities: Entity[]) {}
+    constructor(public id: string, public map: Map, public entities: Entity[]) {}
 
     public isVisible(entity: Entity) {
         return this.map.get(entity.position.x, entity.position.y).visible;

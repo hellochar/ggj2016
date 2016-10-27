@@ -18,9 +18,9 @@ import { IAction, findUserLevel } from "./action";
 
 import "./index.less";
 
-function buildLevels() {
+function buildInitialState(): IState {
     const center = {x: 30, y: 15};
-    const level0 = new Level(generateMap(center),
+    const level0 = new Level("0", generateMap(center),
         [
             new Entity.User(center),
             new Entity.Mercury({x: 2, y: 2})
@@ -28,23 +28,30 @@ function buildLevels() {
     );
     level0.addLeaves();
     level0.map.giveVision(center, 7);
-    const levels = [level0];
+    const levels = {
+        0: level0,
+    }
+    const levelOrder = ["0"];
     for(let depth = 1; depth < 5; depth += 1) {
+        const id = depth.toString();
         const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
-        const currentLevel = new Level(newMap, []);
+        const currentLevel = new Level(id, newMap, []);
         currentLevel.addLeaves();
-        levels[depth] = currentLevel;
+        levels[id] = currentLevel;
+        levelOrder.push(id);
     }
     // const lastLevel = levels[levels.length - 1];
     // const ringPosition = lastLevel.map.getDownstairsPosition();
     // lastLevel.map.setImportantTile(ringPosition, TileType.DECORATIVE_SPACE);
     // const ringEntity = new Entity.Ring(ringPosition);
     // lastLevel.entities.push(ringEntity);
-    return levels;
+
+    return {
+        levelOrder,
+        levels,
+    }
 }
-const INITIAL_STATE: IState = {
-    levels: buildLevels()
-};
+const INITIAL_STATE: IState = buildInitialState();
 
 const Direction = {
     LEFT: {
@@ -66,7 +73,7 @@ const Direction = {
 }
 
 import { handleMoveAction, IMoveAction, IMapEvolveAction, createMoveAction,createMapEvolveAction,handleMapEvolveAction,IChangeLevelAction,createChangeLevelAction,handleChangeLevelAction } from "./action";
-function reducer(state: IState = INITIAL_STATE, action: IAction) {
+function reducer(state: IState = INITIAL_STATE, action: IAction): IState {
     if (action.type === "MOVE_ACTION") {
         return handleMoveAction(state, action as IMoveAction);
     } else if(action.type === "MAP_EVOLVE") {
@@ -116,7 +123,7 @@ class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps, {}> {
 
 function mapStateToProps(state: IState): IPureHeadsUpDisplayProps {
     const userLevel = findUserLevel(state.levels);
-    const userFloor = state.levels.indexOf(userLevel);
+    const userFloor = state.levelOrder.indexOf(userLevel.id);
     return {
         user: userLevel.entities[0],
         userLevel,
@@ -193,7 +200,7 @@ class PureLevel extends React.Component<ILevelProps, {}> {
 
 interface IGameProps {
     dispatch: Redux.Dispatch<IState>;
-    levels: Level[];
+    state: IState;
 }
 
 class PureGame extends React.Component<IGameProps, {}> {
@@ -211,8 +218,8 @@ class PureGame extends React.Component<IGameProps, {}> {
             this.props.dispatch(createMapEvolveAction("1234/3"));
         }
 
-        const userLevel = findUserLevel(this.props.levels),
-              userLevelIndex = this.props.levels.indexOf(userLevel);
+        const userLevel = findUserLevel(this.props.state.levels);
+        const userLevelIndex = this.props.state.levelOrder.indexOf(userLevel.id);
         if (event.code === "KeyQ") {
             const user = userLevel.entities[0];
             const currentTile = userLevel.map.get(user.position.x, user.position.y);
@@ -243,8 +250,7 @@ class PureGame extends React.Component<IGameProps, {}> {
     }
 
     render() {
-        const userLevel = findUserLevel(this.props.levels);
-        const userLevelIndex = this.props.levels.indexOf(userLevel);
+        const userLevel = findUserLevel(this.props.state.levels);
         const user = userLevel.entities[0];
 
         return (
@@ -259,14 +265,8 @@ class PureGame extends React.Component<IGameProps, {}> {
 }
 
 const Game = connect(
-    (state: IState) => {
-        return {
-            levels: state.levels,
-        };
-    },
-    (dispatch: Redux.Dispatch<IState>) => {
-        return { dispatch }
-    }
+    (state: IState) => { return { state } },
+    (dispatch: Redux.Dispatch<IState>) => { return { dispatch } }
 )(PureGame);
 
 const store = Redux.createStore(reducer);
