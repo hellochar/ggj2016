@@ -26,11 +26,13 @@ function buildLevels() {
             new Entity.Mercury({x: 2, y: 2})
         ]
     );
+    level0.addLeaves();
     level0.map.giveVision(center, 7);
     const levels = [level0];
     for(let depth = 1; depth < 5; depth += 1) {
         const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
         const currentLevel = new Level(newMap, []);
+        currentLevel.addLeaves();
         levels[depth] = currentLevel;
     }
     // const lastLevel = levels[levels.length - 1];
@@ -123,7 +125,7 @@ class PureLevel extends React.Component<ILevelProps, {}> {
         return <i
             style={style}
             className={`fa entity ${entity.iconClass()}`}
-            key={entity.name}>
+            key={JSON.stringify(entity)}>
             </i>;
     }
 

@@ -1,7 +1,7 @@
 /* tslint:disable */
 
 import { forEachOnLineInGrid, forEachInRect, forEachInCircle, Position } from "./math";
-import { Entity } from "./entity";
+import { Entity, Leaf } from "./entity";
 import { clone, repeat } from "./util";
 
 export enum TileType {
@@ -148,6 +148,26 @@ export class Level {
 
     public isVisible(entity: Entity) {
         return this.map.get(entity.position.x, entity.position.y).visible;
+    }
+
+    private leafConcentration(x: number, y: number) {
+        const { sin, cos } = Math;
+        return sin(x + sin(y)) * cos(y + cos(x));
+    }
+
+    public addLeaves() {
+        const offsetX = Math.random() * 100;
+        const offsetY = Math.random() * 100;
+        for (let x = 0; x < this.map.width; x++) {
+            for (let y = 0; y < this.map.height; y++) {
+                if (this.map.get(x, y).type === TileType.SPACE) {
+                    const z = this.leafConcentration(x * 0.15 + offsetX, y * 0.15 + offsetY);
+                    if (z > 0.5) {
+                        this.entities.push(new Leaf(1 + Math.floor(z * 5), { x, y }));
+                    }
+                }
+            }
+        }
     }
 
     // perform AI update on each entity that isn't the user

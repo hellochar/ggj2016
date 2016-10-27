@@ -109,3 +109,24 @@ export class Ring extends Entity {
         return newRing as this;
     }
 }
+
+export class Leaf extends Entity {
+    constructor(health: number, p: Position) {
+        super(health, 5, "Leaf", p);
+    }
+
+    public iconClass() {
+        if (this.health > 4) {
+            return "fa-pagelines item";
+        } else {
+            return "fa-leaf item";
+        }
+    }
+
+    public decideNextAction() {}
+
+    public clone() {
+        const newLeaf = new Leaf(this.health, clone(this.position));
+        return newLeaf as this;
+    }
+}
