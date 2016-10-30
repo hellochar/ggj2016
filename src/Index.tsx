@@ -20,13 +20,15 @@ import "./index.less";
 
 function buildInitialState(): IState {
     const center = {x: 30, y: 15};
+    const user = new Entity.User("0", center);
+    const mercury = new Entity.Mercury("1", {x: 2, y: 2});
     const level0 = new Level("0", generateMap(center),
         [
-            new Entity.User("1", center),
-            new Entity.Mercury("2", {x: 2, y: 2})
+            user.id,
+            mercury.id
         ]
     );
-    level0.addLeaves();
+    // level0.addLeaves();
     level0.map.giveVision(center, 7);
     const levels = {
         0: level0,
@@ -36,7 +38,7 @@ function buildInitialState(): IState {
         const id = depth.toString();
         const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
         const currentLevel = new Level(id, newMap, []);
-        currentLevel.addLeaves();
+        // currentLevel.addLeaves();
         levels[id] = currentLevel;
         levelOrder.push(id);
     }
@@ -47,9 +49,13 @@ function buildInitialState(): IState {
     // lastLevel.entities.push(ringEntity);
 
     return {
+        entities: {
+            [user.id]: user,
+            [mercury.id]: mercury
+        },
         levelOrder,
         levels,
-    }
+    };
 }
 const INITIAL_STATE: IState = buildInitialState();
 
@@ -125,7 +131,7 @@ function mapStateToProps(state: IState): IPureHeadsUpDisplayProps {
     const userLevel = findUserLevel(state.levels);
     const userFloor = state.levelOrder.indexOf(userLevel.id);
     return {
-        user: userLevel.entities[0],
+        user: state.entities["0"] as Entity.User,
         userLevel,
         userFloor,
     };
@@ -134,6 +140,7 @@ function mapStateToProps(state: IState): IPureHeadsUpDisplayProps {
 const HeadsUpDisplay = connect(mapStateToProps)(PureHeadsUpDisplay);
 
 interface ILevelProps {
+    getEntity: (id: string) => Entity.Entity;
     level: Level;
     center: Position;
 }
@@ -187,8 +194,9 @@ class PureLevel extends React.Component<ILevelProps, {}> {
                     </div>
                 );
             })}
-            {this.props.level.entities.map((entity) => {
-                if (this.props.level.isVisible(entity)) {
+            {this.props.level.entities.map((entityId) => {
+                const entity = this.props.getEntity(entityId);
+                if (this.props.level.isVisible(entity.position)) {
                     return this.elementForEntity(entity);
                 } else {
                     return null;
@@ -221,14 +229,14 @@ class PureGame extends React.Component<IGameProps, {}> {
         const userLevel = findUserLevel(this.props.state.levels);
         const userLevelIndex = this.props.state.levelOrder.indexOf(userLevel.id);
         if (event.code === "KeyQ") {
-            const user = userLevel.entities[0];
+            const user = this.props.state.entities["0"];
             const currentTile = userLevel.map.get(user.position.x, user.position.y);
             if (currentTile.type === TileType.UPSTAIRS) {
                 this.props.dispatch(createChangeLevelAction(userLevelIndex - 1));
             }
         }
         if (event.code === "KeyE") {
-            const user = userLevel.entities[0];
+            const user = this.props.state.entities["0"];
             const currentTile = userLevel.map.get(user.position.x, user.position.y);
             if (currentTile.type === TileType.DOWNSTAIRS) {
                 this.props.dispatch(createChangeLevelAction(userLevelIndex + 1));
@@ -251,12 +259,13 @@ class PureGame extends React.Component<IGameProps, {}> {
 
     render() {
         const userLevel = findUserLevel(this.props.state.levels);
-        const user = userLevel.entities[0];
+        const user = this.props.state.entities["0"];
+        const getEntity = (e: string) => this.props.state.entities[e];
 
         return (
             <div className="rg-game">
                 <div className="rg-viewport">
-                    <PureLevel center={user.position} level={userLevel} />
+                    <PureLevel center={user.position} getEntity={getEntity} level={userLevel} />
                 </div>
                 <HeadsUpDisplay />
             </div>
