@@ -1,5 +1,3 @@
-/* tslint:disable */
-
 import { IAction, findEntityLevel, handlePerformActionAction, handleChangeLevelAction, handleIterateUntilActorTurnAction } from "./action";
 import * as Entity from "./model/entity";
 import { Level, Tile, TileType, generateMap } from "./model/level";
@@ -19,9 +17,9 @@ function buildInitialState(): IState {
     level0.map.giveVision(center, 7);
     const levels = {
         0: level0,
-    }
+    };
     const levelOrder = ["0"];
-    for(let depth = 1; depth < 5; depth += 1) {
+    for (let depth = 1; depth < 5; depth += 1) {
         const id = depth.toString();
         const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
         const currentLevel = new Level(id, newMap, []);
@@ -68,9 +66,9 @@ export default function reducer(state: IState = INITIAL_STATE, action: IAction):
         } else {
             return nextState;
         }
-    } else if(action.type === "ChangeLevel") {
+    } else if (action.type === "ChangeLevel") {
         return handleChangeLevelAction(state, action);
-    } else if(action.type === "IterateUntilActorTurn") {
+    } else if (action.type === "IterateUntilActorTurn") {
         return handleIterateUntilActorTurnAction(state, action);
     } else {
         return state;

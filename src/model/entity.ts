@@ -1,19 +1,16 @@
-/* tslint:disable */
-
-/**
+/*
 
 to implement:
 fa-pied-piper-alt as a dart blower
 fa-odnoklassniki as a POWERMAN;  see also fa-odnoklassniki-square for an alternate version
 
- other ideas:
+Other ideas:
 
 fa-rebel for some crazy item/insignia
 fa-tencent-weibo as a flower icon
 fa-xing and fa-modx as origami
 fa-ge as some crazy power core
 fa-pagelines as a leaf of peace
-
 
 misc cool ones:
 
@@ -26,7 +23,7 @@ import { clone } from "../util";
 import { IState } from "../state";
 import * as Actions from "./action";
 
-/**
+/* TODO
  * 1. Make entities only move by returning Redux Actions.
 
  * Worry: we're mixing game actions (such as open/close the UI) with game-model actions (such as entity moves).
@@ -39,6 +36,10 @@ import * as Actions from "./action";
 // need to copy all its properties to a new object. The contract for Entities
 // is that their constructors can have no side effects. All methods do is either
 // mutate the Entity's exposed members.
+
+/**
+ * Base class for Entities - any object that exists in the game.
+ */
 export abstract class Entity {
     constructor(public id: string,
                 public health: number,
@@ -57,9 +58,9 @@ export abstract class Entity {
         };
     }
 
-    abstract clone(): this;
+    public abstract clone(): this;
 
-    abstract iconClass(): string;
+    public abstract iconClass(): string;
 }
 
 export abstract class Item extends Entity {
@@ -70,7 +71,7 @@ export abstract class Item extends Entity {
  * that actor's turn.
  */
 export abstract class Actor extends Entity {
-    abstract decideNextAction(state: IState): Actions.Action;
+    public abstract decideNextAction(state: IState): Actions.Action;
 }
 
 export class User extends Actor {
@@ -78,13 +79,13 @@ export class User extends Actor {
         super(id, 10, 10, "hellochar", p);
     }
 
-    iconClass() { return 'fa-user user'; }
+    public iconClass() { return "fa-user user"; }
 
-    decideNextAction(state: IState) {
+    public decideNextAction(state: IState) {
         return null; // TODO fill user movement into this
     }
 
-    clone() {
+    public clone() {
         const newUser = new User(this.id, clone(this.position));
         newUser.health = this.health;
         newUser.maxHealth = this.maxHealth;
@@ -98,9 +99,9 @@ export class Mercury extends Actor {
         super(id, 25, 25, "Mercury", p);
     }
 
-    iconClass() { return 'fa-mercury'; }
+    public iconClass() { return "fa-mercury"; }
 
-    decideNextAction(state: IState): Actions.Action {
+    public decideNextAction(state: IState): Actions.Action {
         const possibleActions: Actions.Action[] = [
             {
                 type: "nothing"
@@ -113,7 +114,7 @@ export class Mercury extends Actor {
             }, {
                 direction: "left",
                 type: "move"
-            },{
+            }, {
                 direction: "right",
                 type: "move"
             }
@@ -121,7 +122,7 @@ export class Mercury extends Actor {
         return _.sample(possibleActions);
     }
 
-    clone() {
+    public clone() {
         const newMercury = new Mercury(this.id, clone(this.position));
         newMercury.health = this.health;
         newMercury.maxHealth = this.maxHealth;
@@ -135,9 +136,9 @@ export class Ring extends Item {
         super(id, 0, 0, "Ring", p);
     }
 
-    iconClass() { return 'fa-circle-o-notch important'; }
+    public iconClass() { return "fa-circle-o-notch important"; }
 
-    clone() {
+    public clone() {
         const newRing = new Ring(this.id, clone(this.position));
         newRing.health = this.health;
         newRing.maxHealth = this.maxHealth;

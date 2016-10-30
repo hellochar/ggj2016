@@ -1,5 +1,3 @@
-/* tslint:disable */
-
 import { Entity } from "./model/entity";
 import { Level } from "./model/level";
 import { Actor } from "./model/entity";

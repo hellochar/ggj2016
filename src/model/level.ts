@@ -1,5 +1,3 @@
-/* tslint:disable */
-
 import { Leaf } from "./entity";
 import { forEachOnLineInGrid, forEachInRect, forEachInCircle, Position } from "../math";
 import { clone, repeat } from "../util";
@@ -24,9 +22,24 @@ export interface Tile {
  * it back to Redux.
  */
 export class Map {
+    public static generateRandomWalls(width: number, height: number, percentage: number): Map {
+        const map: Tile[][] = [];
+        for (let y = 0; y < height; y += 1) {
+            const row = [];
+            for (let x = 0; x < width; x += 1) {
+                row.push({
+                    visible: false,
+                    type: Math.random() < percentage ? TileType.WALL : TileType.SPACE
+                });
+            }
+            map.push(row);
+        }
+        return new Map(map);
+    }
+
     constructor(private tiles: Tile[][]) {}
 
-    clone(): Map {
+    public clone(): Map {
         return new Map(clone(this.tiles));
     }
 
@@ -59,7 +72,7 @@ export class Map {
         const setToWall = (p: Position) => {
             this.tiles[p.y][p.x].type = TileType.WALL;
             return false;
-        }
+        };
         forEachOnLineInGrid(topLeft, {x: topLeft.x, y: bottomRight.y}, setToWall);
         forEachOnLineInGrid({x: topLeft.x, y: bottomRight.y}, bottomRight, setToWall);
         forEachOnLineInGrid(bottomRight, {x: bottomRight.x, y: topLeft.y}, setToWall);
@@ -69,7 +82,7 @@ export class Map {
     public drawPathBetween(lineSegments: Position[]) {
         for ( let k = 0; k < lineSegments.length - 1; k++ ) {
             const from = lineSegments[k];
-            const to = lineSegments[k+1];
+            const to = lineSegments[k + 1];
             forEachOnLineInGrid(from, to, ({x, y}) => {
                 this.tiles[y][x].type = TileType.DECORATIVE_SPACE;
             });
@@ -89,7 +102,7 @@ export class Map {
         forEachInCircle(center, radius, ({x, y}) => {
             this.get(x, y, (tile) => {
                 if (!tile.visible) {
-                    var isVisionBlocked = false;
+                    let isVisionBlocked = false;
                     forEachOnLineInGrid({x, y}, center, (position) => {
                         if (this.tiles[position.y][position.x].type === TileType.WALL) {
                             isVisionBlocked = true;
@@ -111,8 +124,8 @@ export class Map {
     }
 
     public getDownstairsPosition(): Position {
-        for(let y = 0; y < this.height; y += 1) {
-            for(let x = 0; x < this.width; x += 1) {
+        for (let y = 0; y < this.height; y += 1) {
+            for (let x = 0; x < this.width; x += 1) {
                 if (this.tiles[y][x].type === TileType.DOWNSTAIRS) {
                     return {x, y};
                 }
@@ -125,21 +138,6 @@ export class Map {
                       {x: p.x + 1, y: p.y + 1},
                       (p) => this.tiles[p.y][p.x].type = TileType.DECORATIVE_SPACE);
         this.tiles[p.y][p.x].type = type;
-    }
-
-    static generateRandomWalls(width: number, height: number, percentage: number): Map {
-        const map: Tile[][] = [];
-        for(let y = 0; y < height; y += 1) {
-            const row = [];
-            for(let x = 0; x < width; x += 1) {
-                row.push({
-                    visible: false,
-                    type: Math.random() < percentage ? TileType.WALL : TileType.SPACE
-                });
-            }
-            map.push(row);
-        }
-        return new Map(map);
     }
 }
 
@@ -161,7 +159,7 @@ export class Level {
         const { sin, cos } = Math;
         return sin(x + sin(y)) * cos(y + cos(x));
     }
-    
+
     // public addLeaves() {
     //     const offsetX = Math.random() * 100;
     //     const offsetY = Math.random() * 100;
@@ -179,7 +177,7 @@ export class Level {
     // }
 
     // perform AI update on each entity that isn't the user
-    update() {
+    public update() {
         // this.entities.map()
     }
 }
@@ -194,7 +192,7 @@ class LifeLikeCA {
         const [surviveString, birthString] = surviveBirth.split("/");
         this.survive = [];
         this.birth = [];
-        for(let i = 0; i <= 8; i++) {
+        for (let i = 0; i <= 8; i++) {
             if (surviveString.indexOf(`${i}`) !== -1) {
                 this.survive[i] = true;
             } else {
@@ -211,8 +209,8 @@ class LifeLikeCA {
 
     private getNumAliveNeighbors(x: number, y: number) {
         let numAlive = 0;
-        for(var yi = y - 1; yi <= y + 1; yi += 1) {
-            for(var xi = x - 1; xi <= x + 1; xi += 1) {
+        for (let yi = y - 1; yi <= y + 1; yi += 1) {
+            for (let xi = x - 1; xi <= x + 1; xi += 1) {
                 this.map.get(xi, yi, (tile) => {
                     if (!(yi === y && xi === x) && tile.type === TileType.WALL) {
                         numAlive += 1;
@@ -227,16 +225,16 @@ class LifeLikeCA {
         const currentState = this.map.get(x, y);
         const aliveNeighbors = this.getNumAliveNeighbors(x, y);
         let type: TileType = currentState.type;
-        switch(currentState.type) {
+        switch (currentState.type) {
             case TileType.SPACE:
-                if (this.birth[aliveNeighbors] == true) {
+                if (this.birth[aliveNeighbors]) {
                     type = TileType.WALL;
                 } else {
                     type = TileType.SPACE;
                 }
                 break;
             case TileType.WALL:
-                if (this.survive[aliveNeighbors] == true) {
+                if (this.survive[aliveNeighbors]) {
                     type = TileType.WALL;
                 } else {
                     type = TileType.SPACE;
@@ -250,12 +248,12 @@ class LifeLikeCA {
         };
     }
 
-    simulate() {
+    public simulate() {
         const {width, height} = this.map;
         // clone map
         const newTiles = clone(this.map.getTiles());
-        for(let y = 0; y < height; y += 1) {
-            for(let x = 0; x < width; x += 1) {
+        for (let y = 0; y < height; y += 1) {
+            for (let x = 0; x < width; x += 1) {
                 const nextState = this.computeNextState(x, y);
                 newTiles[y][x] = nextState;
             }
@@ -265,23 +263,23 @@ class LifeLikeCA {
 }
 
 export function generateMap(upstairs: Position) {
-    const width = 40,
-          height = 20;
+    const width = 40;
+    const height = 20;
+    const inset = 3;
     let map = Map.generateRandomWalls(width, height, 0.25);
 
     function randomX() {
-        return inset + Math.floor(Math.random() * (width - inset*2));
+        return inset + Math.floor(Math.random() * (width - inset * 2));
     }
 
     function randomY() {
-        return inset + Math.floor(Math.random() * (height - inset*2));
+        return inset + Math.floor(Math.random() * (height - inset * 2));
     }
 
     repeat(5, () => map.lifelikeEvolve("1234/3"));
     repeat(100, () => map.lifelikeEvolve("45678/3"));
     repeat(7, () => map.lifelikeEvolve("1234/3"));
 
-    const inset = 3;
     let downstairs: Position;
     do {
         downstairs = {

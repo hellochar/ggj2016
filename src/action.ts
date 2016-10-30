@@ -1,5 +1,3 @@
-/* tslint:disable */
-
 import * as _ from "lodash";
 
 import * as ModelActions from "./model/action";
@@ -46,7 +44,7 @@ export function createIterateUntilActorTurnAction(actorId: string): IIterateUnti
     return {
         actorId,
         type: "IterateUntilActorTurn",
-    }
+    };
 }
 
 export function handleIterateUntilActorTurnAction(initialState: IState, action: IIterateUntilActorTurnAction): IState {
@@ -140,7 +138,7 @@ function moveAction(state: IState, actorId: string, action: ModelActions.IMoveAc
             x: 0,
             y: 1
         }
-    }
+    };
 
     return updateEntityLevel(state, actorId, (level) => {
         const actor = state.entities[actorId];
@@ -189,7 +187,7 @@ export function createChangeLevelAction(entityId: string, newLevel: number): ICh
         entityId,
         newLevel,
         type: "ChangeLevel"
-    }
+    };
 }
 
 export function handleChangeLevelAction(state: IState, action: IChangeLevelAction): IState {
