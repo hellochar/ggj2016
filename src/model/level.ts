@@ -1,5 +1,5 @@
 import { Leaf } from "./entity";
-import { forEachOnLineInGrid, forEachInRect, forEachInCircle, Position } from "../math";
+import { forEachOnLineInGrid, forEachInRect, forEachInCircle, IPosition } from "../math";
 import { clone, repeat } from "../util";
 
 export enum TileType {
@@ -10,7 +10,7 @@ export enum TileType {
     DECORATIVE_SPACE = 4,
 }
 
-export interface Tile {
+export interface ITile {
     visible: boolean;
     explored: boolean;
     type: TileType;
@@ -23,7 +23,7 @@ export interface Tile {
  */
 export class Map {
     public static generateRandomWalls(width: number, height: number, percentage: number): Map {
-        const map: Tile[][] = [];
+        const map: ITile[][] = [];
         for (let y = 0; y < height; y += 1) {
             const row = [];
             for (let x = 0; x < width; x += 1) {
@@ -37,7 +37,7 @@ export class Map {
         return new Map(map);
     }
 
-    constructor(private tiles: Tile[][]) {}
+    constructor(private tiles: ITile[][]) {}
 
     public clone(): Map {
         return new Map(clone(this.tiles));
@@ -51,7 +51,7 @@ export class Map {
         return this.tiles.length;
     }
 
-    public get(x: number, y: number, then?: (Tile) => void): Tile {
+    public get(x: number, y: number, then?: (Tile) => void): ITile {
         const row = this.tiles[y];
         if (row != null) {
             const tile = row[x];
@@ -67,9 +67,9 @@ export class Map {
     }
 
     // inline mutation
-    public outlineRectWithWalls(topLeft: Position = {x: 0, y: 0},
-                                bottomRight: Position = {x: this.width - 1, y: this.height - 1}) {
-        const setToWall = (p: Position) => {
+    public outlineRectWithWalls(topLeft: IPosition = {x: 0, y: 0},
+                                bottomRight: IPosition = {x: this.width - 1, y: this.height - 1}) {
+        const setToWall = (p: IPosition) => {
             this.tiles[p.y][p.x].type = TileType.WALL;
             return false;
         };
@@ -79,7 +79,7 @@ export class Map {
         forEachOnLineInGrid({x: bottomRight.x, y: topLeft.y}, topLeft, setToWall);
     }
 
-    public drawPathBetween(lineSegments: Position[]) {
+    public drawPathBetween(lineSegments: IPosition[]) {
         for ( let k = 0; k < lineSegments.length - 1; k++ ) {
             const from = lineSegments[k];
             const to = lineSegments[k + 1];
@@ -90,7 +90,7 @@ export class Map {
     }
 
     // lose immediate sight of the given area (turning any visible areas into just explored areas)
-    public removeVision(center: Position, radius: number) {
+    public removeVision(center: IPosition, radius: number) {
         forEachInCircle(center, radius, ({x, y}) => {
             this.get(x, y, (tile) => {
                 tile.visible = false;
@@ -98,7 +98,7 @@ export class Map {
         });
     }
 
-    public giveVision(center: Position, radius: number) {
+    public giveVision(center: IPosition, radius: number) {
         forEachInCircle(center, radius, ({x, y}) => {
             this.get(x, y, (tile) => {
                 if (!tile.visible) {
@@ -123,7 +123,7 @@ export class Map {
         this.tiles = ca.simulate();
     }
 
-    public getDownstairsPosition(): Position {
+    public getDownstairsPosition(): IPosition {
         for (let y = 0; y < this.height; y += 1) {
             for (let x = 0; x < this.width; x += 1) {
                 if (this.tiles[y][x].type === TileType.DOWNSTAIRS) {
@@ -133,7 +133,7 @@ export class Map {
         }
     }
 
-    public setImportantTile(p: Position, type: TileType) {
+    public setImportantTile(p: IPosition, type: TileType) {
         forEachInRect({x: p.x - 1, y: p.y - 1},
                       {x: p.x + 1, y: p.y + 1},
                       (p) => this.tiles[p.y][p.x].type = TileType.DECORATIVE_SPACE);
@@ -151,7 +151,7 @@ export class Level {
         this.entities = entities;
     }
 
-    public isVisible(position: Position) {
+    public isVisible(position: IPosition) {
         return this.map.get(position.x, position.y).visible;
     }
 
@@ -221,7 +221,7 @@ class LifeLikeCA {
         return numAlive;
     }
 
-    private computeNextState(x: number, y: number): Tile {
+    private computeNextState(x: number, y: number): ITile {
         const currentState = this.map.get(x, y);
         const aliveNeighbors = this.getNumAliveNeighbors(x, y);
         let type: TileType = currentState.type;
@@ -262,7 +262,7 @@ class LifeLikeCA {
     }
 }
 
-export function generateMap(upstairs: Position) {
+export function generateMap(upstairs: IPosition) {
     const width = 40;
     const height = 20;
     const inset = 3;
@@ -280,7 +280,7 @@ export function generateMap(upstairs: Position) {
     repeat(100, () => map.lifelikeEvolve("45678/3"));
     repeat(7, () => map.lifelikeEvolve("1234/3"));
 
-    let downstairs: Position;
+    let downstairs: IPosition;
     do {
         downstairs = {
             x: randomX(),

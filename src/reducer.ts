@@ -1,6 +1,6 @@
 import { IAction, findEntityLevel, handlePerformActionAction, handleChangeLevelAction, handleIterateUntilActorTurnAction } from "./action";
 import * as Entity from "./model/entity";
-import { Level, Tile, TileType, generateMap } from "./model/level";
+import { Level, ITile, TileType, generateMap } from "./model/level";
 import { IState } from "./state";
 
 function buildInitialState(): IState {

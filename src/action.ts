@@ -4,7 +4,7 @@ import * as ModelActions from "./model/action";
 import * as Entity from "./model/entity";
 import { Level, TileType } from "./model/level";
 import { IState } from "./state";
-import { Position } from "./math";
+import { IPosition } from "./math";
 
 export type IAction = IPerformActionAction | IChangeLevelAction | IIterateUntilActorTurnAction;
 

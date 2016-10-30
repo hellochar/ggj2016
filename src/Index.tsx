@@ -8,9 +8,9 @@ import * as React from "react";
 import * as Redux from "redux";
 import { connect, Provider } from "react-redux";
 
-import { forEachOnLineInGrid, Position } from "./math";
+import { forEachOnLineInGrid, IPosition } from "./math";
 import * as Entity from "./model/entity";
-import { Level, Tile, TileType, generateMap } from "./model/level";
+import { Level, ITile, TileType, generateMap } from "./model/level";
 import * as ModelAction from "./model/action";
 import reducer from "./reducer";
 import { IState } from "./state";
@@ -69,7 +69,7 @@ const HeadsUpDisplay = connect(mapStateToProps)(PureHeadsUpDisplay);
 interface ILevelProps {
     getEntity: (id: string) => Entity.Entity;
     level: Level;
-    center: Position;
+    center: IPosition;
 }
 
 class PureLevel extends React.Component<ILevelProps, {}> {
@@ -83,7 +83,7 @@ class PureLevel extends React.Component<ILevelProps, {}> {
         }
     }
 
-    public elementForTile(tile: Tile, x: number, y: number) {
+    public elementForTile(tile: ITile, x: number, y: number) {
         let visibilityClasses: string;
         if (tile.visible) {
             visibilityClasses = `tile-visible ${this.iconClassForTile(tile.type)}`;

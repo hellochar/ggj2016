@@ -18,7 +18,7 @@ fa-500px, fa-deviantart, fa-forumbee, fa-gg, fa-opencart
 
 */
 
-import { Position } from "../math";
+import { IPosition } from "../math";
 import { clone } from "../util";
 import { IState } from "../state";
 import * as Actions from "./action";
@@ -45,13 +45,13 @@ export abstract class Entity {
                 public health: number,
                 public maxHealth: number,
                 public name: string,
-                public position: Position) {
+                public position: IPosition) {
     }
 
     /**
      * Mutate this entity by offsetting the position.
      */
-    public move(offset: Position) {
+    public move(offset: IPosition) {
         this.position = {
             x: this.position.x + offset.x,
             y: this.position.y + offset.y
@@ -75,7 +75,7 @@ export abstract class Actor extends Entity {
 }
 
 export class User extends Actor {
-    constructor(id: string, p: Position) {
+    constructor(id: string, p: IPosition) {
         super(id, 10, 10, "hellochar", p);
     }
 
@@ -95,7 +95,7 @@ export class User extends Actor {
 }
 
 export class Mercury extends Actor {
-    constructor(id: string, p: Position) {
+    constructor(id: string, p: IPosition) {
         super(id, 25, 25, "Mercury", p);
     }
 
@@ -132,7 +132,7 @@ export class Mercury extends Actor {
 }
 
 export class Ring extends Item {
-    constructor(id: string, p: Position) {
+    constructor(id: string, p: IPosition) {
         super(id, 0, 0, "Ring", p);
     }
 
@@ -148,7 +148,7 @@ export class Ring extends Item {
 }
 
 export class Tree extends Actor {
-    constructor(id: string, p: Position) {
+    constructor(id: string, p: IPosition) {
         super(id, 1, 1, "Tree", p);
     }
 
@@ -166,7 +166,7 @@ export class Tree extends Actor {
 }
 
 export class Leaf extends Item {
-    constructor(id: string, health: number, p: Position) {
+    constructor(id: string, health: number, p: IPosition) {
         super(id, health, 5, "Leaf", p);
     }
 
