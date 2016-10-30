@@ -23,7 +23,6 @@ import "./index.less";
 class PureEntityInfo extends React.Component<{entity: Entity.Entity, floor: number}, {}> {
     render() {
         const { entity } = this.props;
-        entity.health = Math.random() * entity.maxHealth;
         const healthPercentage = entity.health / entity.maxHealth;
         const healthIndicatorClassnames = classnames("rg-entity-info-health", {
             "good": healthPercentage >= 0.7,
@@ -169,12 +168,6 @@ class PureGame extends React.Component<IGameProps, {}> {
                 type: "go-downstairs",
             },
         };
-        // if (event.code === "KeyZ") {
-        //     this.props.dispatch(createMapEvolveAction("45678/3"));
-        // }
-        // if (event.code === "KeyX") {
-        //     this.props.dispatch(createMapEvolveAction("1234/3"));
-        // }
 
         const userLevel = findEntityLevel("0", this.props.state.levels);
         const userLevelIndex = this.props.state.levelOrder.indexOf(userLevel.id);
@@ -185,7 +178,6 @@ class PureGame extends React.Component<IGameProps, {}> {
     private throttledHandleKeyPress = _.throttle(this.handleKeyPress, 100);
 
     public componentDidMount() {
-        // document.addEventListener("keypress", this.throttledHandleKeyPress, false);
         document.addEventListener("keydown", this.throttledHandleKeyPress, false);
         document.addEventListener("keyup", () => {
             this.throttledHandleKeyPress.flush();
@@ -214,19 +206,7 @@ const Game = connect(
     (dispatch: Redux.Dispatch<IState>) => { return { dispatch } }
 )(PureGame);
 
-
-// function processNextEntityTurn(store: Redux.Store<IState>) {
-//     const state = store.getState();
-//     const actorId = state.loopCoordinator.turnOrder[0];
-//     const actor = state.entities[actorId] as Entity.Actor;
-//     actor.decideNextAction(state).then((action) => {
-//         store.dispatch(createPerformActionAction(actorId, action));
-//         processNextEntityTurn(store);
-//     });
-// }
-//
 const store = Redux.createStore(reducer);
-// processNextEntityTurn(store);
 
 ReactDOM.render(
     <Provider store={store}>

@@ -173,26 +173,6 @@ function moveAction(state: IState, actorId: string, action: ModelActions.IMoveAc
     });
 }
 
-// export interface IMapEvolveAction extends IAction {
-//     ruleset: string;
-// }
-// export function createMapEvolveAction(ruleset: string): IMapEvolveAction {
-//     return {
-//         ruleset,
-//         type: "MAP_EVOLVE"
-//     };
-// }
-//
-// export function handleMapEvolveAction(state: IState, action: IMapEvolveAction): IState {
-//     return updateUserLevel(state, (level: Level) => {
-//         const newMap = level.map.clone();
-//         newMap.lifelikeEvolve(action.ruleset);
-//         return {
-//             level: new Level(level.id, newMap, level.entities),
-//         };
-//     });
-// }
-
 /**
  * Move an entity to another level. This is a basic state changing action
  * that can be used in many different situations (e.g. going upstairs,
