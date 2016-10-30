@@ -39,7 +39,8 @@ import { IState } from "../state";
 // is that their constructors can have no side effects. All methods do is either
 // mutate the Entity's exposed members.
 export abstract class Entity {
-    constructor(public health: number,
+    constructor(public id: string,
+                public health: number,
                 public maxHealth: number,
                 public name: string,
                 public position: Position) {
@@ -60,8 +61,8 @@ export abstract class Entity {
 }
 
 export class User extends Entity {
-    constructor(p: Position) {
-        super(10, 10, "hellochar", p);
+    constructor(id: string, p: Position) {
+        super(id, 10, 10, "hellochar", p);
     }
 
     iconClass() { return 'fa-user user'; }
@@ -71,7 +72,7 @@ export class User extends Entity {
     }
 
     clone() {
-        const newUser = new User(clone(this.position));
+        const newUser = new User(this.id, clone(this.position));
         newUser.health = this.health;
         newUser.maxHealth = this.maxHealth;
         newUser.name = this.name;
@@ -80,8 +81,8 @@ export class User extends Entity {
 }
 
 export class Mercury extends Entity {
-    constructor(p: Position) {
-        super(25, 25, "Mercury", p);
+    constructor(id: string, p: Position) {
+        super(id, 25, 25, "Mercury", p);
     }
 
     iconClass() { return 'fa-mercury'; }
@@ -91,7 +92,7 @@ export class Mercury extends Entity {
     }
 
     clone() {
-        const newMercury = new Mercury(clone(this.position));
+        const newMercury = new Mercury(this.id, clone(this.position));
         newMercury.health = this.health;
         newMercury.maxHealth = this.maxHealth;
         newMercury.name = this.name;
@@ -100,8 +101,8 @@ export class Mercury extends Entity {
 }
 
 export class Ring extends Entity {
-    constructor(p: Position) {
-        super(0, 0, "Ring", p);
+    constructor(id: string, p: Position) {
+        super(id, 0, 0, "Ring", p);
     }
 
     iconClass() { return 'fa-circle-o-notch item important'; }
@@ -111,7 +112,7 @@ export class Ring extends Entity {
     }
 
     clone() {
-        const newRing = new Ring(clone(this.position));
+        const newRing = new Ring(this.id, clone(this.position));
         newRing.health = this.health;
         newRing.maxHealth = this.maxHealth;
         newRing.name = this.name;
@@ -120,8 +121,8 @@ export class Ring extends Entity {
 }
 
 export class Leaf extends Entity {
-    constructor(health: number, p: Position) {
-        super(health, 5, "Leaf", p);
+    constructor(id: string, health: number, p: Position) {
+        super(id, health, 5, "Leaf", p);
     }
 
     public iconClass() {
@@ -135,7 +136,7 @@ export class Leaf extends Entity {
     public decideNextAction() {}
 
     public clone() {
-        const newLeaf = new Leaf(this.health, clone(this.position));
+        const newLeaf = new Leaf(this.id, this.health, clone(this.position));
         return newLeaf as this;
     }
 }

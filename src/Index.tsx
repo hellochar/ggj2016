@@ -22,8 +22,8 @@ function buildInitialState(): IState {
     const center = {x: 30, y: 15};
     const level0 = new Level("0", generateMap(center),
         [
-            new Entity.User(center),
-            new Entity.Mercury({x: 2, y: 2})
+            new Entity.User("1", center),
+            new Entity.Mercury("2", {x: 2, y: 2})
         ]
     );
     level0.addLeaves();
