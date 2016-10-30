@@ -81,7 +81,7 @@ export class User extends Actor {
 
     public iconClass() { return "fa-user user"; }
 
-    public decideNextAction(state: IState) {
+    public decideNextAction(state: IState): Actions.Action {
         return null; // TODO fill user movement into this
     }
 
@@ -119,7 +119,7 @@ export class Mercury extends Actor {
                 type: "move"
             }
         ];
-        return _.sample(possibleActions);
+        return _.sample(possibleActions) as Actions.Action;
     }
 
     public clone() {

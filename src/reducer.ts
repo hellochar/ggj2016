@@ -1,6 +1,6 @@
-import { IAction, findEntityLevel, handlePerformActionAction, handleChangeLevelAction, handleIterateUntilActorTurnAction } from "./action";
+import { IAction, handlePerformActionAction, handleChangeLevelAction, handleIterateUntilActorTurnAction } from "./action";
 import * as Entity from "./model/entity";
-import { Level, ITile, TileType, generateMap } from "./model/level";
+import { Level, generateMap } from "./model/level";
 import { IState } from "./state";
 
 function buildInitialState(): IState {
@@ -44,10 +44,6 @@ function buildInitialState(): IState {
     };
 }
 const INITIAL_STATE: IState = buildInitialState();
-
-function error(t: never): never {
-    throw new Error("bad case!");
-}
 
 /**
  * Top-level reducer for the game.

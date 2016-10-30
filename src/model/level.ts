@@ -1,4 +1,3 @@
-import { Leaf } from "./entity";
 import { forEachOnLineInGrid, forEachInRect, forEachInCircle, IPosition } from "../math";
 import { clone, repeat } from "../util";
 
@@ -25,9 +24,10 @@ export class Map {
     public static generateRandomWalls(width: number, height: number, percentage: number): Map {
         const map: ITile[][] = [];
         for (let y = 0; y < height; y += 1) {
-            const row = [];
+            const row: ITile[] = [];
             for (let x = 0; x < width; x += 1) {
                 row.push({
+                    explored: false,
                     visible: false,
                     type: Math.random() < percentage ? TileType.WALL : TileType.SPACE
                 });
@@ -51,7 +51,7 @@ export class Map {
         return this.tiles.length;
     }
 
-    public get(x: number, y: number, then?: (Tile) => void): ITile {
+    public get(x: number, y: number, then?: (t: ITile) => void): ITile {
         const row = this.tiles[y];
         if (row != null) {
             const tile = row[x];
@@ -59,6 +59,8 @@ export class Map {
                 then(tile);
             }
             return tile;
+        } else {
+            throw new Error("out of bounds get!");
         }
     }
 
@@ -107,6 +109,8 @@ export class Map {
                         if (this.tiles[position.y][position.x].type === TileType.WALL) {
                             isVisionBlocked = true;
                             return true;
+                        } else {
+                            return false;
                         }
                     });
                     tile.visible = !isVisionBlocked;
@@ -131,6 +135,7 @@ export class Map {
                 }
             }
         }
+        return null;
     }
 
     public setImportantTile(p: IPosition, type: TileType) {
@@ -155,11 +160,11 @@ export class Level {
         return this.map.get(position.x, position.y).visible;
     }
 
-    private leafConcentration(x: number, y: number) {
-        const { sin, cos } = Math;
-        return sin(x + sin(y)) * cos(y + cos(x));
-    }
-
+    // private leafConcentration(x: number, y: number) {
+    //     const { sin, cos } = Math;
+    //     return sin(x + sin(y)) * cos(y + cos(x));
+    // }
+// 
     // public addLeaves() {
     //     const offsetX = Math.random() * 100;
     //     const offsetY = Math.random() * 100;

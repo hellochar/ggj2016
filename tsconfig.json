@@ -9,9 +9,11 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "declaration": false,
-        "noImplicitAny": false,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
         "removeComments": true,
-        "noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true
     },
@@ -19,5 +21,8 @@
     "buildOnSave": false,
     "atom": {
         "rewriteTsconfig": true
-    }
+    },
+    "include": [
+        "src/**/*"
+    ]
 }

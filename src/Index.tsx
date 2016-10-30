@@ -8,14 +8,13 @@ import * as React from "react";
 import * as Redux from "redux";
 import { connect, Provider } from "react-redux";
 
-import { forEachOnLineInGrid, IPosition } from "./math";
+import { IPosition } from "./math";
 import * as Entity from "./model/entity";
-import { Level, ITile, TileType, generateMap } from "./model/level";
+import { Level, ITile, TileType } from "./model/level";
 import * as ModelAction from "./model/action";
 import reducer from "./reducer";
 import { IState } from "./state";
-import {repeat, clone} from "./util";
-import { IAction, findEntityLevel, createPerformActionAction, createChangeLevelAction } from "./action";
+import { findEntityLevel, createPerformActionAction } from "./action";
 
 import "./index.less";
 
@@ -168,7 +167,6 @@ class PureGame extends React.Component<IGameProps, {}> {
             },
         };
 
-        const userLevel = findEntityLevel("0", this.props.state.levels);
         if (mapping[event.code]) {
             this.props.dispatch(createPerformActionAction("0", mapping[event.code]));
         }

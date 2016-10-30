@@ -4,12 +4,11 @@ import * as ModelActions from "./model/action";
 import * as Entity from "./model/entity";
 import { Level, TileType } from "./model/level";
 import { IState } from "./state";
-import { IPosition } from "./math";
 
 export type IAction = IPerformActionAction | IChangeLevelAction | IIterateUntilActorTurnAction;
 
 export function findEntityLevel(entityId: string, levels: { [id: string]: Level}) {
-    return _.find(levels, (level) => {
+    return _.find(levels, (level: Level) => {
         return level.entities.some((id) => entityId === id);
     });
 }

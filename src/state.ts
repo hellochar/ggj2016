@@ -1,6 +1,5 @@
 import { Entity } from "./model/entity";
 import { Level } from "./model/level";
-import { Actor } from "./model/entity";
 
 /**
  * Entire state of the game.

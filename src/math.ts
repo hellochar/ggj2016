@@ -4,7 +4,7 @@ export interface IPosition {
 }
 
 // ignores the first start position. callback should return TRUE if we should stop iteration
-export function forEachOnLineInGrid(start: IPosition, end: IPosition, callback: (Position) => boolean | void) {
+export function forEachOnLineInGrid(start: IPosition, end: IPosition, callback: (p: IPosition) => boolean | void) {
     let x0 = start.x;
     let y0 = start.y;
 
@@ -33,7 +33,7 @@ export function forEachOnLineInGrid(start: IPosition, end: IPosition, callback: 
     }
 }
 
-export function forEachInRect(topLeft: IPosition, bottomRight: IPosition, cb: (Position) => any) {
+export function forEachInRect(topLeft: IPosition, bottomRight: IPosition, cb: (p: IPosition) => any) {
     for (let x = topLeft.x; x <= bottomRight.x; x += 1) {
         for (let y = topLeft.y; y <= bottomRight.y; y += 1) {
             cb({x: x, y: y});
@@ -41,7 +41,7 @@ export function forEachInRect(topLeft: IPosition, bottomRight: IPosition, cb: (P
     }
 }
 
-export function forEachInCircle(center: IPosition, radius: number, cb: (Position) => any) {
+export function forEachInCircle(center: IPosition, radius: number, cb: (p: IPosition) => any) {
     forEachInRect({x: center.x - radius, y: center.y - radius},
         {x: center.x + radius, y: center.y + radius},
         (p) => {
