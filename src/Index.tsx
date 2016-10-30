@@ -108,7 +108,7 @@ class PureLevel extends React.Component<ILevelProps, {}> {
         return <i
             style={style}
             className={className}
-            key={JSON.stringify(entity)}>
+            key={entity.id}>
             </i>;
     }
 
@@ -170,7 +170,6 @@ class PureGame extends React.Component<IGameProps, {}> {
         };
 
         const userLevel = findEntityLevel("0", this.props.state.levels);
-        const userLevelIndex = this.props.state.levelOrder.indexOf(userLevel.id);
         if (mapping[event.code]) {
             this.props.dispatch(createPerformActionAction("0", mapping[event.code]));
         }
