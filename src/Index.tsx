@@ -1,5 +1,4 @@
 /// <reference path="../typings/tsd.d.ts" />
-/* tslint:disable */
 
 import ReactDOM = require("react-dom");
 
@@ -143,7 +142,7 @@ interface IGameProps {
 }
 
 class PureGame extends React.Component<IGameProps, {}> {
-    private handleKeyPress = (event: any) => {
+    private handleKeyPress = (event: KeyboardEvent) => {
         const mapping: { [key: string]: ModelAction.Action } = {
             KeyW: {
                 direction: "up",

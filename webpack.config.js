@@ -63,7 +63,7 @@ var config = {
 
   tslint: {
     // Rules are in tslint.json
-    emitErrors: true, // false = WARNING for webpack, true = ERROR for webpack
+    emitErrors: false,
     formattersDirectory: path.join(nodeModulesPath, 'tslint-loader', 'formatters')
   },
 };
