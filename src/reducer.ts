@@ -1,6 +1,6 @@
 /* tslint:disable */
 
-import { IAction, findEntityLevel, handlePerformActionAction, handleChangeLevelAction } from "./action";
+import { IAction, findEntityLevel, handlePerformActionAction, handleChangeLevelAction, handleIterateUntilActorTurnAction } from "./action";
 import * as Entity from "./model/entity";
 import { Level, Tile, TileType, generateMap } from "./model/level";
 import { IState } from "./state";
@@ -42,21 +42,36 @@ function buildInitialState(): IState {
         },
         levelOrder,
         levels,
-        loopCoordinator: {
-            turnOrder: [user.id, mercury.id],
-        },
+        turnOrder: [user.id, mercury.id],
     };
 }
 const INITIAL_STATE: IState = buildInitialState();
+
+function error(t: never): never {
+    throw new Error("bad case!");
+}
 
 /**
  * Top-level reducer for the game.
  */
 export default function reducer(state: IState = INITIAL_STATE, action: IAction): IState {
     if (action.type === "PerformAction") {
-        return handlePerformActionAction(state, action);
+        const nextState = handlePerformActionAction(state, action);
+        // TODO don't make this happen here
+        if (action.actorId === "0") {
+            // skip to the next turn
+            nextState.turnOrder = [...nextState.turnOrder.splice(1), nextState.turnOrder[0]];
+            return handleIterateUntilActorTurnAction(nextState, {
+                actorId: "0",
+                type: "IterateUntilActorTurn",
+            });
+        } else {
+            return nextState;
+        }
     } else if(action.type === "ChangeLevel") {
         return handleChangeLevelAction(state, action);
+    } else if(action.type === "IterateUntilActorTurn") {
+        return handleIterateUntilActorTurnAction(state, action);
     } else {
         return state;
     }

@@ -8,7 +8,7 @@ import { Level, TileType } from "./model/level";
 import { IState } from "./state";
 import { Position } from "./math";
 
-export type IAction = IPerformActionAction | IChangeLevelAction;
+export type IAction = IPerformActionAction | IChangeLevelAction | IIterateUntilActorTurnAction;
 
 export function findEntityLevel(entityId: string, levels: { [id: string]: Level}) {
     return _.find(levels, (level) => {
@@ -36,6 +36,32 @@ export function updateEntityLevel(
     }
 
     return newState;
+}
+
+export interface IIterateUntilActorTurnAction {
+    actorId: string;
+    type: "IterateUntilActorTurn";
+}
+export function createIterateUntilActorTurnAction(actorId: string): IIterateUntilActorTurnAction {
+    return {
+        actorId,
+        type: "IterateUntilActorTurn",
+    }
+}
+
+export function handleIterateUntilActorTurnAction(initialState: IState, action: IIterateUntilActorTurnAction): IState {
+    let state = initialState;
+    while (state.turnOrder[0] !== action.actorId) {
+        const actor = state.entities[state.turnOrder[0]] as Entity.Actor;
+        const nextAction = actor.decideNextAction(state);
+        state = handlePerformActionAction(state, {
+            actorId: actor.id,
+            action: nextAction,
+            type: "PerformAction",
+        });
+        state.turnOrder = [...state.turnOrder.splice(1), state.turnOrder[0]];
+    }
+    return state;
 }
 
 export interface IPerformActionAction {

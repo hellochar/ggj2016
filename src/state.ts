@@ -14,7 +14,6 @@ export interface IState {
     entities: {
         [entityId: string]: Entity;
     };
-    loopCoordinator: IGameLoopCoordinator;
     /**
      * The order in which levels are stacked in the game.
      */
@@ -25,12 +24,6 @@ export interface IState {
     levels: {
         [levelId: string]: Level;
     };
-}
-
-/**
- * State responsible for moving the game along in time.
- */
-interface IGameLoopCoordinator {
     /**
      * Queue of actor ids waiting for their turn. The actor at the front of the
      * list will act, and then be pushed to the back of the turn order.

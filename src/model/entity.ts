@@ -70,7 +70,7 @@ export abstract class Item extends Entity {
  * that actor's turn.
  */
 export abstract class Actor extends Entity {
-    abstract decideNextAction(state: IState): Promise<Actions.Action>;
+    abstract decideNextAction(state: IState): Actions.Action;
 }
 
 export class User extends Actor {
@@ -100,8 +100,25 @@ export class Mercury extends Actor {
 
     iconClass() { return 'fa-mercury'; }
 
-    decideNextAction(state: IState) {
-        return Promise.resolve({ type: "nothing" });
+    decideNextAction(state: IState): Actions.Action {
+        const possibleActions: Actions.Action[] = [
+            {
+                type: "nothing"
+            }, {
+                direction: "up",
+                type: "move"
+            }, {
+                direction: "down",
+                type: "move"
+            }, {
+                direction: "left",
+                type: "move"
+            },{
+                direction: "right",
+                type: "move"
+            }
+        ];
+        return _.sample(possibleActions);
     }
 
     clone() {
@@ -134,8 +151,8 @@ export class Tree extends Actor {
         super(id, 1, 1, "Tree", p);
     }
 
-    public decideNextAction(state: IState) {
-        return Promise.resolve({ type: "nothing" });
+    public decideNextAction(state: IState): Actions.Action {
+        return { type: "nothing" };
     }
 
     public iconClass() {
