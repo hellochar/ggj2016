@@ -165,6 +165,9 @@ class PureGame extends React.Component<IGameProps, {}> {
             KeyE: {
                 type: "go-downstairs",
             },
+            Period: {
+                type: "nothing",
+            },
         };
 
         if (mapping[event.code]) {

@@ -1,5 +1,6 @@
 import { forEachOnLineInGrid, forEachInRect, forEachInCircle, IPosition } from "../math";
 import { clone, repeat } from "../util";
+import * as Entity from "./entity";
 
 export enum TileType {
     SPACE = 0,
@@ -60,7 +61,7 @@ export class Map {
             }
             return tile;
         } else {
-            throw new Error("out of bounds get!");
+            return undefined;
         }
     }
 
@@ -160,26 +161,33 @@ export class Level {
         return this.map.get(position.x, position.y).visible;
     }
 
-    // private leafConcentration(x: number, y: number) {
-    //     const { sin, cos } = Math;
-    //     return sin(x + sin(y)) * cos(y + cos(x));
-    // }
-// 
-    // public addLeaves() {
-    //     const offsetX = Math.random() * 100;
-    //     const offsetY = Math.random() * 100;
-    //     for (let x = 0; x < this.map.width; x++) {
-    //         for (let y = 0; y < this.map.height; y++) {
-    //             if (this.map.get(x, y).type === TileType.SPACE) {
-    //                 const z = this.leafConcentration(x * 0.15 + offsetX, y * 0.15 + offsetY);
-    //                 if (z > 0.5) {
-    //                     const id = Math.random().toString(16).substring(2);
-    //                     this.entities.push(new Leaf(1 + Math.floor(z * 5), { x, y }));
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+    private leafConcentration(x: number, y: number) {
+        const { sin, cos } = Math;
+        return sin(x + sin(y)) * cos(y + cos(x));
+    }
+
+    /**
+     * Create a bunch of leaves and add references to them. The caller must immediately
+     * add them to the game.
+     */
+    public addLeaves(): Entity.Leaf[] {
+        const offsetX = Math.random() * 100;
+        const offsetY = Math.random() * 100;
+        const leaves: Entity.Leaf[] = [];
+        for (let x = 0; x < this.map.width; x++) {
+            for (let y = 0; y < this.map.height; y++) {
+                if (this.map.get(x, y).type === TileType.SPACE) {
+                    const z = this.leafConcentration(x * 0.15 + offsetX, y * 0.15 + offsetY);
+                    if (z > 0.5) {
+                        const id = Math.random().toString(16).substring(2);
+                        leaves.push(new Entity.Leaf(id, 1 + Math.floor(z * 5), { x, y }));
+                        this.entities.push(id);
+                    }
+                }
+            }
+        }
+        return leaves;
+    }
 
     // perform AI update on each entity that isn't the user
     public update() {

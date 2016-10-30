@@ -4,16 +4,21 @@ import { Level, generateMap } from "./model/level";
 import { IState } from "./state";
 
 function buildInitialState(): IState {
+    const entitiesToAdd: Entity.Entity[] = [];
+
     const center = {x: 30, y: 15};
+
     const user = new Entity.User("0", center);
     const mercury = new Entity.Mercury("1", {x: 2, y: 2});
+
+    entitiesToAdd.push(user, mercury);
     const level0 = new Level("0", generateMap(center),
         [
             user.id,
             mercury.id
         ]
     );
-    // level0.addLeaves();
+    entitiesToAdd.push(...level0.addLeaves());
     level0.map.giveVision(center, 7);
     const levels = {
         0: level0,
@@ -23,7 +28,7 @@ function buildInitialState(): IState {
         const id = depth.toString();
         const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
         const currentLevel = new Level(id, newMap, []);
-        // currentLevel.addLeaves();
+        entitiesToAdd.push(...currentLevel.addLeaves());
         levels[id] = currentLevel;
         levelOrder.push(id);
     }
@@ -34,10 +39,7 @@ function buildInitialState(): IState {
     // lastLevel.entities.push(ringEntity);
 
     return {
-        entities: {
-            [user.id]: user,
-            [mercury.id]: mercury,
-        },
+        entities: _.keyBy(entitiesToAdd, "id"),
         levelOrder,
         levels,
         turnOrder: [user.id, mercury.id],
@@ -52,7 +54,7 @@ export default function reducer(state: IState = INITIAL_STATE, action: IAction):
     if (action.type === "PerformAction") {
         const nextState = handlePerformActionAction(state, action);
         // TODO don't make this happen here
-        if (action.actorId === "0") {
+        if (nextState !== state && action.actorId === "0") {
             // skip to the next turn
             nextState.turnOrder = [...nextState.turnOrder.splice(1), nextState.turnOrder[0]];
             return handleIterateUntilActorTurnAction(nextState, {

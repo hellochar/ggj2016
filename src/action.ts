@@ -16,23 +16,32 @@ export function findEntityLevel(entityId: string, levels: { [id: string]: Level}
 export function updateEntityLevel(
     state: IState,
     entityId: string,
-    update: (level: Level) => { level: Level, entity?: Entity.Entity }): IState {
+    update: (level: Level) => { level?: Level, entity?: Entity.Entity }): IState {
     const userLevel = findEntityLevel(entityId, state.levels);
     const { level, entity } = update(userLevel);
 
-    const newState = _.assign({}, state, {
-        levels: _.assign({}, state.levels, {
+    const newState = _.assign({}, state);
+    let changed = false;
+
+    if (level != null && level !== userLevel) {
+        changed = true;
+        newState.levels = _.assign({}, state.levels, {
             [userLevel.id]: level
-        }),
-    });
+        });
+    }
 
     if (entity != null) {
+        changed = true;
         newState.entities = _.assign({}, state.entities, {
             [entity.id]: entity,
         });
     }
 
-    return newState;
+    if (changed) {
+        return newState;
+    } else {
+        return state;
+    }
 }
 
 export interface IIterateUntilActorTurnAction {
@@ -79,13 +88,13 @@ export function createPerformActionAction(actorId: string, action: ModelActions.
  * the same state reference.
  */
 export function handlePerformActionAction(state: IState, action: IPerformActionAction): IState {
-    // TODO fill in
     const actorAction = action.action;
     const actor = state.entities[action.actorId];
     if (actorAction.type === "move") {
         return moveAction(state, action.actorId, actorAction);
     } else if (actorAction.type === "nothing") {
-        return state;
+        // shallow clone state to indicate that the action was successfully performed.
+        return _.assign({}, state);
     } else if (actorAction.type === "go-downstairs") {
         const actorLevel = findEntityLevel(actor.id, state.levels);
         const currentTile = actorLevel.map.get(actor.position.x, actor.position.y);
@@ -146,26 +155,24 @@ function moveAction(state: IState, actorId: string, action: ModelActions.IMoveAc
             actor.position.x + direction.x,
             actor.position.y + direction.y);
         if (newPositionTile == null || newPositionTile.type === TileType.WALL) {
-            return {
-                level: level,
-                entity: actor
-            };
+            return { level };
         } else {
             const newActor = actor.clone();
             newActor.move(direction);
 
-            const newMap = level.map.clone();
-            newMap.removeVision(actor.position, 7);
-            newMap.giveVision(newActor.position, 7);
-
-            // const entityId =
-            // const newEntities = [
-            //
-            // ]
-            return {
-                level: new Level(level.id, newMap, level.entities),
-                entity: newActor
-            };
+            if (actorId === "0") {
+                const newMap = level.map.clone();
+                newMap.removeVision(actor.position, 7);
+                newMap.giveVision(newActor.position, 7);
+                return {
+                    level: new Level(level.id, newMap, level.entities),
+                    entity: newActor
+                };
+            } else {
+                return {
+                    entity: newActor
+                };
+            }
         }
     });
 }
