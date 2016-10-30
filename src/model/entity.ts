@@ -24,6 +24,7 @@ fa-500px, fa-deviantart, fa-forumbee, fa-gg, fa-opencart
 import { Position } from "../math";
 import { clone } from "../util";
 import { IState } from "../state";
+import * as Actions from "./action";
 
 /**
  * 1. Make entities only move by returning Redux Actions.
@@ -46,21 +47,33 @@ export abstract class Entity {
                 public position: Position) {
     }
 
-    abstract clone(): this;
-
-    abstract iconClass(): string;
-
-    abstract decideNextAction(state: IState): void;
-
-    move(offset: Position) {
+    /**
+     * Mutate this entity by offsetting the position.
+     */
+    public move(offset: Position) {
         this.position = {
             x: this.position.x + offset.x,
             y: this.position.y + offset.y
         };
     }
+
+    abstract clone(): this;
+
+    abstract iconClass(): string;
 }
 
-export class User extends Entity {
+export abstract class Item extends Entity {
+}
+
+/**
+ * An actor is an Entity that is placed in the turn order and can take actions when it is
+ * that actor's turn.
+ */
+export abstract class Actor extends Entity {
+    abstract decideNextAction(state: IState): Promise<Actions.Action>;
+}
+
+export class User extends Actor {
     constructor(id: string, p: Position) {
         super(id, 10, 10, "hellochar", p);
     }
@@ -68,7 +81,7 @@ export class User extends Entity {
     iconClass() { return 'fa-user user'; }
 
     decideNextAction(state: IState) {
-        // do nothing
+        return null; // TODO fill user movement into this
     }
 
     clone() {
@@ -80,7 +93,7 @@ export class User extends Entity {
     }
 }
 
-export class Mercury extends Entity {
+export class Mercury extends Actor {
     constructor(id: string, p: Position) {
         super(id, 25, 25, "Mercury", p);
     }
@@ -88,7 +101,7 @@ export class Mercury extends Entity {
     iconClass() { return 'fa-mercury'; }
 
     decideNextAction(state: IState) {
-        // do nothing
+        return Promise.resolve({ type: "nothing" });
     }
 
     clone() {
@@ -100,16 +113,12 @@ export class Mercury extends Entity {
     }
 }
 
-export class Ring extends Entity {
+export class Ring extends Item {
     constructor(id: string, p: Position) {
         super(id, 0, 0, "Ring", p);
     }
 
-    iconClass() { return 'fa-circle-o-notch item important'; }
-
-    decideNextAction(state: IState) {
-        // do nothing
-    }
+    iconClass() { return 'fa-circle-o-notch important'; }
 
     clone() {
         const newRing = new Ring(this.id, clone(this.position));
@@ -120,20 +129,36 @@ export class Ring extends Entity {
     }
 }
 
-export class Leaf extends Entity {
+export class Tree extends Actor {
+    constructor(id: string, p: Position) {
+        super(id, 1, 1, "Tree", p);
+    }
+
+    public decideNextAction(state: IState) {
+        return Promise.resolve({ type: "nothing" });
+    }
+
+    public iconClass() {
+        return "fa-tree";
+    }
+
+    public clone() {
+        return new Tree(this.id, clone(this.position)) as this;
+    }
+}
+
+export class Leaf extends Item {
     constructor(id: string, health: number, p: Position) {
         super(id, health, 5, "Leaf", p);
     }
 
     public iconClass() {
         if (this.health > 4) {
-            return "fa-pagelines item";
+            return "fa-pagelines";
         } else {
-            return "fa-leaf item";
+            return "fa-leaf";
         }
     }
-
-    public decideNextAction() {}
 
     public clone() {
         const newLeaf = new Leaf(this.id, this.health, clone(this.position));

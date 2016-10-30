@@ -2,20 +2,26 @@
 
 import * as _ from "lodash";
 
+import * as ModelActions from "./model/action";
 import * as Entity from "./model/entity";
 import { Level, TileType } from "./model/level";
 import { IState } from "./state";
 import { Position } from "./math";
 
-export function findUserLevel(levels: { [id: string]: Level}) {
+export type IAction = IPerformActionAction | IChangeLevelAction;
+
+export function findEntityLevel(entityId: string, levels: { [id: string]: Level}) {
     return _.find(levels, (level) => {
-        return level.entities.some((id) => id === "0");
+        return level.entities.some((id) => entityId === id);
     });
 }
 
-export function updateUserLevel(state: IState, update: (level: Level) => { level: Level, user?: Entity.Entity }): IState {
-    const userLevel = findUserLevel(state.levels);
-    const { level, user } = update(userLevel);
+export function updateEntityLevel(
+    state: IState,
+    entityId: string,
+    update: (level: Level) => { level: Level, entity?: Entity.Entity }): IState {
+    const userLevel = findEntityLevel(entityId, state.levels);
+    const { level, entity } = update(userLevel);
 
     const newState = _.assign({}, state, {
         levels: _.assign({}, state.levels, {
@@ -23,98 +29,168 @@ export function updateUserLevel(state: IState, update: (level: Level) => { level
         }),
     });
 
-    if (user != null) {
+    if (entity != null) {
         newState.entities = _.assign({}, state.entities, {
-            [user.id]: user,
+            [entity.id]: entity,
         });
     }
 
     return newState;
 }
 
-
-export interface IAction {
-    type: string;
+export interface IPerformActionAction {
+    actorId: string;
+    action: ModelActions.Action;
+    type: "PerformAction";
 }
-
-export interface IMoveAction extends IAction {
-    direction: Position;
-}
-export function createMoveAction(direction: Position): IMoveAction {
+export function createPerformActionAction(actorId: string, action: ModelActions.Action): IPerformActionAction {
     return {
-        direction: direction,
-        type: "MOVE_ACTION"
+        actorId,
+        action,
+        type: "PerformAction",
     };
 }
 
-export function handleMoveAction(state: IState, action: IMoveAction): IState {
+/**
+ * Update state in response to the perform action action. Handles invalid actor/action combinations by returning
+ * the same state reference.
+ */
+export function handlePerformActionAction(state: IState, action: IPerformActionAction): IState {
+    // TODO fill in
+    const actorAction = action.action;
+    const actor = state.entities[action.actorId];
+    if (actorAction.type === "move") {
+        return moveAction(state, action.actorId, actorAction);
+    } else if (actorAction.type === "nothing") {
+        return state;
+    } else if (actorAction.type === "go-downstairs") {
+        const actorLevel = findEntityLevel(actor.id, state.levels);
+        const currentTile = actorLevel.map.get(actor.position.x, actor.position.y);
+        if (currentTile.type === TileType.DOWNSTAIRS) {
+            const levelIndex = state.levelOrder.indexOf(actorLevel.id);
+            const action: IChangeLevelAction = {
+                newLevel: levelIndex + 1,
+                entityId: actor.id,
+                type: "ChangeLevel",
+            };
+            return handleChangeLevelAction(state, action);
+        }
+    } else if (actorAction.type === "go-upstairs") {
+        const actorLevel = findEntityLevel(actor.id, state.levels);
+        const currentTile = actorLevel.map.get(actor.position.x, actor.position.y);
+        if (currentTile.type === TileType.UPSTAIRS) {
+            const levelIndex = state.levelOrder.indexOf(actorLevel.id);
+            const action: IChangeLevelAction = {
+                newLevel: levelIndex - 1,
+                entityId: actor.id,
+                type: "ChangeLevel",
+            };
+            return handleChangeLevelAction(state, action);
+        }
+    }
+}
 
-    return updateUserLevel(state, (userLevel) => {
-        const user: Entity.User = state.entities["0"];
-        const newPositionTile = userLevel.map.get(user.position.x + action.direction.x,
-                                                  user.position.y + action.direction.y);
+function moveAction(state: IState, actorId: string, action: ModelActions.IMoveAction): IState {
+    const offsets = {
+        "left": {
+            x: -1,
+            y: 0
+        },
+        "right": {
+            x: 1,
+            y: 0
+        },
+        "up": {
+            x: 0,
+            y: -1
+        },
+        "down": {
+            x: 0,
+            y: 1
+        }
+    }
+
+    return updateEntityLevel(state, actorId, (level) => {
+        const actor = state.entities[actorId];
+        const direction = offsets[action.direction];
+        const newPositionTile = level.map.get(
+            actor.position.x + direction.x,
+            actor.position.y + direction.y);
         if (newPositionTile == null || newPositionTile.type === TileType.WALL) {
             return {
-                level: userLevel,
-                user: user
+                level: level,
+                entity: actor
             };
         } else {
-            const newUser = user.clone();
-            newUser.move(action.direction);
+            const newActor = actor.clone();
+            newActor.move(direction);
 
-            const newMap = userLevel.map.clone();
-            newMap.removeVision(user.position, 7);
-            newMap.giveVision(newUser.position, 7);
+            const newMap = level.map.clone();
+            newMap.removeVision(actor.position, 7);
+            newMap.giveVision(newActor.position, 7);
 
+            // const entityId =
+            // const newEntities = [
+            //
+            // ]
             return {
-                level: new Level(userLevel.id, newMap, userLevel.entities),
-                user: newUser
+                level: new Level(level.id, newMap, level.entities),
+                entity: newActor
             };
         }
     });
 }
 
-export interface IMapEvolveAction extends IAction {
-    ruleset: string;
-}
-export function createMapEvolveAction(ruleset: string): IMapEvolveAction {
-    return {
-        ruleset,
-        type: "MAP_EVOLVE"
-    };
-}
+// export interface IMapEvolveAction extends IAction {
+//     ruleset: string;
+// }
+// export function createMapEvolveAction(ruleset: string): IMapEvolveAction {
+//     return {
+//         ruleset,
+//         type: "MAP_EVOLVE"
+//     };
+// }
+//
+// export function handleMapEvolveAction(state: IState, action: IMapEvolveAction): IState {
+//     return updateUserLevel(state, (level: Level) => {
+//         const newMap = level.map.clone();
+//         newMap.lifelikeEvolve(action.ruleset);
+//         return {
+//             level: new Level(level.id, newMap, level.entities),
+//         };
+//     });
+// }
 
-export function handleMapEvolveAction(state: IState, action: IMapEvolveAction): IState {
-    return updateUserLevel(state, (level: Level) => {
-        const newMap = level.map.clone();
-        newMap.lifelikeEvolve(action.ruleset);
-        return {
-            level: new Level(level.id, newMap, level.entities),
-        };
-    });
-}
-
-export interface IChangeLevelAction extends IAction {
+/**
+ * Move an entity to another level. This is a basic state changing action
+ * that can be used in many different situations (e.g. going upstairs,
+ * teleporting, falling down a hole, etc.).
+ */
+export interface IChangeLevelAction {
+    entityId: string;
     newLevel: number;
+    type: "ChangeLevel";
 }
-export function createChangeLevelAction(newLevel: number): IChangeLevelAction {
+
+export function createChangeLevelAction(entityId: string, newLevel: number): IChangeLevelAction {
     return {
+        entityId,
         newLevel,
-        type: "CHANGE_LEVEL"
+        type: "ChangeLevel"
     }
 }
 
 export function handleChangeLevelAction(state: IState, action: IChangeLevelAction): IState {
     // delete entity from old level
     const newLevelId = state.levelOrder[action.newLevel];
-    let user: Entity.User;
-    const newState = updateUserLevel(state, (level) => {
-        return { level: new Level(level.id, level.map, level.entities.slice(1)) };
+    const entity = state.entities[action.entityId];
+    const newState = updateEntityLevel(state, action.entityId, (level) => {
+        return { level: new Level(level.id, level.map, _.without(level.entities, action.entityId)) };
     });
 
     const newMap = newState.levels[newLevelId].map.clone();
-    newMap.giveVision(user.position, 7);
-    const newLevel = new Level(newLevelId, newMap, [user.id, ...newState.levels[newLevelId].entities]);
+    newMap.giveVision(entity.position, 7);
+    const newLevel = new Level(newLevelId, newMap, [entity.id, ...newState.levels[newLevelId].entities]);
 
     const newLevels = _.assign({}, newState.levels, {
         [newLevelId]: newLevel

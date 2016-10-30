@@ -12,84 +12,13 @@ import { connect, Provider } from "react-redux";
 import { forEachOnLineInGrid, Position } from "./math";
 import * as Entity from "./model/entity";
 import { Level, Tile, TileType, generateMap } from "./model/level";
+import * as ModelAction from "./model/action";
+import reducer from "./reducer";
 import { IState } from "./state";
 import {repeat, clone} from "./util";
-import { IAction, findUserLevel } from "./action";
+import { IAction, findEntityLevel, createPerformActionAction, createChangeLevelAction } from "./action";
 
 import "./index.less";
-
-function buildInitialState(): IState {
-    const center = {x: 30, y: 15};
-    const user = new Entity.User("0", center);
-    const mercury = new Entity.Mercury("1", {x: 2, y: 2});
-    const level0 = new Level("0", generateMap(center),
-        [
-            user.id,
-            mercury.id
-        ]
-    );
-    // level0.addLeaves();
-    level0.map.giveVision(center, 7);
-    const levels = {
-        0: level0,
-    }
-    const levelOrder = ["0"];
-    for(let depth = 1; depth < 5; depth += 1) {
-        const id = depth.toString();
-        const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
-        const currentLevel = new Level(id, newMap, []);
-        // currentLevel.addLeaves();
-        levels[id] = currentLevel;
-        levelOrder.push(id);
-    }
-    // const lastLevel = levels[levels.length - 1];
-    // const ringPosition = lastLevel.map.getDownstairsPosition();
-    // lastLevel.map.setImportantTile(ringPosition, TileType.DECORATIVE_SPACE);
-    // const ringEntity = new Entity.Ring(ringPosition);
-    // lastLevel.entities.push(ringEntity);
-
-    return {
-        entities: {
-            [user.id]: user,
-            [mercury.id]: mercury
-        },
-        levelOrder,
-        levels,
-    };
-}
-const INITIAL_STATE: IState = buildInitialState();
-
-const Direction = {
-    LEFT: {
-        x: -1,
-        y: 0
-    },
-    RIGHT: {
-        x: 1,
-        y: 0
-    },
-    UP: {
-        x: 0,
-        y: -1
-    },
-    DOWN: {
-        x: 0,
-        y: 1
-    }
-}
-
-import { handleMoveAction, IMoveAction, IMapEvolveAction, createMoveAction,createMapEvolveAction,handleMapEvolveAction,IChangeLevelAction,createChangeLevelAction,handleChangeLevelAction } from "./action";
-function reducer(state: IState = INITIAL_STATE, action: IAction): IState {
-    if (action.type === "MOVE_ACTION") {
-        return handleMoveAction(state, action as IMoveAction);
-    } else if(action.type === "MAP_EVOLVE") {
-        return handleMapEvolveAction(state, action as IMapEvolveAction);
-    } else if(action.type === "CHANGE_LEVEL") {
-        return handleChangeLevelAction(state, action as IChangeLevelAction);
-    } else {
-        return state;
-    }
-}
 
 class PureEntityInfo extends React.Component<{entity: Entity.Entity, floor: number}, {}> {
     render() {
@@ -112,7 +41,7 @@ class PureEntityInfo extends React.Component<{entity: Entity.Entity, floor: numb
 }
 
 interface IPureHeadsUpDisplayProps {
-    user: Entity.User;
+    user: Entity.Entity;
     userLevel: Level;
     userFloor: number;
 }
@@ -128,7 +57,7 @@ class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps, {}> {
 }
 
 function mapStateToProps(state: IState): IPureHeadsUpDisplayProps {
-    const userLevel = findUserLevel(state.levels);
+    const userLevel = findEntityLevel("0", state.levels);
     const userFloor = state.levelOrder.indexOf(userLevel.id);
     return {
         user: state.entities["0"] as Entity.User,
@@ -174,9 +103,12 @@ class PureLevel extends React.Component<ILevelProps, {}> {
             left: entity.position.x * 25,
             top: entity.position.y * 25
         };
+        const className = classnames("fa", "entity", entity.iconClass(), {
+            item: entity instanceof Entity.Item
+        });
         return <i
             style={style}
-            className={`fa entity ${entity.iconClass()}`}
+            className={className}
             key={JSON.stringify(entity)}>
             </i>;
     }
@@ -213,37 +145,41 @@ interface IGameProps {
 
 class PureGame extends React.Component<IGameProps, {}> {
     private handleKeyPress = (event: any) => {
-        const mapping = {
-            KeyW: Direction.UP,
-            KeyA: Direction.LEFT,
-            KeyS: Direction.DOWN,
-            KeyD: Direction.RIGHT
+        const mapping: { [key: string]: ModelAction.Action } = {
+            KeyW: {
+                direction: "up",
+                type: "move",
+            },
+            KeyA: {
+                direction: "left",
+                type: "move",
+            },
+            KeyS: {
+                direction: "down",
+                type: "move",
+            },
+            KeyD: {
+                direction: "right",
+                type: "move",
+            },
+            KeyQ: {
+                type: "go-upstairs",
+            },
+            KeyE: {
+                type: "go-downstairs",
+            },
         };
-        if (event.code === "KeyZ") {
-            this.props.dispatch(createMapEvolveAction("45678/3"));
-        }
-        if (event.code === "KeyX") {
-            this.props.dispatch(createMapEvolveAction("1234/3"));
-        }
+        // if (event.code === "KeyZ") {
+        //     this.props.dispatch(createMapEvolveAction("45678/3"));
+        // }
+        // if (event.code === "KeyX") {
+        //     this.props.dispatch(createMapEvolveAction("1234/3"));
+        // }
 
-        const userLevel = findUserLevel(this.props.state.levels);
+        const userLevel = findEntityLevel("0", this.props.state.levels);
         const userLevelIndex = this.props.state.levelOrder.indexOf(userLevel.id);
-        if (event.code === "KeyQ") {
-            const user = this.props.state.entities["0"];
-            const currentTile = userLevel.map.get(user.position.x, user.position.y);
-            if (currentTile.type === TileType.UPSTAIRS) {
-                this.props.dispatch(createChangeLevelAction(userLevelIndex - 1));
-            }
-        }
-        if (event.code === "KeyE") {
-            const user = this.props.state.entities["0"];
-            const currentTile = userLevel.map.get(user.position.x, user.position.y);
-            if (currentTile.type === TileType.DOWNSTAIRS) {
-                this.props.dispatch(createChangeLevelAction(userLevelIndex + 1));
-            }
-        }
         if (mapping[event.code]) {
-            this.props.dispatch(createMoveAction(mapping[event.code]));
+            this.props.dispatch(createPerformActionAction("0", mapping[event.code]));
         }
     };
     private throttledHandleKeyPress = _.throttle(this.handleKeyPress, 100);
@@ -258,7 +194,7 @@ class PureGame extends React.Component<IGameProps, {}> {
     }
 
     render() {
-        const userLevel = findUserLevel(this.props.state.levels);
+        const userLevel = findEntityLevel("0", this.props.state.levels);
         const user = this.props.state.entities["0"];
         const getEntity = (e: string) => this.props.state.entities[e];
 
@@ -278,7 +214,20 @@ const Game = connect(
     (dispatch: Redux.Dispatch<IState>) => { return { dispatch } }
 )(PureGame);
 
+
+function processNextEntityTurn(store: Redux.Store<IState>) {
+    const state = store.getState();
+    const actorId = state.loopCoordinator.turnOrder[0];
+    const actor = state.entities[actorId] as Entity.Actor;
+    actor.decideNextAction(state).then((action) => {
+        store.dispatch(createPerformActionAction(actorId, action));
+        processNextEntityTurn(store);
+    });
+}
+
 const store = Redux.createStore(reducer);
+processNextEntityTurn(store);
+
 ReactDOM.render(
     <Provider store={store}>
         <Game />
