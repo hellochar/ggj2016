@@ -74,6 +74,8 @@ export function handlePerformActionAction(state: IState, action: IPerformActionA
                 type: "ChangeLevel",
             };
             return handleChangeLevelAction(state, action);
+        } else {
+            return state;
         }
     } else if (actorAction.type === "go-upstairs") {
         const actorLevel = findEntityLevel(actor.id, state.levels);
@@ -86,7 +88,11 @@ export function handlePerformActionAction(state: IState, action: IPerformActionA
                 type: "ChangeLevel",
             };
             return handleChangeLevelAction(state, action);
+        } else {
+            return state;
         }
+    } else {
+        throw new Error(`got unknown action ${JSON.stringify(actorAction)}`);
     }
 }
 
@@ -183,20 +189,24 @@ export function createChangeLevelAction(entityId: string, newLevel: number): ICh
 export function handleChangeLevelAction(state: IState, action: IChangeLevelAction): IState {
     // delete entity from old level
     const newLevelId = state.levelOrder[action.newLevel];
-    const entity = state.entities[action.entityId];
-    const newState = updateEntityLevel(state, action.entityId, (level) => {
-        return { level: new Level(level.id, level.map, _.without(level.entities, action.entityId)) };
-    });
+    if (newLevelId !== undefined) {
+        const entity = state.entities[action.entityId];
+        const newState = updateEntityLevel(state, action.entityId, (level) => {
+            return { level: new Level(level.id, level.map, _.without(level.entities, action.entityId)) };
+        });
 
-    const newMap = newState.levels[newLevelId].map.clone();
-    newMap.giveVision(entity.position, 7);
-    const newLevel = new Level(newLevelId, newMap, [entity.id, ...newState.levels[newLevelId].entities]);
+        const newMap = newState.levels[newLevelId].map.clone();
+        newMap.giveVision(entity.position, 7);
+        const newLevel = new Level(newLevelId, newMap, [entity.id, ...newState.levels[newLevelId].entities]);
 
-    const newLevels = _.assign({}, newState.levels, {
-        [newLevelId]: newLevel
-    });
+        const newLevels = _.assign({}, newState.levels, {
+            [newLevelId]: newLevel
+        });
 
-    return _.assign({}, newState, {
-        levels: newLevels
-    });
+        return _.assign({}, newState, {
+            levels: newLevels
+        });
+    } else {
+        return state;
+    }
 }

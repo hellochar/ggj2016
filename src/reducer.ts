@@ -1,3 +1,4 @@
+/* tslint:disable */
 
 import { IAction, findEntityLevel, handlePerformActionAction, handleChangeLevelAction } from "./action";
 import * as Entity from "./model/entity";

@@ -215,18 +215,18 @@ const Game = connect(
 )(PureGame);
 
 
-function processNextEntityTurn(store: Redux.Store<IState>) {
-    const state = store.getState();
-    const actorId = state.loopCoordinator.turnOrder[0];
-    const actor = state.entities[actorId] as Entity.Actor;
-    actor.decideNextAction(state).then((action) => {
-        store.dispatch(createPerformActionAction(actorId, action));
-        processNextEntityTurn(store);
-    });
-}
-
+// function processNextEntityTurn(store: Redux.Store<IState>) {
+//     const state = store.getState();
+//     const actorId = state.loopCoordinator.turnOrder[0];
+//     const actor = state.entities[actorId] as Entity.Actor;
+//     actor.decideNextAction(state).then((action) => {
+//         store.dispatch(createPerformActionAction(actorId, action));
+//         processNextEntityTurn(store);
+//     });
+// }
+//
 const store = Redux.createStore(reducer);
-processNextEntityTurn(store);
+// processNextEntityTurn(store);
 
 ReactDOM.render(
     <Provider store={store}>
