@@ -1,11 +1,4 @@
 # ggj2016
-This boilerplate combines:
-* [Typescript](https://github.com/Microsoft/TypeScript)
-* [React](https://github.com/facebook/react)
-* [Webpack](https://github.com/webpack/webpack)
-* [Jasmine](https://github.com/jasmine/jasmine)
-* [Karma](https://github.com/karma-runner/karma)
-* [CSS modules](https://github.com/css-modules/css-modules)
 
 ## Getting started
 * run **npm start** to build and start webpack-dev-server
@@ -16,23 +9,14 @@ This boilerplate combines:
 * **npm run watch** for incremental builds on every file change
 * **npm start** to build and start webpack-dev-server
 
-## Tests
-* **npm test** - single run unit tests in PhantomJS
-* **npm run test-debug** - to run repeated unit tests in PhantomJS after every file change
-* **npm run test-browser**- single run unit tests in Chrome
-* **npm run test-browser-debug** - to run repeated unit tests after every file change in Chrome with debug option
-    * After browser is opened click on "DEBUG" button in top right corner
-    * Hit F12 to debug
+## Ramblings
+Iteration 1:
+* Core game loop - there are emergent systems of NPCs in this universe and
+they will interact with each other and with the game in specific ways. You,
+the player, needs to observe and understand what's happening in the game -
+how the NPCs are moving and interacting with each other, and how to interact
+with them to influence the game to be in your favor.
+* Your ultimate goal is to earn as many points as you can before you die.
 
-###Visual Studio Code integration
-####Show tslint errors only in VS Code
-* Hit Ctrl + P
-* Run "task tslint-watch"
-
-####Show webpack errors in VS Code
-* Hit Ctrl + P
-* Run "task webpack-watch"
-
-####Kill running task
-* Hit Ctrl + shift + P
-* Run "Tasks: Terminate Running Task"
+Iteration 2 - simplify:
+* Your ultimate goal is to retrieve the ring at the last floor before you die.

@@ -196,6 +196,18 @@ export class Level {
         return leaves;
     }
 
+    public placeRing() {
+        const ringPosition = this.map.getDownstairsPosition();
+        this.map.setImportantTile(ringPosition, TileType.DECORATIVE_SPACE);
+        const ringEntity: Entity.IRing = {
+            id: Math.random().toString(16).substring(2),
+            type: "ring",
+            position: ringPosition,
+        };
+        this.entities.push(ringEntity.id);
+        return ringEntity;
+    }
+
     // perform AI update on each entity that isn't the user
     public update() {
         // this.entities.map()

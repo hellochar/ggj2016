@@ -37,7 +37,7 @@ function buildInitialState(): IState {
         0: level0,
     };
     const levelOrder = ["0"];
-    for (let depth = 1; depth < 5; depth += 1) {
+    for (let depth = 1; depth < 3; depth += 1) {
         const id = depth.toString();
         const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
         const currentLevel = new Level(id, newMap, []);
@@ -45,11 +45,9 @@ function buildInitialState(): IState {
         levels[id] = currentLevel;
         levelOrder.push(id);
     }
-    // const lastLevel = levels[levels.length - 1];
-    // const ringPosition = lastLevel.map.getDownstairsPosition();
-    // lastLevel.map.setImportantTile(ringPosition, TileType.DECORATIVE_SPACE);
-    // const ringEntity = new Entity.Ring(ringPosition);
-    // lastLevel.entities.push(ringEntity);
+
+    const lastLevel = levels[levelOrder[levelOrder.length - 1]];
+    entitiesToAdd.push(lastLevel.placeRing());
 
     return {
         entities: _.keyBy(entitiesToAdd, "id"),
