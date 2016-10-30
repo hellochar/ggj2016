@@ -8,8 +8,21 @@ function buildInitialState(): IState {
 
     const center = {x: 30, y: 15};
 
-    const user = new Entity.User("0", center);
-    const mercury = new Entity.Mercury("1", {x: 2, y: 2});
+    const user: Entity.IUser = {
+        id: "0",
+        type: "user",
+        name: "hellochar",
+        position: center,
+        health: 10,
+        maxHealth: 10,
+    };
+    const mercury: Entity.IMercury = {
+        id: "1",
+        type: "mercury",
+        position: {x: 2, y: 2},
+        health: 5,
+        maxHealth: 5,
+    };
 
     entitiesToAdd.push(user, mercury);
     const level0 = new Level("0", generateMap(center),

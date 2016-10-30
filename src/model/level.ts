@@ -170,17 +170,24 @@ export class Level {
      * Create a bunch of leaves and add references to them. The caller must immediately
      * add them to the game.
      */
-    public addLeaves(): Entity.Leaf[] {
+    public addLeaves(): Entity.ILeaf[] {
         const offsetX = Math.random() * 100;
         const offsetY = Math.random() * 100;
-        const leaves: Entity.Leaf[] = [];
+        const leaves: Entity.ILeaf[] = [];
         for (let x = 0; x < this.map.width; x++) {
             for (let y = 0; y < this.map.height; y++) {
                 if (this.map.get(x, y).type === TileType.SPACE) {
                     const z = this.leafConcentration(x * 0.15 + offsetX, y * 0.15 + offsetY);
                     if (z > 0.5) {
                         const id = Math.random().toString(16).substring(2);
-                        leaves.push(new Entity.Leaf(id, 1 + Math.floor(z * 5), { x, y }));
+                        const leaf: Entity.ILeaf = {
+                            health: 1 + Math.floor(z * 5),
+                            id,
+                            maxHealth: 5,
+                            position: { x, y },
+                            type: "leaf",
+                        };
+                        leaves.push(leaf);
                         this.entities.push(id);
                     }
                 }

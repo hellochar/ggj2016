@@ -59,7 +59,7 @@ export function handleIterateUntilActorTurnAction(initialState: IState, action: 
     let state = initialState;
     while (state.turnOrder[0] !== action.actorId) {
         const actor = state.entities[state.turnOrder[0]] as Entity.Actor;
-        const nextAction = actor.decideNextAction(state);
+        const nextAction = Entity.decideNextAction(state, actor);
         state = handlePerformActionAction(state, {
             actorId: actor.id,
             action: nextAction,
@@ -89,7 +89,7 @@ export function createPerformActionAction(actorId: string, action: ModelActions.
  */
 export function handlePerformActionAction(state: IState, action: IPerformActionAction): IState {
     const actorAction = action.action;
-    const actor = state.entities[action.actorId];
+    const actor = state.entities[action.actorId] as Entity.Actor;
     if (actorAction.type === "move") {
         return moveAction(state, action.actorId, actorAction);
     } else if (actorAction.type === "nothing") {
@@ -157,8 +157,7 @@ function moveAction(state: IState, actorId: string, action: ModelActions.IMoveAc
         if (newPositionTile == null || newPositionTile.type === TileType.WALL) {
             return { level };
         } else {
-            const newActor = actor.clone();
-            newActor.move(direction);
+            const newActor = Entity.move(actor, direction);
 
             if (actorId === "0") {
                 const newMap = level.map.clone();

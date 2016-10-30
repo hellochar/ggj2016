@@ -19,9 +19,42 @@ fa-500px, fa-deviantart, fa-forumbee, fa-gg, fa-opencart
 */
 
 import { IPosition } from "../math";
-import { clone } from "../util";
 import { IState } from "../state";
 import * as Actions from "./action";
+
+export function move<T extends IHasPosition>(e: T, offset: IPosition) {
+    return _.assign({}, e, {
+        position: {
+            x: e.position.x + offset.x,
+            y: e.position.y + offset.y
+        }
+    });
+}
+
+export function decideNextAction(state: IState, actor: Actor): Actions.Action {
+    switch (actor.type) {
+        case "user": return null;
+        case "mercury":
+            const possibleActions: Actions.Action[] = [
+                {
+                    type: "nothing"
+                }, {
+                    direction: "up",
+                    type: "move"
+                }, {
+                    direction: "down",
+                    type: "move"
+                }, {
+                    direction: "left",
+                    type: "move"
+                }, {
+                    direction: "right",
+                    type: "move"
+                }
+            ];
+            return _.sample(possibleActions) as Actions.Action;
+    }
+}
 
 /* TODO
  * 1. Make entities only move by returning Redux Actions.
@@ -38,148 +71,67 @@ import * as Actions from "./action";
 // mutate the Entity's exposed members.
 
 /**
- * Base class for Entities - any object that exists in the game.
+ * Properties common to entities - anything that exists in the game.
  */
-export abstract class Entity {
-    constructor(public id: string,
-                public health: number,
-                public maxHealth: number,
-                public name: string,
-                public position: IPosition) {
-    }
+export interface IBaseEntity {
+    /**
+     * Unique id of this entity.
+     */
+    id: string;
+}
+
+export interface IHasHealth {
+    /**
+     * Health of this entity.
+     */
+    health: number;
 
     /**
-     * Mutate this entity by offsetting the position.
+     * Max health of this entity.
      */
-    public move(offset: IPosition) {
-        this.position = {
-            x: this.position.x + offset.x,
-            y: this.position.y + offset.y
-        };
-    }
-
-    public abstract clone(): this;
-
-    public abstract iconClass(): string;
+    maxHealth: number;
 }
 
-export abstract class Item extends Entity {
+export interface IHasPosition {
+    /**
+     * Entity's current position in the 2D universe.
+     */
+    position: IPosition;
 }
+
+export type Entity = Item | Actor | ITree;
+
+export type Item = ILeaf | IRing;
+
+export interface IBaseActor extends IBaseEntity, IHasPosition, IHasHealth { }
 
 /**
  * An actor is an Entity that is placed in the turn order and can take actions when it is
  * that actor's turn.
  */
-export abstract class Actor extends Entity {
-    public abstract decideNextAction(state: IState): Actions.Action;
+export type Actor = IUser | IMercury;
+
+export interface IUser extends IBaseActor {
+    type: "user";
+
+    /**
+     * Non-unique name of this entity, to be shown to users.
+     */
+    name: string;
 }
 
-export class User extends Actor {
-    constructor(id: string, p: IPosition) {
-        super(id, 10, 10, "hellochar", p);
-    }
-
-    public iconClass() { return "fa-user user"; }
-
-    public decideNextAction(state: IState): Actions.Action {
-        return null; // TODO fill user movement into this
-    }
-
-    public clone() {
-        const newUser = new User(this.id, clone(this.position));
-        newUser.health = this.health;
-        newUser.maxHealth = this.maxHealth;
-        newUser.name = this.name;
-        return newUser as this;
-    }
+export interface IMercury extends IBaseActor {
+    type: "mercury";
 }
 
-export class Mercury extends Actor {
-    constructor(id: string, p: IPosition) {
-        super(id, 25, 25, "Mercury", p);
-    }
-
-    public iconClass() { return "fa-mercury"; }
-
-    public decideNextAction(state: IState): Actions.Action {
-        const possibleActions: Actions.Action[] = [
-            {
-                type: "nothing"
-            }, {
-                direction: "up",
-                type: "move"
-            }, {
-                direction: "down",
-                type: "move"
-            }, {
-                direction: "left",
-                type: "move"
-            }, {
-                direction: "right",
-                type: "move"
-            }
-        ];
-        return _.sample(possibleActions) as Actions.Action;
-    }
-
-    public clone() {
-        const newMercury = new Mercury(this.id, clone(this.position));
-        newMercury.health = this.health;
-        newMercury.maxHealth = this.maxHealth;
-        newMercury.name = this.name;
-        return newMercury as this;
-    }
+export interface IRing extends IBaseEntity, IHasPosition {
+    type: "ring";
 }
 
-export class Ring extends Item {
-    constructor(id: string, p: IPosition) {
-        super(id, 0, 0, "Ring", p);
-    }
-
-    public iconClass() { return "fa-circle-o-notch important"; }
-
-    public clone() {
-        const newRing = new Ring(this.id, clone(this.position));
-        newRing.health = this.health;
-        newRing.maxHealth = this.maxHealth;
-        newRing.name = this.name;
-        return newRing as this;
-    }
+export interface ITree extends IBaseEntity, IHasPosition {
+    type: "tree";
 }
 
-export class Tree extends Actor {
-    constructor(id: string, p: IPosition) {
-        super(id, 1, 1, "Tree", p);
-    }
-
-    public decideNextAction(state: IState): Actions.Action {
-        return { type: "nothing" };
-    }
-
-    public iconClass() {
-        return "fa-tree";
-    }
-
-    public clone() {
-        return new Tree(this.id, clone(this.position)) as this;
-    }
-}
-
-export class Leaf extends Item {
-    constructor(id: string, health: number, p: IPosition) {
-        super(id, health, 5, "Leaf", p);
-    }
-
-    public iconClass() {
-        if (this.health > 4) {
-            return "fa-pagelines";
-        } else {
-            return "fa-leaf";
-        }
-    }
-
-    public clone() {
-        const newLeaf = new Leaf(this.id, this.health, clone(this.position));
-        return newLeaf as this;
-    }
+export interface ILeaf extends IBaseEntity, IHasHealth, IHasPosition {
+    type: "leaf";
 }

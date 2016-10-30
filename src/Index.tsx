@@ -18,7 +18,7 @@ import { findEntityLevel, createPerformActionAction } from "./action";
 
 import "./index.less";
 
-class PureEntityInfo extends React.Component<{entity: Entity.Entity, floor: number}, {}> {
+class PureEntityInfo extends React.Component<{entity: Entity.IUser, floor: number}, {}> {
     public render() {
         const { entity } = this.props;
         const healthPercentage = entity.health / entity.maxHealth;
@@ -38,7 +38,7 @@ class PureEntityInfo extends React.Component<{entity: Entity.Entity, floor: numb
 }
 
 interface IPureHeadsUpDisplayProps {
-    user: Entity.Entity;
+    user: Entity.IUser;
     userLevel: Level;
     userFloor: number;
 }
@@ -57,7 +57,7 @@ function mapStateToProps(state: IState): IPureHeadsUpDisplayProps {
     const userLevel = findEntityLevel("0", state.levels);
     const userFloor = state.levelOrder.indexOf(userLevel.id);
     return {
-        user: state.entities["0"] as Entity.User,
+        user: state.entities["0"] as Entity.IUser,
         userLevel,
         userFloor,
     };
@@ -95,14 +95,38 @@ class PureLevel extends React.Component<ILevelProps, {}> {
         return <i className={className} key={`${x},${y}`}></i>;
     }
 
+    /**
+     * Add per-entity classnames.
+     */
+    public getIconClassForEntity(entity: Entity.Entity) {
+        switch (entity.type) {
+            case "user": return "fa-user";
+            case "mercury": return "fa-mercury";
+            case "ring": return "fa-circle-o-notch";
+            case "tree": return "fa-tree";
+            case "leaf":
+                if (entity.health > 4) {
+                    return "fa-pagelines";
+                } else {
+                    return "fa-leaf";
+                }
+        }
+    }
+
     public elementForEntity(entity: Entity.Entity) {
         const style = {
             left: entity.position.x * 25,
             top: entity.position.y * 25
         };
-        const className = classnames("fa", "entity", entity.iconClass(), {
-            item: entity instanceof Entity.Item
-        });
+        const className = classnames(
+            "fa",
+            this.getIconClassForEntity(entity),
+            "rg-entity",
+            {
+                "rg-entity-item": entity.type === "ring" || entity.type === "leaf",
+                "rg-entity-user": entity.type === "user"
+            }
+        );
         return <i
             style={style}
             className={className}
