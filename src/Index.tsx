@@ -20,7 +20,7 @@ import { IAction, findEntityLevel, createPerformActionAction, createChangeLevelA
 import "./index.less";
 
 class PureEntityInfo extends React.Component<{entity: Entity.Entity, floor: number}, {}> {
-    render() {
+    public render() {
         const { entity } = this.props;
         const healthPercentage = entity.health / entity.maxHealth;
         const healthIndicatorClassnames = classnames("rg-entity-info-health", {
@@ -50,7 +50,7 @@ class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps, {}> {
             <div className="rg-hud">
                 <PureEntityInfo entity={this.props.user} floor={this.props.userFloor} />
             </div>
-        )
+        );
     }
 }
 
@@ -74,12 +74,12 @@ interface ILevelProps {
 
 class PureLevel extends React.Component<ILevelProps, {}> {
     public iconClassForTile(tile: TileType) {
-        switch(tile) {
-            case TileType.SPACE: return 'fa-square-o space';
-            case TileType.WALL: return 'fa-stop';
-            case TileType.DOWNSTAIRS: return 'fa-chevron-down';
-            case TileType.UPSTAIRS: return 'fa-chevron-up';
-            case TileType.DECORATIVE_SPACE: return 'fa-slack space';
+        switch (tile) {
+            case TileType.SPACE: return "fa-square-o space";
+            case TileType.WALL: return "fa-stop";
+            case TileType.DOWNSTAIRS: return "fa-chevron-down";
+            case TileType.UPSTAIRS: return "fa-chevron-up";
+            case TileType.DECORATIVE_SPACE: return "fa-slack space";
         }
     }
 
@@ -183,7 +183,7 @@ class PureGame extends React.Component<IGameProps, {}> {
         }, false);
     }
 
-    render() {
+    public render() {
         const userLevel = findEntityLevel("0", this.props.state.levels);
         const user = this.props.state.entities["0"];
         const getEntity = (e: string) => this.props.state.entities[e];
@@ -200,8 +200,8 @@ class PureGame extends React.Component<IGameProps, {}> {
 }
 
 const Game = connect(
-    (state: IState) => { return { state } },
-    (dispatch: Redux.Dispatch<IState>) => { return { dispatch } }
+    (state: IState) => { return { state }; },
+    (dispatch: Redux.Dispatch<IState>) => { return { dispatch }; }
 )(PureGame);
 
 const store = Redux.createStore(reducer);

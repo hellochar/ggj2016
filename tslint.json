@@ -5,13 +5,7 @@
             "parameters",
             "statements"
         ],
-        "ban": false,
         "class-name": true,
-        "comment-format": [
-            true,
-            "check-space",
-            "check-uppercase"
-        ],
         "curly": true,
         "eofline": false,
         "forin": true,
@@ -21,15 +15,9 @@
         "interface-name": true,
         "jsdoc-format": true,
         "label-position": true,
-        "label-undefined": true,
         "max-line-length": [ true, 140 ],
-        "member-ordering": [
-            true,
-            "public-before-private",
-            "static-before-instance",
-            "variables-before-functions"
-        ],
-        "no-any": true,
+        "member-access": true,
+        "member-ordering": false,
         "no-arg": true,
         "no-bitwise": true,
         "no-console": [
@@ -42,20 +30,18 @@
         ],
         "no-consecutive-blank-lines": true,
         "no-construct": true,
-        "no-constructor-vars": true,
         "no-debugger": false,
         "no-duplicate-key": true,
         "no-duplicate-variable": true,
-        "no-empty": true,
         "no-eval": true,
         "no-string-literal": true,
-        "no-switch-case-fall-through": true,
         "trailing-comma": false,
         "no-trailing-whitespace": false,
         "no-unreachable": true,
         "no-unused-expression": true,
         "no-unused-variable": false,
         "no-use-before-declare": true,
+        "no-var-keyword": true,
         "no-var-requires": false,
         "one-line": [
             true,
@@ -67,15 +53,12 @@
         "quotemark": [ true, "double" ],
         "radix": true,
         "semicolon": true,
-        "switch-default": true,
+        "switch-default": false,
         "triple-equals": [ true, "allow-null-check" ],
         "typedef": [
             true,
-            "call-signature",
             "parameter",
-            "property-declaration",
-            "variable-declaration",
-            "member-variable-declaration"
+            "property-declaration"
         ],
         "typedef-whitespace": [
             true,
@@ -87,12 +70,7 @@
                 "variable-declaration": "nospace"
             }
         ],
-        "use-strict": [
-            true,
-            "check-module",
-            "check-function"
-        ],
-        "variable-name": true,
+        "variable-name": false,
         "whitespace": [
             true,
             "check-branch",
