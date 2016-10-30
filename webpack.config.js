@@ -17,7 +17,7 @@ var config = {
       'react-redux'
     ],
     app: [
-      path.join(__dirname, 'src', 'Index.tsx')
+      path.join(__dirname, 'src', 'index.tsx')
     ]
   },
 
