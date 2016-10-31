@@ -1,5 +1,4 @@
 /*
-
 to implement:
 fa-pied-piper-alt as a dart blower
 fa-odnoklassniki as a POWERMAN;  see also fa-odnoklassniki-square for an alternate version
@@ -17,8 +16,6 @@ misc cool ones:
 fa-500px, fa-deviantart, fa-forumbee, fa-gg, fa-opencart
 
 */
-
-
 
 import { IPosition } from "../math";
 import { IState } from "../state";
