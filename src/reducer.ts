@@ -15,6 +15,10 @@ function buildInitialState(): IState {
         position: center,
         health: 10,
         maxHealth: 10,
+        inventory: {
+            itemIds: [],
+            maxSize: 20
+        }
     };
     const mercury: Entity.IMercury = {
         id: "1",
@@ -22,6 +26,10 @@ function buildInitialState(): IState {
         position: {x: 2, y: 2},
         health: 5,
         maxHealth: 5,
+        inventory: {
+            itemIds: [],
+            maxSize: 20
+        }
     };
 
     entitiesToAdd.push(user, mercury);

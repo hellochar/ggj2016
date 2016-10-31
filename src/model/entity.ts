@@ -18,9 +18,21 @@ fa-500px, fa-deviantart, fa-forumbee, fa-gg, fa-opencart
 
 */
 
+
+
 import { IPosition } from "../math";
 import { IState } from "../state";
 import * as Actions from "./action";
+
+/**
+ * Utility methods.
+ */
+export function getEntitiesAtPosition(state: IState, levelId: string, position: IPosition): string[] {
+    const allEntitiesOnLevel = state.levels[levelId].entities;
+    return allEntitiesOnLevel.filter((entityId) => {
+        return _.isEqual(state.entities[entityId].position, position);
+    });
+}
 
 export function move<T extends IHasPosition>(e: T, offset: IPosition) {
     return _.assign({}, e, {
@@ -99,11 +111,34 @@ export interface IHasPosition {
     position: IPosition;
 }
 
+export interface IHasInventory {
+    /**
+     *
+     */
+     inventory: IInventory;
+}
+
+export interface IInventory {
+    /**
+     * Array of items in this inventory.
+     */
+    itemIds: string[];
+
+    /**
+     * Max number of items that can be held.
+     */
+    maxSize?: number;
+}
+
 export type Entity = Item | Actor | ITree;
 
 export type Item = ILeaf | IRing;
 
-export interface IBaseActor extends IBaseEntity, IHasPosition, IHasHealth { }
+export function isItem(e: Entity): e is Item {
+    return e.type === "leaf" || e.type === "ring";
+}
+
+export interface IBaseActor extends IBaseEntity, IHasPosition, IHasHealth, IHasInventory { }
 
 /**
  * An actor is an Entity that is placed in the turn order and can take actions when it is

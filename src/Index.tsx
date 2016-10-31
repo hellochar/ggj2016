@@ -123,7 +123,7 @@ class PureLevel extends React.Component<ILevelProps, {}> {
             this.getIconClassForEntity(entity),
             "rg-entity",
             {
-                "rg-entity-item": entity.type === "ring" || entity.type === "leaf",
+                "rg-entity-item": Entity.isItem(entity),
                 "rg-entity-user": entity.type === "user"
             }
         );
@@ -193,6 +193,21 @@ class PureGame extends React.Component<IGameProps, {}> {
                 type: "nothing",
             },
         };
+
+        // add pick-up-item if available
+        const itemsBeneathUser = Entity.getEntitiesAtPosition(
+            this.props.state,
+            findEntityLevel("0", this.props.state.levels).id,
+            this.props.state.entities["0"].position
+        ).filter((entityId) => {
+            return Entity.isItem(this.props.state.entities[entityId]);
+        });
+        if (itemsBeneathUser.length > 0) {
+            mapping["KeyG"] = {
+                itemId: itemsBeneathUser[0],
+                type: "pick-up-item",
+            };
+        }
 
         if (mapping[event.code]) {
             this.props.dispatch(createPerformActionAction("0", mapping[event.code]));

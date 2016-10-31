@@ -17,4 +17,27 @@ export interface IDoNothingAction {
     type: "nothing";
 }
 
-export type Action = IMoveAction | IGoDownstairsAction | IGoUpstairsAction | IDoNothingAction;
+export interface IPickUpItemAction {
+    itemId: string;
+    type: "pick-up-item";
+}
+
+export interface IDropItemAction {
+    itemId: string;
+    type: "drop-item";
+}
+
+export interface IUseItemAction {
+    itemId: string;
+    type: "use-item";
+}
+
+export type Action =
+IMoveAction |
+IGoDownstairsAction |
+IGoUpstairsAction |
+IDoNothingAction |
+IPickUpItemAction |
+IDropItemAction |
+IUseItemAction
+;

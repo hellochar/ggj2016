@@ -123,8 +123,60 @@ export function handlePerformActionAction(state: IState, action: IPerformActionA
         } else {
             return state;
         }
+    } else if (actorAction.type === "pick-up-item") {
+        const actorLevel = findEntityLevel(actor.id, state.levels);
+        const item = state.entities[actorAction.itemId];
+        const itemLevel = findEntityLevel(item.id, state.levels);
+        if (!Entity.isItem(item)) {
+            throw new Error(`tried pick-up-item on a non-item entity ${JSON.stringify(item)}`);
+        }
+        if (_.isEqual(item.position, actor.position) && itemLevel === actorLevel) {
+            return updateEntityLevel(state, actor.id, (level) => {
+                const newLevel = new Level(level.id, level.map, _.without(actorLevel.entities, item.id));
+                const newEntity = _.assign({}, actor, {
+                    inventory: _.assign({}, actor.inventory, {
+                        itemIds: [...actor.inventory.itemIds, item.id],
+                    }),
+                });
+                return {
+                    level: newLevel,
+                    entity: newEntity,
+                };
+            });
+        } else {
+            return state;
+        }
+    } else if (actorAction.type === "drop-item") {
+        const item = state.entities[actorAction.itemId];
+        if (!Entity.isItem(item)) {
+            throw new Error(`tried drop-item on a non-item ${JSON.stringify(item)}`);
+        }
+        const newState = updateEntityLevel(state, actor.id, (level) => {
+            const newLevel = new Level(level.id, level.map, [...level.entities, item.id]);
+            const newActor: Entity.Actor = _.assign({}, actor, {
+                inventory: _.assign({}, actor.inventory, {
+                    itemIds: _.without(actor.inventory.itemIds, item.id),
+                }),
+            });
+            return {
+                level: newLevel,
+                entity: newActor
+            };
+        });
+        // set new item on user's position
+        const newItem = _.assign({}, item, {
+            position: _.assign({}, actor.position),
+        });
+        return _.assign({}, newState, {
+            entities: _.assign({}, newState.entities, {
+                [item.id]: newItem,
+            }),
+        });
+    } else if (actorAction.type === "use-item") {
+        // TODO implement later
+        return _.assign({}, state);
     } else {
-        throw new Error(`got unknown action ${JSON.stringify(actorAction)}`);
+        return state;
     }
 }
 
