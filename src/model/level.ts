@@ -176,7 +176,12 @@ export class Level {
     }
 
     public isVisible(position: IPosition) {
-        return this.map.get(position.x, position.y).visible;
+        const tile = this.map.get(position.x, position.y);
+        if (tile !== undefined) {
+            return tile.visible;
+        } else {
+            return false;
+        }
     }
 
     private leafConcentration(x: number, y: number) {

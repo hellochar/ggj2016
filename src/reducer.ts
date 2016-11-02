@@ -29,7 +29,7 @@ function buildInitialState(): IState {
         0: level0,
     };
     const levelOrder = ["0"];
-    for (let depth = 1; depth < 3; depth += 1) {
+    for (let depth = 1; depth < 10; depth += 1) {
         const id = depth.toString();
         const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
         const currentLevel = new Level(id, newMap, []);

@@ -92,9 +92,11 @@ body {
         text-align: center;
     }
 
+    @hover-transition: background 0.1s, transform 0.1s, box-shadow 0.1s;
+
     .tile {
         .rg-map-cell-mixin();
-        transition: color 0.1s, background 0.1s;
+        transition: color 0.1s, @hover-transition;
 
         &.tile-remembered {
             color: rgba(0.5,0.5,0.5,0.75);
@@ -116,16 +118,29 @@ body {
                 content: " ";
             }
         }
+
+        &:hover {
+            transform: scale(1.1);
+            box-shadow: 3px 3px 2px 1px rgba(0, 0, 0, 0.15);
+        }
     }
 
     .rg-entity {
         .rg-map-cell-mixin();
+        transition: @hover-transition;
 
         position: absolute;
+
+        &:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 1px 5px rgba(79, 136, 177, 0.5);
+            background: white;
+            border-radius: 2px;
+        }
     }
 
     .rg-entity-actor {
-        transition: top 0.05s, left 0.05s;
+        transition: @hover-transition, top 0.05s, left 0.05s;
 
         animation-name: active;
         animation-duration: 2s;
