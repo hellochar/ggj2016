@@ -203,10 +203,18 @@ function moveAction(state: IState, actorId: string, action: ModelActions.IMoveAc
     return updateEntityLevel(state, actorId, (level) => {
         const actor = state.entities[actorId];
         const direction = offsets[action.direction];
-        const newPositionTile = level.map.get(
-            actor.position.x + direction.x,
-            actor.position.y + direction.y);
-        if (newPositionTile == null || newPositionTile.type === TileType.WALL) {
+        const newPosition = {
+            x: actor.position.x + direction.x,
+            y: actor.position.y + direction.y,
+        };
+        const newPositionTile = level.map.get(newPosition.x, newPosition.y);
+        const spaceIsOccupied = Entity.getEntitiesAtPosition(state, level.id, newPosition)
+            .filter((id) => !Entity.isItem(state.entities[id]))
+            .length > 0;
+        if (newPositionTile == null ||
+            level.map.isTileObstructed(newPosition) ||
+            spaceIsOccupied) {
+            // can't move there; abort action.
             return { level };
         } else {
             const newActor = Entity.move(actor, direction);

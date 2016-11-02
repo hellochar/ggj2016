@@ -78,6 +78,15 @@ export class Map {
         }
     }
 
+    public isTileFree(p: IPosition) {
+        const tile = this.get(p.x, p.y)
+        if (tile) {
+            return tile.type === TileType.SPACE;
+        } else {
+            return true;
+        }
+    }
+
     // inline mutation
     public outlineRectWithWalls(topLeft: IPosition = {x: 0, y: 0},
                                 bottomRight: IPosition = {x: this.width - 1, y: this.height - 1}) {
@@ -194,7 +203,7 @@ export class Level {
                     x: position.x + _.random(-RANGE, RANGE + 1),
                     y: position.y + _.random(-RANGE, RANGE + 1),
                 };
-            } while (this.map.isTileObstructed(newPosition));
+            } while (!this.map.isTileFree(newPosition));
 
             const home: Entity.IHouse = {
                 id: Math.random().toString(16).substring(2),
