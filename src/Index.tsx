@@ -122,6 +122,7 @@ class PureLevel extends React.Component<ILevelProps, {}> {
                 } else {
                     return "fa-leaf";
                 }
+            case "house": return "fa-home";
         }
     }
 
@@ -136,7 +137,8 @@ class PureLevel extends React.Component<ILevelProps, {}> {
             "rg-entity",
             {
                 "rg-entity-item": Entity.isItem(entity),
-                "rg-entity-user": entity.type === "user"
+                "rg-entity-user": entity.type === "user",
+                "rg-entity-actor": Entity.isActor(entity),
             }
         );
         return <i

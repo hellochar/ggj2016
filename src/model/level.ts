@@ -166,6 +166,38 @@ export class Level {
         return sin(x + sin(y)) * cos(y + cos(x));
     }
 
+    // add entities and people
+    public addVillage(): Entity.Entity[] {
+        const numHomes = _.random(1, 5);
+        // center of the homes
+        const RANGE = 4;
+        const position = {
+            x: _.random(RANGE + 1, this.map.width - RANGE - 1),
+            y: _.random(RANGE + 1, this.map.height - RANGE - 1)
+        };
+
+        const entities: Entity.Entity[] = [];
+
+        _.times(numHomes, () => {
+            const newPosition = {
+                x: position.x + _.random(-RANGE, RANGE + 1),
+                y: position.y + _.random(-RANGE, RANGE + 1),
+            };
+
+            const id = Math.random().toString(16).substring(2);
+            const home: Entity.IHouse = {
+                id: id,
+                type: "house",
+                position: newPosition,
+            };
+
+            this.entities.push(id);
+            entities.push(home);
+        });
+
+        return entities;
+    }
+
     /**
      * Create a bunch of leaves and add references to them. The caller must immediately
      * add them to the game.

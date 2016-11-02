@@ -40,6 +40,7 @@ function buildInitialState(): IState {
         ]
     );
     entitiesToAdd.push(...level0.addLeaves());
+    entitiesToAdd.push(...level0.addVillage());
     level0.map.giveVision(center, 7);
     const levels = {
         0: level0,
@@ -50,6 +51,7 @@ function buildInitialState(): IState {
         const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
         const currentLevel = new Level(id, newMap, []);
         entitiesToAdd.push(...currentLevel.addLeaves());
+        entitiesToAdd.push(...currentLevel.addVillage());
         levels[id] = currentLevel;
         levelOrder.push(id);
     }

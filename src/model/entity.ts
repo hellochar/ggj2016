@@ -127,11 +127,11 @@ export interface IInventory {
     maxSize?: number;
 }
 
-export type Entity = Item | Actor | ITree;
+export type Entity = Item | Actor | ITree | IHouse;
 
 export type Item = ILeaf | IRing;
 
-export function isItem(e: Entity): e is Item {
+export function isItem(e: Entity) {
     return e.type === "leaf" || e.type === "ring";
 }
 
@@ -142,6 +142,10 @@ export interface IBaseActor extends IBaseEntity, IHasPosition, IHasHealth, IHasI
  * that actor's turn.
  */
 export type Actor = IUser | IMercury;
+
+export function isActor(e: Entity) {
+    return e.type === "user" || e.type === "mercury";
+}
 
 export interface IUser extends IBaseActor {
     type: "user";
@@ -166,4 +170,8 @@ export interface ITree extends IBaseEntity, IHasPosition {
 
 export interface ILeaf extends IBaseEntity, IHasHealth, IHasPosition {
     type: "leaf";
+}
+
+export interface IHouse extends IBaseEntity, IHasPosition {
+    type: "house";
 }

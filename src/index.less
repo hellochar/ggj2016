@@ -1,7 +1,5 @@
 @import "../node_modules/normalize.css";
 
-@size: 25px;
-
 * {
     box-sizing: border-box;
 }
@@ -70,6 +68,8 @@ body {
     }
 }
 
+
+@cell-size: 25px;
 .rg-map {
     margin: 0;
     position: relative;
@@ -82,17 +82,19 @@ body {
     }
 
     .row {
-        height: @size;
+        height: @cell-size;
+    }
+
+    .rg-map-cell-mixin() {
+        width: @cell-size;
+        height: @cell-size;
+        font-size: @cell-size;
+        text-align: center;
     }
 
     .tile {
-        width: @size;
-        height: @size;
-        font-size: @size;
-        text-align: center;
+        .rg-map-cell-mixin();
         transition: color 0.1s, background 0.1s;
-
-        // transition: top 0.05s, left 0.05s, opacity 0.05s;
 
         &.tile-remembered {
             color: rgba(0.5,0.5,0.5,0.75);
@@ -117,11 +119,14 @@ body {
     }
 
     .rg-entity {
-        .tile;
-
-        transition: top 0.05s, left 0.05s;
+        .rg-map-cell-mixin();
 
         position: absolute;
+    }
+
+    .rg-entity-actor {
+        transition: top 0.05s, left 0.05s;
+
         animation-name: active;
         animation-duration: 2s;
         animation-timing-function: steps(2);
