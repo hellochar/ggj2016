@@ -42,7 +42,8 @@ export function forEachInRect(topLeft: IPosition, bottomRight: IPosition, cb: (p
 }
 
 export function forEachInCircle(center: IPosition, radius: number, cb: (p: IPosition) => any) {
-    forEachInRect({x: center.x - radius, y: center.y - radius},
+    forEachInRect(
+        {x: center.x - radius, y: center.y - radius},
         {x: center.x + radius, y: center.y + radius},
         (p) => {
             const {x, y} = p;
@@ -50,5 +51,6 @@ export function forEachInCircle(center: IPosition, radius: number, cb: (p: IPosi
             if (isInCircle) {
                 cb(p);
             }
-        });
-    }
+        }
+    );
+}
