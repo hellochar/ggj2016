@@ -1,4 +1,4 @@
-import { Entity } from "./model/entity";
+import { Entity, IUser } from "./model/entity";
 import { Level } from "./model/level";
 
 /**
@@ -10,6 +10,10 @@ export interface IState {
      */
     entities: {
         [entityId: string]: Entity;
+        /**
+        * The special player entity.
+        */
+        0: IUser;
     };
     /**
      * The order in which levels are stacked in the game.

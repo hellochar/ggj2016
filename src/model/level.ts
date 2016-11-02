@@ -70,7 +70,12 @@ export class Map {
     }
 
     public isTileObstructed(p: IPosition) {
-        return this.get(p.x, p.y).type === TileType.WALL;
+        const tile = this.get(p.x, p.y)
+        if (tile) {
+            return tile.type === TileType.WALL;
+        } else {
+            return true;
+        }
     }
 
     // inline mutation

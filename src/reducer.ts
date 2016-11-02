@@ -20,25 +20,8 @@ function buildInitialState(): IState {
             maxSize: 20
         }
     };
-    const mercury: Entity.IMercury = {
-        id: "1",
-        type: "mercury",
-        position: {x: 2, y: 2},
-        health: 5,
-        maxHealth: 5,
-        inventory: {
-            itemIds: [],
-            maxSize: 20
-        }
-    };
-
-    entitiesToAdd.push(user, mercury);
-    const level0 = new Level("0", generateMap(center),
-        [
-            user.id,
-            mercury.id
-        ]
-    );
+    entitiesToAdd.push(user);
+    const level0 = new Level("0", generateMap(center), [ user.id ]);
     entitiesToAdd.push(...level0.addLeaves());
     entitiesToAdd.push(...level0.addVillage());
     level0.map.giveVision(center, 7);
@@ -62,7 +45,9 @@ function buildInitialState(): IState {
     const turnOrder = entitiesToAdd.filter(Entity.isActor).map((actor) => actor.id);
 
     return {
-        entities: _.keyBy(entitiesToAdd, "id"),
+        entities: _.assign(_.keyBy(entitiesToAdd, "id"), {
+            "0": user
+        }),
         levelOrder,
         levels,
         turnOrder: turnOrder,

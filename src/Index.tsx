@@ -208,11 +208,12 @@ class PureGame extends React.Component<IGameProps, {}> {
             },
         };
 
+        const user = this.props.state.entities["0"];
         // add pick-up-item if available
         const itemsBeneathUser = Entity.getEntitiesAtPosition(
             this.props.state,
             findEntityLevel("0", this.props.state.levels).id,
-            this.props.state.entities["0"].position
+            user.position
         ).filter((entityId) => {
             return Entity.isItem(this.props.state.entities[entityId]);
         });
@@ -220,6 +221,13 @@ class PureGame extends React.Component<IGameProps, {}> {
             mapping["KeyG"] = {
                 itemId: itemsBeneathUser[0],
                 type: "pick-up-item",
+            };
+        }
+
+        if (user.inventory.itemIds.length > 0) {
+            mapping["KeyP"] = {
+                itemId: user.inventory.itemIds[0],
+                type: "drop-item",
             };
         }
 
