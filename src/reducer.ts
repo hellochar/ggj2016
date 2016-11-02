@@ -59,11 +59,13 @@ function buildInitialState(): IState {
     const lastLevel = levels[levelOrder[levelOrder.length - 1]];
     entitiesToAdd.push(lastLevel.placeRing());
 
+    const turnOrder = entitiesToAdd.filter(Entity.isActor).map((actor) => actor.id);
+
     return {
         entities: _.keyBy(entitiesToAdd, "id"),
         levelOrder,
         levels,
-        turnOrder: [user.id, mercury.id],
+        turnOrder: turnOrder,
     };
 }
 const INITIAL_STATE: IState = buildInitialState();

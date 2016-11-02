@@ -184,15 +184,30 @@ export class Level {
                 y: position.y + _.random(-RANGE, RANGE + 1),
             };
 
-            const id = Math.random().toString(16).substring(2);
             const home: Entity.IHouse = {
-                id: id,
+                id: Math.random().toString(16).substring(2),
                 type: "house",
                 position: newPosition,
             };
 
-            this.entities.push(id);
+            this.entities.push(home.id);
             entities.push(home);
+
+            const person: Entity.IMercury = {
+                id: Math.random().toString(16).substring(2),
+                type: "mercury",
+                position: newPosition,
+                // name: Math.random().toString(36).substring(7), // random string
+                health: 10,
+                maxHealth: 10,
+                inventory: {
+                    itemIds: [],
+                    maxSize: 20,
+                },
+            };
+
+            this.entities.push(person.id);
+            entities.push(person);
         });
 
         return entities;
