@@ -5,6 +5,7 @@ export interface IMoveAction {
     type: "move";
     direction: Direction;
 }
+
 export interface IGoUpstairsAction {
     type: "go-upstairs";
 }
@@ -32,6 +33,11 @@ export interface IUseItemAction {
     type: "use-item";
 }
 
+// creates a fruit in a nearby location.
+export interface ICreateFruitAction {
+    type: "create-fruit";
+}
+
 export type Action =
 IMoveAction |
 IGoDownstairsAction |
@@ -39,5 +45,6 @@ IGoUpstairsAction |
 IDoNothingAction |
 IPickUpItemAction |
 IDropItemAction |
-IUseItemAction
+IUseItemAction |
+ICreateFruitAction
 ;

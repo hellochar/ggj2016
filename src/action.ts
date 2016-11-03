@@ -130,7 +130,8 @@ export function handlePerformActionAction(state: IState, action: IPerformActionA
         if (!Entity.isItem(item)) {
             throw new Error(`tried pick-up-item on a non-item entity ${JSON.stringify(item)}`);
         }
-        if (_.isEqual(item.position, actor.position) && itemLevel === actorLevel) {
+        if (_.isEqual(item.position, actor.position) && itemLevel === actorLevel && Entity.hasInventory(actor)) {
+            // TODO associate actions with Entity traits
             return updateEntityLevel(state, actor.id, (level) => {
                 const newLevel = new Level(level.id, level.map, _.without(actorLevel.entities, item.id));
                 const newEntity = _.assign({}, actor, {
@@ -150,6 +151,9 @@ export function handlePerformActionAction(state: IState, action: IPerformActionA
         const item = state.entities[actorAction.itemId];
         if (!Entity.isItem(item)) {
             throw new Error(`tried drop-item on a non-item ${JSON.stringify(item)}`);
+        }
+        if (!Entity.hasInventory(actor)) {
+            throw new Error(`Actor of type ${actor.type} tried to drop-item, but has no inventory!`);
         }
         const newState = updateEntityLevel(state, actor.id, (level) => {
             const newLevel = new Level(level.id, level.map, [...level.entities, item.id]);
@@ -175,6 +179,25 @@ export function handlePerformActionAction(state: IState, action: IPerformActionA
     } else if (actorAction.type === "use-item") {
         // TODO implement later
         return _.assign({}, state);
+    } else if (actorAction.type === "create-fruit") {
+        const fruit: Entity.IFruit = {
+            id: Math.random().toString(16).substring(2),
+            position: {
+                x: actor.position.x + (Math.random() < 0.5 ? -1 : 1),
+                y: actor.position.y + (Math.random() < 0.5 ? -1 : 1),
+            },
+            type: "fruit",
+        };
+        const level = findEntityLevel(actor.id, state.levels);
+        const newLevel = new Level(level.id, level.map, [...level.entities, fruit.id]);
+        return _.assign({}, state, {
+            entities: _.assign({}, state.entities, {
+                [fruit.id]: fruit,
+            }),
+            levels: _.assign({}, state.levels, {
+                [level.id]: newLevel,
+            }),
+        });
     } else {
         return state;
     }

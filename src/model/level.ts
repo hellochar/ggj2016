@@ -250,7 +250,7 @@ export class Level {
         for (let x = 0; x < this.map.width; x++) {
             for (let y = 0; y < this.map.height; y++) {
                 if (this.map.get(x, y).type === TileType.SPACE) {
-                    const z = this.treeTexture(x * 0.35 + offsetX, y * 0.35 + offsetY) + Math.random() * 0.05;
+                    const z = this.treeTexture(x * 0.35 + offsetX, y * 0.35 + offsetY) + Math.random() * 0.25 - 0.125;
                     if (z > 0.98) {
                         const id = Math.random().toString(16).substring(2);
                         const tree: Entity.ITree = {

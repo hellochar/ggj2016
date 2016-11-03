@@ -62,6 +62,16 @@ export function decideNextAction(state: IState, actor: Actor): Actions.Action {
                 }
             ];
             return _.sample(possibleActions) as Actions.Action;
+        case "tree":
+            if (Math.random() < 0.02) {
+                return {
+                    type: "create-fruit",
+                };
+            } else {
+                return {
+                    type: "nothing",
+                }
+            }
     }
 }
 
@@ -109,10 +119,11 @@ export interface IHasPosition {
 }
 
 export interface IHasInventory {
-    /**
-     *
-     */
      inventory: IInventory;
+}
+
+export function hasInventory(e: Entity): e is (Entity & IHasInventory) {
+    return e.type === "user" || e.type === "mercury";
 }
 
 export interface IInventory {
@@ -127,27 +138,27 @@ export interface IInventory {
     maxSize?: number;
 }
 
-export type Entity = Item | Actor | ITree | IHouse;
+export type Entity = Item | Actor | IHouse;
 
-export type Item = ILeaf | IRing;
+export type Item = IRing | IFruit;
 
 export function isItem(e: Entity) {
-    return e.type === "leaf" || e.type === "ring";
+    return e.type === "fruit" || e.type === "ring";
 }
 
-export interface IBaseActor extends IBaseEntity, IHasPosition, IHasHealth, IHasInventory { }
+export interface IBaseActor extends IBaseEntity, IHasPosition { }
 
 /**
  * An actor is an Entity that is placed in the turn order and can take actions when it is
  * that actor's turn.
  */
-export type Actor = IUser | IMercury;
+export type Actor = IUser | IMercury | ITree;
 
 export function isActor(e: Entity) {
-    return e.type === "user" || e.type === "mercury";
+    return e.type === "user" || e.type === "mercury" || e.type === "tree";
 }
 
-export interface IUser extends IBaseActor {
+export interface IUser extends IBaseActor, IHasHealth, IHasInventory {
     type: "user";
 
     /**
@@ -156,7 +167,7 @@ export interface IUser extends IBaseActor {
     name: string;
 }
 
-export interface IMercury extends IBaseActor {
+export interface IMercury extends IBaseActor, IHasHealth, IHasInventory {
     type: "mercury";
 }
 
@@ -164,13 +175,17 @@ export interface IRing extends IBaseEntity, IHasPosition {
     type: "ring";
 }
 
-export interface ITree extends IBaseEntity, IHasPosition {
+export interface ITree extends IBaseActor {
     type: "tree";
 }
 
-export interface ILeaf extends IBaseEntity, IHasHealth, IHasPosition {
-    type: "leaf";
+export interface IFruit extends IBaseEntity, IHasPosition {
+    type: "fruit";
 }
+
+// export interface ILeaf extends IBaseEntity, IHasHealth, IHasPosition {
+//     type: "leaf";
+// }
 
 export interface IHouse extends IBaseEntity, IHasPosition {
     type: "house";

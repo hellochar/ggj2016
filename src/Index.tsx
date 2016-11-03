@@ -117,12 +117,7 @@ class PureLevel extends React.Component<ILevelProps, {}> {
             case "mercury": return "fa-mercury";
             case "ring": return "fa-circle-o-notch";
             case "tree": return "fa-tree";
-            case "leaf":
-                if (entity.health > 4) {
-                    return "fa-pagelines";
-                } else {
-                    return "fa-leaf";
-                }
+            case "fruit": return "fa-apple";
             case "house": return "fa-home";
         }
     }
@@ -140,7 +135,7 @@ class PureLevel extends React.Component<ILevelProps, {}> {
             case "mercury": return "A cave-dweller, not so different from you and I.";
             case "ring": return "The fabled Ring of Norsogoth. Who knows what would happen when it's worn?";
             case "tree": return "Sorrow is knowledge, those that know the most must mourn the deepest, the tree of knowledge is not the tree of life.";
-            case "leaf": return "Let your life lightly dance on the edges of Time like dew on the tip of a leaf.";
+            case "fruit": return "The roots of education are bitter, but the fruit is sweet.";
             case "house": return "Have nothing in your house that you do not know to be useful, or believe to be beautiful.";
         }
     }
