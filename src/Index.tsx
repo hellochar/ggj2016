@@ -86,11 +86,11 @@ interface ILevelProps {
 class PureLevel extends React.Component<ILevelProps, {}> {
     public iconClassForTile(tile: TileType) {
         switch (tile) {
-            case TileType.SPACE: return "fa-square-o space";
+            case TileType.SPACE: return "fa-square-o rg-tile-space";
             case TileType.WALL: return "fa-stop";
             case TileType.DOWNSTAIRS: return "fa-chevron-down";
             case TileType.UPSTAIRS: return "fa-chevron-up";
-            case TileType.DECORATIVE_SPACE: return "fa-slack space";
+            case TileType.DECORATIVE_SPACE: return "fa-slack rg-tile-space";
         }
     }
 
@@ -103,7 +103,7 @@ class PureLevel extends React.Component<ILevelProps, {}> {
         } else {
             visibilityClasses = "tile-unexplored";
         }
-        const className = classnames("fa", "tile", visibilityClasses);
+        const className = classnames("fa", "rg-tile", visibilityClasses);
         return <i className={className} key={`${x},${y}`}></i>;
     }
 
@@ -153,10 +153,10 @@ class PureLevel extends React.Component<ILevelProps, {}> {
             top: `-${this.props.center.y * 25}px`,
             left: `-${this.props.center.x * 25}px`,
         };
-        return <pre className="rg-map" style={style}>
+        return <div className="rg-map" style={style}>
             {this.props.level.map.getTiles().map((row, y) => {
                 return (
-                    <div className="row" key={y}>
+                    <div className="rg-row" key={y}>
                         {row.map((tile, x) => this.elementForTile(tile, x, y))}
                     </div>
                 );
@@ -169,7 +169,7 @@ class PureLevel extends React.Component<ILevelProps, {}> {
                     return null;
                 }
             })}
-        </pre>;
+        </div>;
     }
 }
 

@@ -40,7 +40,7 @@ var devConfigExtension = {
       { test: /\.import\.css$/,  loader: "style!css", include: path.resolve(__dirname, "src") },
       { test: /\.less$/, exclude: /\.module\.less$/, loader: "style!css!less", include: path.resolve(__dirname, "src") },
       { test: /\.module\.less$/, loader: "style!css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!less", include: path.resolve(__dirname, "src") },
-      { test: /\.(jpg|png|jpg|png|woff|eot|ttf|svg|gif)$/, loader: "file-loader?name=[name].[ext]" }
+      { test: /\.(jpg|png|jpg|png|woff2?|eot|ttf|svg|gif)$/, loader: "file-loader?name=[name].[ext]" }
     ]
   },
 

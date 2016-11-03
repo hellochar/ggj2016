@@ -1,4 +1,5 @@
 @import "../node_modules/normalize.css";
+@import "../node_modules/bootstrap/dist/css/bootstrap.css";
 
 * {
     box-sizing: border-box;
@@ -75,13 +76,14 @@ body {
     position: relative;
     transform: translate(50%, 50%);
     transition: top 0.05s, left 0.05s;
+    white-space: pre;
 
     .fa-square-o:before {
         position: relative;
         top: 1.2px;
     }
 
-    .row {
+    .rg-row {
         height: @cell-size;
     }
 
@@ -94,7 +96,7 @@ body {
 
     @hover-transition: background 0.1s, transform 0.1s, box-shadow 0.1s;
 
-    .tile {
+    .rg-tile {
         .rg-map-cell-mixin();
         transition: color 0.1s, @hover-transition;
 
@@ -102,7 +104,7 @@ body {
             color: rgba(0.5,0.5,0.5,0.75);
             background-color: #999;
 
-            &.space {
+            &.rg-tile-space {
                 color: rgba(0.9,0.9,0.5, 0.1);
             }
         }
@@ -176,7 +178,7 @@ body {
         }
     }
 
-    .space {
+    .rg-tile-space {
         color: rgba(1,1,1, 0.12);
     }
 
