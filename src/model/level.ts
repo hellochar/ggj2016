@@ -184,7 +184,7 @@ export class Level {
         }
     }
 
-    private leafConcentration(x: number, y: number) {
+    private treeTexture(x: number, y: number) {
         const { sin, cos } = Math;
         return sin(x + sin(y)) * cos(y + cos(x));
     }
@@ -243,30 +243,28 @@ export class Level {
      * Create a bunch of leaves and add references to them. The caller must immediately
      * add them to the game.
      */
-    public addLeaves(): Entity.ILeaf[] {
+    public addTrees(): Entity.ITree[] {
         const offsetX = Math.random() * 100;
         const offsetY = Math.random() * 100;
-        const leaves: Entity.ILeaf[] = [];
+        const trees: Entity.ITree[] = [];
         for (let x = 0; x < this.map.width; x++) {
             for (let y = 0; y < this.map.height; y++) {
                 if (this.map.get(x, y).type === TileType.SPACE) {
-                    const z = this.leafConcentration(x * 0.15 + offsetX, y * 0.15 + offsetY);
-                    if (z > 0.5) {
+                    const z = this.treeTexture(x * 0.35 + offsetX, y * 0.35 + offsetY) + Math.random() * 0.05;
+                    if (z > 0.98) {
                         const id = Math.random().toString(16).substring(2);
-                        const leaf: Entity.ILeaf = {
-                            health: 1 + Math.floor(z * 5),
+                        const tree: Entity.ITree = {
                             id,
-                            maxHealth: 5,
                             position: { x, y },
-                            type: "leaf",
+                            type: "tree",
                         };
-                        leaves.push(leaf);
+                        trees.push(tree);
                         this.entities.push(id);
                     }
                 }
             }
         }
-        return leaves;
+        return trees;
     }
 
     public placeRing() {

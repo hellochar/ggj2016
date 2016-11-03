@@ -22,7 +22,7 @@ function buildInitialState(): IState {
     };
     entitiesToAdd.push(user);
     const level0 = new Level("0", generateMap(center), [ user.id ]);
-    entitiesToAdd.push(...level0.addLeaves());
+    entitiesToAdd.push(...level0.addTrees());
     entitiesToAdd.push(...level0.addVillage());
     level0.map.giveVision(center, 7);
     const levels = {
@@ -33,7 +33,7 @@ function buildInitialState(): IState {
         const id = depth.toString();
         const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
         const currentLevel = new Level(id, newMap, []);
-        entitiesToAdd.push(...currentLevel.addLeaves());
+        entitiesToAdd.push(...currentLevel.addTrees());
         entitiesToAdd.push(...currentLevel.addVillage());
         levels[id] = currentLevel;
         levelOrder.push(id);
