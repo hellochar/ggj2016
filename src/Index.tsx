@@ -137,7 +137,7 @@ class PureLevel extends React.Component<ILevelProps, {}> {
     public descriptionForEntity(entity: Entity.Entity) {
         switch (entity.type) {
             case "user": return "An aspiring adventurer.";
-            case "mercury": return "A cave-dweller, not so alike from you and I.";
+            case "mercury": return "A cave-dweller, not so different from you and I.";
             case "ring": return "The fabled Ring of Norsogoth. Who knows what would happen when it's worn?";
             case "tree": return "Sorrow is knowledge, those that know the most must mourn the deepest, the tree of knowledge is not the tree of life.";
             case "leaf": return "Let your life lightly dance on the edges of Time like dew on the tip of a leaf.";
@@ -168,7 +168,6 @@ class PureLevel extends React.Component<ILevelProps, {}> {
 
         const popover = (
             <Bootstrap.Popover title={this.nameForEntity(entity)}>
-                { JSON.stringify (entity, null, 4) }
                 <div className="rg-entity-popover-description">
                     {this.descriptionForEntity(entity)}
                 </div>
