@@ -70,7 +70,7 @@ export function decideNextAction(state: IState, actor: Actor): Actions.Action {
             } else {
                 return {
                     type: "nothing",
-                }
+                };
             }
     }
 }

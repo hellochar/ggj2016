@@ -70,7 +70,7 @@ export class Map {
     }
 
     public isTileObstructed(p: IPosition) {
-        const tile = this.get(p.x, p.y)
+        const tile = this.get(p.x, p.y);
         if (tile) {
             return tile.type === TileType.WALL;
         } else {
@@ -79,7 +79,7 @@ export class Map {
     }
 
     public isTileFree(p: IPosition) {
-        const tile = this.get(p.x, p.y)
+        const tile = this.get(p.x, p.y);
         if (tile) {
             return tile.type === TileType.SPACE;
         } else {
