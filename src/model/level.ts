@@ -1,5 +1,6 @@
-import { forEachOnLineInGrid, forEachInRect, forEachInCircle, IPosition } from "../math";
-import { clone, repeat } from "../util";
+import * as _ from "lodash";
+
+import { forEachOnLineInGrid, forEachInRect, forEachInCircle, IPosition } from "math";
 import * as Entity from "./entity";
 
 export enum TileType {
@@ -41,7 +42,7 @@ export class Map {
     constructor(private tiles: ITile[][]) {}
 
     public clone(): Map {
-        return new Map(clone(this.tiles));
+        return new Map(_.cloneDeep(this.tiles));
     }
 
     get width() {
@@ -105,7 +106,7 @@ export class Map {
             const from = lineSegments[k];
             const to = lineSegments[k + 1];
             forEachOnLineInGrid(from, to, ({x, y}) => {
-                this.tiles[y][x].type = TileType.DECORATIVE_SPACE;
+                this.tiles[y][x].type = TileType.SPACE;
             });
         }
     }
@@ -290,9 +291,9 @@ class LifeLikeCA {
     public survive: boolean[];
     public birth: boolean[];
 
-    constructor(map: Map, surviveBirth: string) {
+    constructor(map: Map, rule: string) {
         this.map = map;
-        const [surviveString, birthString] = surviveBirth.split("/");
+        const [, birthString, surviveString] = rule.match(/B([0-8]*)\/S([0-8]*)/);
         this.survive = [];
         this.birth = [];
         for (let i = 0; i <= 8; i++) {
@@ -354,7 +355,7 @@ class LifeLikeCA {
     public simulate() {
         const {width, height} = this.map;
         // clone map
-        const newTiles = clone(this.map.getTiles());
+        const newTiles = _.cloneDeep(this.map.getTiles());
         for (let y = 0; y < height; y += 1) {
             for (let x = 0; x < width; x += 1) {
                 const nextState = this.computeNextState(x, y);
@@ -366,11 +367,31 @@ class LifeLikeCA {
 }
 
 export function generateMap(upstairs: IPosition) {
-    const width = 40;
-    const height = 20;
-    const inset = 3;
+    const width = 60;
+    const height = 30;
     let map = Map.generateRandomWalls(width, height, 0.25);
 
+    _.times(5, () => map.lifelikeEvolve("B3/S1234"));
+    _.times(100, () => map.lifelikeEvolve("B3/S45678"));
+    _.times(7, () => map.lifelikeEvolve("B3/S1234"));
+
+    // experimental: run three iteration of three random rulesets:
+    const ruleSets = [
+        "B1357/S1357",
+        "B2/S",
+        "B25/S4",
+        "B3/S012345678",
+        "B34/S34",
+        "B35678/S5678",
+        "B3678/S34678",
+        "B378/S012345678",
+        "B234/S",
+    ];
+
+    let ruleset = _.sample(ruleSets);
+    _.times(10, () => map.lifelikeEvolve(ruleset));
+
+    const inset = 3;
     function randomX() {
         return inset + Math.floor(Math.random() * (width - inset * 2));
     }
@@ -378,10 +399,6 @@ export function generateMap(upstairs: IPosition) {
     function randomY() {
         return inset + Math.floor(Math.random() * (height - inset * 2));
     }
-
-    repeat(5, () => map.lifelikeEvolve("1234/3"));
-    repeat(100, () => map.lifelikeEvolve("45678/3"));
-    repeat(7, () => map.lifelikeEvolve("1234/3"));
 
     let downstairs: IPosition;
     do {
