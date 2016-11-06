@@ -165,6 +165,12 @@ export interface IUser extends IBaseActor, IHasHealth, IHasInventory {
      * Non-unique name of this entity, to be shown to users.
      */
     name: string;
+
+    /**
+     * Number from 0 to 1 describing how full of food this entity is. 1 means
+     * completely full, 0 means starving.
+     */
+    satiation: number;
 }
 
 export interface IMercury extends IBaseActor, IHasHealth, IHasInventory {

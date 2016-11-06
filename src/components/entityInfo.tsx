@@ -2,7 +2,7 @@
 import * as classnames from "classnames";
 import * as React from "react";
 
-import { IUser } from "../model";
+import { IUser } from "model/";
 
 export class PureEntityInfo extends React.Component<{entity: IUser, floor: number}, {}> {
     public render() {
@@ -18,6 +18,7 @@ export class PureEntityInfo extends React.Component<{entity: IUser, floor: numbe
                 <div>
                     <span className="rg-entity-info-name">{entity.name}</span>
                     <span className={healthIndicatorClassnames}>{entity.health} / {entity.maxHealth}</span>
+                    <span className="rg-entity-info-hunger">fullness: {entity.satiation}</span>
                     <span className="rg-entity-info-floor">floor {this.props.floor + 1}</span>
                 </div>
                 <div>
@@ -28,7 +29,7 @@ export class PureEntityInfo extends React.Component<{entity: IUser, floor: numbe
                             );
                         })
                     }
-                    <span className="rg-entity-info-floor">{entity.inventory.itemIds.length} / {entity.inventory.maxSize}</span>
+                    <span className="rg-entity-info-floor">inventory: {entity.inventory.itemIds.length} / {entity.inventory.maxSize}</span>
                 </div>
             </div>
         );

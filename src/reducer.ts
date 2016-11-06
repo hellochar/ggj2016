@@ -18,7 +18,8 @@ function buildInitialState(): IState {
         inventory: {
             itemIds: [],
             maxSize: 20
-        }
+        },
+        satiation: 1,
     };
     entitiesToAdd.push(user);
     const level0 = new Level("0", generateMap(center), [ user.id ]);
@@ -62,8 +63,9 @@ export default function reducer(state: IState = INITIAL_STATE, action: IAction):
     if (action.type === "PerformAction") {
         const nextState = handlePerformActionAction(state, action);
         // TODO don't make this happen here
+        // nextState !== state is to ensure the action was valid and to move time forward
         if (nextState !== state && action.actorId === "0") {
-            // skip to the next turn
+            // move user to the end of the turn order
             nextState.turnOrder = [...nextState.turnOrder.splice(1), nextState.turnOrder[0]];
             return handleIterateUntilActorTurnAction(nextState, {
                 actorId: "0",
