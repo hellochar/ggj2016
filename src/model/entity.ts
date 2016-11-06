@@ -63,7 +63,7 @@ export function decideNextAction(state: IState, actor: Actor): Actions.Action {
             ];
             return _.sample(possibleActions) as Actions.Action;
         case "tree":
-            if (Math.random() < 0.02) {
+            if (Math.random() < 0.002) {
                 return {
                     type: "create-fruit",
                 };
