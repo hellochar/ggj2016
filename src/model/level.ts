@@ -371,12 +371,12 @@ export function generateMap(upstairs: IPosition) {
     const height = 30;
     let map = Map.generateRandomWalls(width, height, 0.25);
 
-    _.times(5, () => map.lifelikeEvolve("B3/S1234"));
-    _.times(100, () => map.lifelikeEvolve("B3/S45678"));
-    _.times(7, () => map.lifelikeEvolve("B3/S1234"));
+    // _.times(5, () => map.lifelikeEvolve("B3/S1234"));
+    // _.times(100, () => map.lifelikeEvolve("B3/S45678"));
+    // _.times(7, () => map.lifelikeEvolve("B3/S1234"));
 
-    // experimental: run three iteration of three random rulesets:
     const ruleSets = [
+        "B3/S1234",
         "B1357/S1357",
         "B2/S",
         "B25/S4",
@@ -389,7 +389,7 @@ export function generateMap(upstairs: IPosition) {
     ];
 
     let ruleset = _.sample(ruleSets);
-    _.times(10, () => map.lifelikeEvolve(ruleset));
+    _.times(200, () => map.lifelikeEvolve(ruleset));
 
     const inset = 3;
     function randomX() {
