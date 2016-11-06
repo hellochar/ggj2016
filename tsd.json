@@ -37,6 +37,9 @@
     },
     "react-bootstrap/react-bootstrap.d.ts": {
       "commit": "baadc0b1309dbd75b25bac04bbee67976e2fbd17"
+    },
+    "redux-logger/redux-logger.d.ts": {
+      "commit": "e7772769fab8c206449ce9673cac417370330aa9"
     }
   }
 }

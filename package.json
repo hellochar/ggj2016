@@ -19,7 +19,8 @@
     "react-bootstrap": "^0.30.6",
     "react-dom": "~0.14.3",
     "react-redux": "^4.4.5",
-    "redux": "^3.6.0"
+    "redux": "^3.6.0",
+    "redux-logger": "^2.7.4"
   },
   "devDependencies": {
     "css-loader": "~0.23.0",
