@@ -32,7 +32,10 @@ var config = {
     alias: {
       'react': path.join(nodeModulesPath, 'react', 'react.js'),
       'react-dom': path.join(nodeModulesPath, 'react-dom', 'dist', 'react-dom.js'),
-    }
+    },
+    root: [
+      path.join(__dirname, "src")
+    ]
   },
 
   output: {
