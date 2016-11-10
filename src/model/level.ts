@@ -375,6 +375,7 @@ export function generateMap(upstairs: IPosition) {
     // _.times(100, () => map.lifelikeEvolve("B3/S45678"));
     // _.times(7, () => map.lifelikeEvolve("B3/S1234"));
 
+    // TODO look at http://psoup.math.wisc.edu/mcell/rullex_life.html
     const ruleSets = [
         "B3/S1234",
         "B1357/S1357",
@@ -386,10 +387,11 @@ export function generateMap(upstairs: IPosition) {
         "B3678/S34678",
         "B378/S012345678",
         "B234/S",
+        "B45678/S2345", // walled cities - looks interesting
     ];
 
     let ruleset = _.sample(ruleSets);
-    _.times(200, () => map.lifelikeEvolve(ruleset));
+    _.times(100, () => map.lifelikeEvolve(ruleset));
 
     const inset = 3;
     function randomX() {
