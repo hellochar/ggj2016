@@ -3,14 +3,11 @@ import {
     handlePerformActionAction,
     handleChangeLevelAction,
     handleIterateUntilActorTurnAction,
-    handleUserDied,
+    handleSetScreen,
     handleResetGameAction
 } from "action";
 import { IState } from "state";
-
-function badTypeError(t: never): never {
-    throw new Error(`Didn't understand ${JSON.stringify(t)}`);
-}
+import { badTypeError } from "util";
 
 /**
  * Top-level reducer for the game.
@@ -32,7 +29,7 @@ export default function reducer(state: IState, action: IAction): IState {
             }
             // kill user if dead
             if (user.health <= 0) {
-                return handleUserDied(nextState);
+                return handleSetScreen(nextState, { type: "SetScreen", screen: "user-died" });
             }
             return handleIterateUntilActorTurnAction(nextState, {
                 actorId: "0",

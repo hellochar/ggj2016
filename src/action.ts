@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import * as ModelActions from "model/action";
 import * as Entity from "model/entity";
 import { Level, TileType } from "model/level";
-import { IState } from "state";
+import { IState, Screen } from "state";
 import { buildInitialState } from "initialState";
 
 export type IAction = IPerformActionAction | IChangeLevelAction | IIterateUntilActorTurnAction | IResetGameAction | IReduxInitAction;
@@ -87,10 +87,21 @@ export function handleIterateUntilActorTurnAction(initialState: IState, action: 
     return state;
 }
 
-export function handleUserDied(state: IState): IState {
-    return _.assign({}, state, {
-        userDead: true
-    });
+export interface ISetScreenAction {
+    screen: Screen;
+    type: "SetScreen";
+}
+export function createSetScreenAction(screen: Screen): ISetScreenAction {
+    return {
+        screen,
+        type: "SetScreen",
+    };
+}
+
+export function handleSetScreen(state: IState, action: ISetScreenAction): IState {
+    const newState = _.assign({}, state);
+    newState.screen = action.screen;
+    return newState;
 }
 
 export interface IPerformActionAction {
@@ -326,6 +337,13 @@ export function createChangeLevelAction(entityId: string, newLevel: number): ICh
 }
 
 export function handleChangeLevelAction(state: IState, action: IChangeLevelAction): IState {
+    const userHasRing = _.some(state.entities[0].inventory.itemIds, (itemId) => {
+        return state.entities[itemId].type === "ring";
+    });
+    // user has gotten out!
+    if (action.newLevel === -1 && userHasRing) {
+        return handleSetScreen(state, { type: "SetScreen", screen: "user-won" });
+    }
     // delete entity from old level
     const newLevelId = state.levelOrder[action.newLevel];
     if (newLevelId !== undefined) {

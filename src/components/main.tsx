@@ -1,22 +1,30 @@
 import * as React from "react";
 import { connect } from "react-redux";
 
-import { IState } from "state";
-
 import { Game } from "components/game";
-import { GameOverScreen } from "components/gameOver";
+import { UserDiedScreen } from "components/userDiedScreen";
+import { UserWonScreen } from "components/userWonScreen";
+import { IState, Screen } from "state";
+import { badTypeError } from "util";
 
 export interface IMainProps {
-    userDead: boolean;
+    screen: Screen;
 }
 
 export class PureMain extends React.Component<IMainProps, {}> {
     public render() {
-        return this.props.userDead ?
-            <GameOverScreen /> : <Game />;
+        if (this.props.screen === "play") {
+            return <Game />;
+        } else if (this.props.screen === "user-died") {
+            return <UserDiedScreen />;
+        } else if (this.props.screen === "user-won") {
+            return <UserWonScreen />;
+        } else {
+            return badTypeError(this.props.screen);
+        }
     }
 }
 
 export const Main = connect(
-    (state: IState) => { return { userDead: state.userDead }; },
+    (state: IState) => { return { screen: state.screen }; },
 )(PureMain);

@@ -51,6 +51,6 @@ export function buildInitialState(): IState {
         levelOrder,
         levels,
         turnOrder: turnOrder,
-        userDead: false,
+        screen: "play",
     };
 }

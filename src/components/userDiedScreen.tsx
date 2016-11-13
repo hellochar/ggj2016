@@ -5,19 +5,19 @@ import { connect } from "react-redux";
 import { createResetGameAction } from "action";
 import { IState } from "state";
 
-export interface IGameOverScreenProps {
+export interface IUserDiedScreenProps {
     dispatch: Redux.Dispatch<IState>;
     state: IState;
 }
 
-export class PureGameOverScreen extends React.Component<IGameOverScreenProps, {}> {
+export class PureUserDiedScreen extends React.Component<IUserDiedScreenProps, {}> {
     public handleRetryButtonClick = (event: React.SyntheticEvent) => {
         this.props.dispatch(createResetGameAction());
     };
 
     public render() {
         return (
-            <div className="rg-game-over">
+            <div className="rg-screen-user-died">
                 <h1>{this.props.state.entities[0].name} has fallen!</h1>
                 <p>Our brave hero could not retrieve the Ring of Norsogoth.</p>
                 <button onClick={this.handleRetryButtonClick}>Retry</button>
@@ -26,7 +26,7 @@ export class PureGameOverScreen extends React.Component<IGameOverScreenProps, {}
     }
 }
 
-export const GameOverScreen = connect(
+export const UserDiedScreen = connect(
     (state: IState) => { return { state }; },
     (dispatch: Redux.Dispatch<IState>) => { return { dispatch }; }
-)(PureGameOverScreen);
+)(PureUserDiedScreen);
