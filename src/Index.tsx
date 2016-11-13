@@ -6,7 +6,7 @@ import * as Redux from "redux";
 import { Provider } from "react-redux";
 import * as createLogger from "redux-logger";
 
-import { Game } from "components/game";
+import { Main } from "components/main";
 import reducer from "reducer";
 
 import "./index.less";
@@ -16,5 +16,5 @@ const store = Redux.createStore(reducer, Redux.applyMiddleware(logger));
 
 ReactDOM.render(
     <Provider store={store}>
-        <Game />
+        <Main />
     </Provider>, document.getElementById("root"));

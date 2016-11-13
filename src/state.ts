@@ -30,4 +30,9 @@ export interface IState {
      * list will act, and then be pushed to the back of the turn order.
      */
     turnOrder: string[];
+    /**
+     * If true, the user is dead and we should show the appropriate UI.
+     * TODO turn this into a proper set of game state objects.
+     */
+    userDead: boolean;
 }

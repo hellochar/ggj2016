@@ -70,6 +70,12 @@ export function handleIterateUntilActorTurnAction(initialState: IState, action: 
     return state;
 }
 
+export function handleUserDied(state: IState): IState {
+    return _.assign({}, state, {
+        userDead: true
+    });
+}
+
 export interface IPerformActionAction {
     actorId: string;
     action: ModelActions.Action;
