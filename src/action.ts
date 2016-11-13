@@ -200,8 +200,7 @@ export function handlePerformActionAction(state: IState, action: IPerformActionA
             }),
         });
     } else if (actorAction.type === "use-item") {
-        // TODO implement later
-        return _.assign({}, state);
+        return useItem(state, actor, actorAction.itemId);
     } else if (actorAction.type === "create-fruit") {
         const fruit: Entity.IFruit = {
             id: Math.random().toString(16).substring(2),
@@ -222,6 +221,31 @@ export function handlePerformActionAction(state: IState, action: IPerformActionA
             }),
         });
     } else {
+        return state;
+    }
+}
+
+function useItem(state: IState, actor: Entity.Actor, itemId: string): IState {
+    const item = state.entities[itemId] as Entity.Item;
+    if (item.type === "fruit") {
+        // eat the fruit: remove the item from existence and satiate the user
+        const newEntities = _.assign({}, state.entities);
+        delete newEntities[itemId];
+
+        if (actor.type === "user") {
+            const newUser = _.assign({}, actor);
+            newUser.satiation = 1;
+            newUser.inventory = _.assign({}, newUser.inventory, {
+                itemIds: _.without(newUser.inventory.itemIds, itemId)
+            });
+            newEntities[actor.id] = newUser;
+        }
+
+        return _.assign({}, state, {
+            entities: _.assign({}, state.entities, newEntities)
+        });
+    } else {
+        // cannot use the item; cancel
         return state;
     }
 }

@@ -1,13 +1,15 @@
 import * as classnames from "classnames";
 import * as React from "react";
 import { connect } from "react-redux";
+import * as Redux from "redux";
 
 import { EntityComponent } from "components/entity";
 import { IUser, Level } from "model/";
 import { IState } from "state";
-import { findEntityLevel } from "action";
+import { createPerformActionAction, findEntityLevel } from "action";
 
 interface IPureHeadsUpDisplayProps {
+    dispatch: Redux.Dispatch<IState>;
     state: IState;
     user: IUser;
     userLevel: Level;
@@ -15,6 +17,14 @@ interface IPureHeadsUpDisplayProps {
 }
 
 export class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps, {}> {
+    public handleItemDoubleClick(event: React.SyntheticEvent, itemId: string) {
+        const action = createPerformActionAction(this.props.user.id, {
+            itemId,
+            type: "use-item",
+        });
+        this.props.dispatch(action);
+    }
+
     public render() {
         const { user: entity } = this.props;
         const healthPercentage = entity.health / entity.maxHealth;
@@ -39,6 +49,7 @@ export class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps
                                 <div className="rg-entity-info-item">
                                     <EntityComponent
                                         entity={this.props.state.entities[itemId]}
+                                        onDoubleClick={(event) => this.handleItemDoubleClick(event, itemId)}
                                         popoverPlacement="bottom"
                                         usePosition={false} />
                                 </div>
@@ -52,7 +63,7 @@ export class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps
     }
 }
 
-function mapStateToProps(state: IState): IPureHeadsUpDisplayProps {
+function mapStateToProps(state: IState) {
     const userLevel = findEntityLevel("0", state.levels);
     const userFloor = state.levelOrder.indexOf(userLevel.id);
     return {
@@ -63,4 +74,7 @@ function mapStateToProps(state: IState): IPureHeadsUpDisplayProps {
     };
 }
 
-export const HeadsUpDisplay = connect(mapStateToProps)(PureHeadsUpDisplay);
+export const HeadsUpDisplay = connect(
+    mapStateToProps,
+    (dispatch: Redux.Dispatch<IState>) => { return { dispatch }; }
+)(PureHeadsUpDisplay);

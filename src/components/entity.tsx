@@ -36,13 +36,14 @@ function descriptionForEntity(entity: Entity) {
     }
 }
 
-export interface IEntityProps {
+export interface IEntityProps extends React.HTMLProps<HTMLElement> {
     entity: Entity;
     popoverPlacement?: "top" | "left" | "right" | "bottom";
     usePosition?: boolean;
 }
 
-export function EntityComponent({ entity, popoverPlacement = "top", usePosition = true }: IEntityProps) {
+export function EntityComponent(props: IEntityProps) {
+    const { entity, popoverPlacement = "top", usePosition = true } = props;
     const style = usePosition ? {
             left: entity.position.x * 25,
             top: entity.position.y * 25,
@@ -58,7 +59,8 @@ export function EntityComponent({ entity, popoverPlacement = "top", usePosition 
             "rg-entity-actor": isActor(entity),
         }
     );
-    const entityElement = <i style={style} className={className} />;
+    
+    const entityElement = <i style={style} className={className} {...props} />;
 
     const popover = (
         <Bootstrap.Popover title={nameForEntity(entity)}>
