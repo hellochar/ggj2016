@@ -38,10 +38,11 @@ function descriptionForEntity(entity: Entity) {
 
 export interface IEntityProps {
     entity: Entity;
+    popoverPlacement?: "top" | "left" | "right" | "bottom";
     usePosition?: boolean;
 }
 
-export function EntityComponent({ entity, usePosition = true }: IEntityProps) {
+export function EntityComponent({ entity, popoverPlacement = "top", usePosition = true }: IEntityProps) {
     const style = usePosition ? {
             left: entity.position.x * 25,
             top: entity.position.y * 25,
@@ -68,7 +69,7 @@ export function EntityComponent({ entity, usePosition = true }: IEntityProps) {
     );
 
     return (
-        <Bootstrap.OverlayTrigger delayShow={200} placement="top" overlay={popover}>
+        <Bootstrap.OverlayTrigger delayShow={200} placement={popoverPlacement} overlay={popover}>
             { entityElement }
         </Bootstrap.OverlayTrigger>
     );

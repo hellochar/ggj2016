@@ -37,7 +37,10 @@ export class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps
                         entity.inventory.itemIds.map((itemId) => {
                             return (
                                 <div className="rg-entity-info-item">
-                                    <EntityComponent entity={this.props.state.entities[itemId]} usePosition={false} />
+                                    <EntityComponent
+                                        entity={this.props.state.entities[itemId]}
+                                        popoverPlacement="bottom"
+                                        usePosition={false} />
                                 </div>
                             );
                         })
