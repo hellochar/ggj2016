@@ -1,4 +1,11 @@
-import { IAction, handlePerformActionAction, handleChangeLevelAction, handleIterateUntilActorTurnAction, handleUserDied, handleResetGameAction } from "action";
+import {
+    IAction,
+    handlePerformActionAction,
+    handleChangeLevelAction,
+    handleIterateUntilActorTurnAction,
+    handleUserDied,
+    handleResetGameAction
+} from "action";
 import { IState } from "state";
 
 function badTypeError(t: never): never {

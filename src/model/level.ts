@@ -272,7 +272,9 @@ export class Level {
 
     public placeRing() {
         const ringPosition = this.map.getDownstairsPosition();
-        if (ringPosition == null) throw new Error("ringPosition somehow null!");
+        if (ringPosition == null) {
+            throw new Error("ringPosition somehow null!");
+        }
         this.map.setImportantTile(ringPosition, TileType.DECORATIVE_SPACE);
         const ringEntity: Entity.IRing = {
             id: Math.random().toString(16).substring(2),
@@ -297,7 +299,9 @@ class LifeLikeCA {
     constructor(map: Map, rule: string) {
         this.map = map;
         const match = rule.match(/B([0-8]*)\/S([0-8]*)/);
-        if (match == null) throw new Error("Invalid CA rule " + match);
+        if (match == null) {
+            throw new Error("Invalid CA rule " + match);
+        }
         const [, birthString, surviveString] = match;
         this.survive = [];
         this.birth = [];
@@ -434,7 +438,6 @@ export function generateMap(upstairs: IPosition) {
         // their insides are many single disconnected spaces. the outer edge is jagged.
         "B345/S4567",
     ];
-
 
     let ruleset = _.sample(ruleSets);
     _.times(100, () => map.lifelikeEvolve(ruleset));
