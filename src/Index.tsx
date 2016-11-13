@@ -15,7 +15,11 @@ import "./index.less";
 const logger = createLogger({ duration: true, timestamp: true, collapsed: () => true });
 const store = Redux.createStore(reducer, buildInitialState(), Redux.applyMiddleware(logger));
 
+const root = document.createElement("div");
+root.id = "root";
+document.body.appendChild(root);
+
 ReactDOM.render(
     <Provider store={store}>
         <Main />
-    </Provider>, document.getElementById("root"));
+    </Provider>, root);

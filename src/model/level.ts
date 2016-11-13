@@ -53,7 +53,7 @@ export class Map {
         return this.tiles.length;
     }
 
-    public get(x: number, y: number, then?: (t: ITile) => void): ITile {
+    public get(x: number, y: number, then?: (t: ITile) => void): ITile | void {
         const row = this.tiles[y];
         if (row != null) {
             const tile = row[x];
@@ -62,7 +62,9 @@ export class Map {
             }
             return tile;
         } else {
-            return undefined;
+            if (then === undefined) {
+                throw new Error(`Cannot get ${x},${y}`);
+            }
         }
     }
 
@@ -147,7 +149,7 @@ export class Map {
         this.tiles = ca.simulate();
     }
 
-    public getDownstairsPosition(): IPosition {
+    public getDownstairsPosition(): IPosition | null {
         for (let y = 0; y < this.height; y += 1) {
             for (let x = 0; x < this.width; x += 1) {
                 if (this.tiles[y][x].type === TileType.DOWNSTAIRS) {
@@ -270,6 +272,7 @@ export class Level {
 
     public placeRing() {
         const ringPosition = this.map.getDownstairsPosition();
+        if (ringPosition == null) throw new Error("ringPosition somehow null!");
         this.map.setImportantTile(ringPosition, TileType.DECORATIVE_SPACE);
         const ringEntity: Entity.IRing = {
             id: Math.random().toString(16).substring(2),
@@ -293,7 +296,9 @@ class LifeLikeCA {
 
     constructor(map: Map, rule: string) {
         this.map = map;
-        const [, birthString, surviveString] = rule.match(/B([0-8]*)\/S([0-8]*)/);
+        const match = rule.match(/B([0-8]*)\/S([0-8]*)/);
+        if (match == null) throw new Error("Invalid CA rule " + match);
+        const [, birthString, surviveString] = match;
         this.survive = [];
         this.birth = [];
         for (let i = 0; i <= 8; i++) {
@@ -377,21 +382,64 @@ export function generateMap(upstairs: IPosition) {
 
     // TODO look at http://psoup.math.wisc.edu/mcell/rullex_life.html
     const ruleSets = [
+        // MazeMine - makes dense linear mazes with long passageways
         "B3/S1234",
+
+        // Replicator - makes dense chaos with all-random
+        // Also to note - can create complex growing patterns from one (or a few)
+        // cells
         "B1357/S1357",
+
+        // seeds - generally chaotic growth. Spacious.
         "B2/S",
+
+        // unnamed - generally chaotic growth. A bit denser than seeds.
         "B25/S4",
+
+        // life without death - quickly fills up most of the space and leaves
+        // only tiny disconnected spaces.
+        // continued iteration creates beautiful natural looking coral like growths
         "B3/S012345678",
+
+        // 3-4 life; chaotic but more interesting/complex spaces; creates nice pockets
+        // of space versus rock
         "B34/S34",
-        "B35678/S5678",
-        "B3678/S34678",
-        "B378/S012345678",
+
+        // diamoeba - will almost always die with rand(0.25). At larger scales
+        // (300x200), depending on initial density, will form large amoeba shapes
+        // whose insides are completely filled with diagonals made of jagged on/offs
+        // that grow and shrink
+        // "B35678/S5678",
+
+        // day and night - will usually die at rand(0.25). At rand(0.5), clusters
+        // and makes nice blobs/formations at ~20-30 iterations
+        // at higher densities, continuous blobs will form with jagged edges
+        // that slowly erode over time
+        // "B3678/S34678",
+
+        // Plow World - very dense space filling; makes organic growths over time
+        // "B378/S012345678",
+
+        // Persian Rug - chaotic at rand(0.25); spacious and generally connected on the inside
+        // intricate patterns form from a few initial cells
+        // has an outer shell vs the chaotic inside
         "B234/S",
-        "B45678/S2345", // walled cities - looks interesting
+
+        // walled cities - rand(0.25) turns into a bunch of self-contained "cities"
+        // with a continuous shell and oscillating interior. Interior is generally
+        // chaotic with disconnected but whole spaces
+        "B45678/S2345",
+
+        // Assimilator - rand(0.25) turns into a few spaced out amoebas that never die
+        // their insides are many single disconnected spaces. the outer edge is jagged.
+        "B345/S4567",
     ];
+
 
     let ruleset = _.sample(ruleSets);
     _.times(100, () => map.lifelikeEvolve(ruleset));
+
+    console.log("using ", ruleset);
 
     const inset = 3;
     function randomX() {

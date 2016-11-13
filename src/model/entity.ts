@@ -42,7 +42,7 @@ export function move<T extends IHasPosition>(e: T, offset: IPosition) {
 
 export function decideNextAction(state: IState, actor: Actor): Actions.Action {
     switch (actor.type) {
-        case "user": return null;
+        case "user": throw new Error("decideNextAction called on user!");
         case "mercury":
             const possibleActions: Actions.Action[] = [
                 {
