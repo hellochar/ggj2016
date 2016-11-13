@@ -38,13 +38,15 @@ function descriptionForEntity(entity: Entity) {
 
 export interface IEntityProps {
     entity: Entity;
+    usePosition?: boolean;
 }
 
-export function EntityComponent({ entity }: IEntityProps) {
-    const style = {
-        left: entity.position.x * 25,
-        top: entity.position.y * 25
-    };
+export function EntityComponent({ entity, usePosition = true }: IEntityProps) {
+    const style = usePosition ? {
+            left: entity.position.x * 25,
+            top: entity.position.y * 25,
+            position: "absolute",
+        } : {};
     const className = classnames(
         "fa",
         getIconClassForEntity(entity),

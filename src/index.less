@@ -5,6 +5,22 @@
     box-sizing: border-box;
 }
 
+// pixel size of each cell (tile or entity) in the map.
+@cell-size: 25px;
+// A set of common transition properties that should animate smoothly on hover
+// of entities. Use this when overriding the transition property on a specific
+// component, but you don't want to lose the existing transition effects.
+@hover-transition: background 0.1s, transform 0.1s, box-shadow 0.1s;
+
+// A mixin to make a component adhere to the cell-size. Use on tiles, entities,
+// and other things that are one cell large.
+.rg-map-cell-mixin() {
+    width: @cell-size;
+    height: @cell-size;
+    font-size: @cell-size;
+    text-align: center;
+}
+
 html {
     width: 100%;
     height: 100%;
@@ -34,13 +50,10 @@ body {
     height: 100%;
 }
 
-.rg-hud {
+.rg-entity-info {
     color: #f3f4f9;
     position: relative;
     background: rgba(0, 0, 0, 0.25);
-}
-
-.rg-entity-info {
     padding: 10px;
 
     .rg-entity-info-name {
@@ -71,6 +84,14 @@ body {
     .rg-entity-info-floor {
         float: right;
     }
+
+    .rg-entity-info-item {
+        display: inline-block;
+        margin: 0 5px;
+        padding: 5px;
+        border: outset 4px #888;
+        background: #444;
+    }
 }
 
 .fade.in {
@@ -83,78 +104,54 @@ body {
     margin-top: 5px;
 }
 
-@cell-size: 25px;
-.rg-map {
-    margin: 0;
-    position: relative;
-    transform: translate(50%, 50%);
-    transition: top 0.05s, left 0.05s;
-    white-space: pre;
+.rg-tile {
+    .rg-map-cell-mixin();
+    transition: color 0.1s, @hover-transition;
 
-    .fa-square-o:before {
-        position: relative;
-        top: 1.2px;
+    &.rg-tile-space {
+        color: rgba(1,1,1, 0.12);
     }
 
-    .rg-row {
-        height: @cell-size;
-    }
+    &.tile-remembered {
+        color: rgba(0.5,0.5,0.5,0.75);
+        background-color: #999;
 
-    .rg-map-cell-mixin() {
-        width: @cell-size;
-        height: @cell-size;
-        font-size: @cell-size;
-        text-align: center;
-    }
-
-    @hover-transition: background 0.1s, transform 0.1s, box-shadow 0.1s;
-
-    .rg-tile {
-        .rg-map-cell-mixin();
-        transition: color 0.1s, @hover-transition;
-
-        &.tile-remembered {
-            color: rgba(0.5,0.5,0.5,0.75);
-            background-color: #999;
-
-            &.rg-tile-space {
-                color: rgba(0.9,0.9,0.5, 0.1);
-            }
-        }
-
-        &.tile-visible {
-            background: white;
-        }
-
-        &.tile-unexplored {
-            &::before {
-                // add space character to fix bug where unexplored tiles weren't
-                // aligned with the other tiles properly
-                content: " ";
-            }
-        }
-
-        &:hover {
-            transform: scale(1.1);
-            box-shadow: 3px 3px 2px 1px rgba(0, 0, 0, 0.15);
+        &.rg-tile-space {
+            color: rgba(0.9,0.9,0.5, 0.1);
         }
     }
 
-    .rg-entity {
-        .rg-map-cell-mixin();
-        transition: @hover-transition;
+    &.tile-visible {
+        background: white;
+    }
 
-        position: absolute;
-
-        &:hover {
-            transform: scale(1.2);
-            box-shadow: 0 0 1px 5px rgba(79, 136, 177, 0.5);
-            background: white;
-            border-radius: 2px;
+    &.tile-unexplored {
+        &::before {
+            // add space character to fix bug where unexplored tiles weren't
+            // aligned with the other tiles properly
+            content: " ";
         }
     }
 
-    .rg-entity-actor {
+    &:hover {
+        transform: scale(1.1);
+        box-shadow: 3px 3px 2px 1px rgba(0, 0, 0, 0.15);
+    }
+}
+
+.rg-entity {
+    .rg-map-cell-mixin();
+
+    transition: @hover-transition;
+
+    &:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 1px 5px rgba(79, 136, 177, 0.8);
+        // background: white;
+        border-radius: 2px;
+    }
+
+    &.rg-entity-actor {
         transition: @hover-transition, top 0.05s, left 0.05s;
 
         animation-name: active;
@@ -171,9 +168,31 @@ body {
             }
         }
     }
+}
 
+.rg-map {
+    margin: 0;
+    position: relative;
+    transform: translate(50%, 50%);
+    transition: top 0.05s, left 0.05s;
+    white-space: pre;
+
+    // center the square-o in the cell
+    .fa-square-o:before {
+        position: relative;
+        top: 1.2px;
+    }
+
+    .rg-row {
+        height: @cell-size;
+    }
+
+    // item specific styles while they're on the map
     .rg-entity-item {
+        // shrink items a bit to make them appear different than full entities
         transform: scale(0.65);
+
+        // make items bobble up and down on the map
         animation-duration: 1s;
         animation-name: bobble;
         animation-iteration-count: infinite;
@@ -189,10 +208,6 @@ body {
                 margin-top: 3px;
             }
         }
-    }
-
-    .rg-tile-space {
-        color: rgba(1,1,1, 0.12);
     }
 
     .rg-entity-user {

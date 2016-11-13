@@ -24,6 +24,9 @@ function buildInitialState(): IState {
     entitiesToAdd.push(user);
     const level0 = new Level("0", generateMap(center), [ user.id ]);
     entitiesToAdd.push(...level0.addTrees());
+    entitiesToAdd.push(...level0.addTrees());
+    entitiesToAdd.push(...level0.addTrees());
+    entitiesToAdd.push(...level0.addTrees());
     entitiesToAdd.push(...level0.addVillage());
     level0.map.giveVision(center, 7);
     const levels = {
