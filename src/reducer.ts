@@ -18,7 +18,7 @@ export default function reducer(state: IState, action: IAction): IState {
             nextState.turnOrder = [...nextState.turnOrder.splice(1), nextState.turnOrder[0]];
             // make user a bit hungrier
             const user = nextState.entities[0];
-            user.satiation = Math.max(0, user.satiation - 0.01);
+            user.satiation = Math.max(0, user.satiation - 0.001);
             if (user.satiation <= 0) {
                 // user is starving - start dealing damage
                 user.health -= 1;
