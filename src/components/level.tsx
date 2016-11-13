@@ -2,8 +2,9 @@ import * as classnames from "classnames";
 import * as React from "react";
 import * as Bootstrap from "react-bootstrap";
 
-import { isItem, isActor, Entity, Level, ITile, TileType } from "model/";
+import { isItem, isActor, Entity, Level } from "model/";
 import { IPosition } from "math";
+import { Tile } from "components/tile";
 
 export interface ILevelProps {
     getEntity: (id: string) => Entity;
@@ -12,29 +13,6 @@ export interface ILevelProps {
 }
 
 export class PureLevel extends React.Component<ILevelProps, {}> {
-    public iconClassForTile(tile: TileType) {
-        switch (tile) {
-            case TileType.SPACE: return "fa-square-o rg-tile-space";
-            case TileType.WALL: return "fa-stop";
-            case TileType.DOWNSTAIRS: return "fa-chevron-down";
-            case TileType.UPSTAIRS: return "fa-chevron-up";
-            case TileType.DECORATIVE_SPACE: return "fa-slack rg-tile-space";
-        }
-    }
-
-    public elementForTile(tile: ITile, x: number, y: number) {
-        let visibilityClasses: string;
-        if (tile.visible) {
-            visibilityClasses = `tile-visible ${this.iconClassForTile(tile.type)}`;
-        } else if (tile.explored) {
-            visibilityClasses = `tile-remembered ${this.iconClassForTile(tile.type)}`;
-        } else {
-            visibilityClasses = "tile-unexplored";
-        }
-        const className = classnames("fa", "rg-tile", visibilityClasses);
-        return <i className={className} key={`${x},${y}`}></i>;
-    }
-
     /**
      * Add per-entity classnames.
      */
@@ -109,13 +87,11 @@ export class PureLevel extends React.Component<ILevelProps, {}> {
             left: `-${this.props.center.x * 25}px`,
         };
         return <div className="rg-map" style={style}>
-            {this.props.level.map.getTiles().map((row, y) => {
-                return (
-                    <div className="rg-row" key={y}>
-                        {row.map((tile, x) => this.elementForTile(tile, x, y))}
-                    </div>
-                );
-            })}
+            {this.props.level.map.getTiles().map((row, y) => (
+                <div className="rg-row" key={y}>
+                    {row.map((tile, x) => <Tile tile={tile} key={`${x},${y}`} />)}
+                </div>
+            ))}
             {this.props.level.entities.map((entityId) => {
                 const entity = this.props.getEntity(entityId);
                 if (this.props.level.isVisible(entity.position)) {
