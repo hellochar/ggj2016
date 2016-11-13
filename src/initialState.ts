@@ -2,7 +2,7 @@ import * as Entity from "model/entity";
 import { Level, generateMap } from "model/level";
 import { IState } from "state";
 
-function buildInitialState(): IState {
+export function buildInitialState(): IState {
     const entitiesToAdd: Entity.Entity[] = [];
 
     const center = {x: 30, y: 15};
@@ -57,5 +57,3 @@ function buildInitialState(): IState {
         userDead: false,
     };
 }
-
-export const INITIAL_STATE: IState = buildInitialState();

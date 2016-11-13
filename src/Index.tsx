@@ -8,11 +8,12 @@ import * as createLogger from "redux-logger";
 
 import { Main } from "components/main";
 import reducer from "reducer";
+import { buildInitialState } from "initialState";
 
 import "./index.less";
 
 const logger = createLogger({ duration: true, timestamp: true, collapsed: () => true });
-const store = Redux.createStore(reducer, Redux.applyMiddleware(logger));
+const store = Redux.createStore(reducer, buildInitialState(), Redux.applyMiddleware(logger));
 
 ReactDOM.render(
     <Provider store={store}>

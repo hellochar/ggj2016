@@ -1,11 +1,12 @@
 import * as _ from "lodash";
 
-import * as ModelActions from "./model/action";
-import * as Entity from "./model/entity";
-import { Level, TileType } from "./model/level";
-import { IState } from "./state";
+import * as ModelActions from "model/action";
+import * as Entity from "model/entity";
+import { Level, TileType } from "model/level";
+import { IState } from "state";
+import { buildInitialState } from "initialState";
 
-export type IAction = IPerformActionAction | IChangeLevelAction | IIterateUntilActorTurnAction;
+export type IAction = IPerformActionAction | IChangeLevelAction | IIterateUntilActorTurnAction | IResetGameAction | IReduxInitAction;
 
 export function findEntityLevel(entityId: string, levels: { [id: string]: Level}) {
     return _.find(levels, (level: Level) => {
@@ -42,6 +43,22 @@ export function updateEntityLevel(
     } else {
         return state;
     }
+}
+
+export interface IReduxInitAction {
+    type: "@@redux/INIT";
+}
+
+export interface IResetGameAction {
+    type: "ResetGame";
+}
+
+export function createResetGameAction(): IResetGameAction {
+    return { type: "ResetGame" };
+}
+
+export function handleResetGameAction(state: IState, action: IResetGameAction): IState {
+    return buildInitialState();
 }
 
 export interface IIterateUntilActorTurnAction {

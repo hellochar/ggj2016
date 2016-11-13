@@ -1,11 +1,14 @@
-import { IAction, handlePerformActionAction, handleChangeLevelAction, handleIterateUntilActorTurnAction, handleUserDied } from "action";
+import { IAction, handlePerformActionAction, handleChangeLevelAction, handleIterateUntilActorTurnAction, handleUserDied, handleResetGameAction } from "action";
 import { IState } from "state";
-import { INITIAL_STATE } from "initialState";
+
+function badTypeError(t: never): never {
+    throw new Error(`Didn't understand ${JSON.stringify(t)}`);
+}
 
 /**
  * Top-level reducer for the game.
  */
-export default function reducer(state: IState = INITIAL_STATE, action: IAction): IState {
+export default function reducer(state: IState, action: IAction): IState {
     if (action.type === "PerformAction") {
         const nextState = handlePerformActionAction(state, action);
         // TODO don't make this happen here
@@ -35,7 +38,11 @@ export default function reducer(state: IState = INITIAL_STATE, action: IAction):
         return handleChangeLevelAction(state, action);
     } else if (action.type === "IterateUntilActorTurn") {
         return handleIterateUntilActorTurnAction(state, action);
-    } else {
+    } else if (action.type === "ResetGame") {
+        return handleResetGameAction(state, action);
+    } else if (action.type === "@@redux/INIT") {
         return state;
+    } else {
+        return badTypeError(action);
     }
 }
