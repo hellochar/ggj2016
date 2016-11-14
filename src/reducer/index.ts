@@ -44,6 +44,8 @@ export default function reducer(state: IState, action: IAction): IState {
         return handleIterateUntilActorTurnAction(state, action);
     } else if (action.type === "ResetGame") {
         return handleResetGameAction(state, action);
+    } else if (action.type === "SetScreen") {
+        return handleSetScreen(state, action);
     } else if (action.type === "@@redux/INIT") {
         return state;
     } else {

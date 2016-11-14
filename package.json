@@ -11,6 +11,7 @@
     "test-browser-debug": "karma start karma.conf.js --browsers=Chrome --single-run=false --debug --auto-watch"
   },
   "dependencies": {
+    "@types/redux-thunk": "^2.1.31",
     "bootstrap": "^3.3.7",
     "classnames": "^2.2.5",
     "lodash": "^4.16.4",
@@ -21,6 +22,7 @@
     "react-redux": "^4.4.5",
     "redux": "^3.6.0",
     "redux-logger": "^2.7.4",
+    "redux-thunk": "^2.1.0",
     "typescript": "rc"
   },
   "devDependencies": {
