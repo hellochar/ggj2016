@@ -5,16 +5,25 @@ import * as Entity from "model/entity";
 import { Level, TileType } from "model/level";
 import { IState, Screen } from "state";
 import { buildInitialState } from "initialState";
+import { badTypeError } from "util";
 
 export type IAction = IPerformActionAction | IChangeLevelAction | IIterateUntilActorTurnAction | IResetGameAction | IReduxInitAction;
 
+/**
+ * Convenience function to get the level of an entity.
+ *
+ * In a perfect world this would be a "computed" property of an Entity, or an enriched method on the Entity.
+ */
 export function findEntityLevel(entityId: string, levels: { [id: string]: Level}) {
     return _.find(levels, (level: Level) => {
         return level.entities.some((id) => entityId === id);
     });
 }
 
-export function updateEntityLevel(
+/**
+ * Convenience function to mutate the entity given by the entityId as well as the level it lives on. Useful for implementing reducers.
+ */
+function updateEntityLevel(
     state: IState,
     entityId: string,
     update: (level: Level) => { level?: Level, entity?: Entity.Entity }): IState {
@@ -125,129 +134,43 @@ export function handlePerformActionAction(state: IState, action: IPerformActionA
     const actorAction = action.action;
     const actor = state.entities[action.actorId] as Entity.Actor;
     if (actorAction.type === "move") {
-        return moveAction(state, action.actorId, actorAction);
+        return handleMoveAction(state, action.actorId, actorAction);
     } else if (actorAction.type === "nothing") {
-        // shallow clone state to indicate that the action was successfully performed.
-        return _.assign({}, state);
+        return handleNothingAction(state, actor, actorAction);
     } else if (actorAction.type === "go-downstairs") {
-        const actorLevel = findEntityLevel(actor.id, state.levels);
-        const currentTile = actorLevel.map.get(actor.position.x, actor.position.y);
-        if (currentTile.type === TileType.DOWNSTAIRS) {
-            const levelIndex = state.levelOrder.indexOf(actorLevel.id);
-            const action: IChangeLevelAction = {
-                newLevel: levelIndex + 1,
-                entityId: actor.id,
-                type: "ChangeLevel",
-            };
-            return handleChangeLevelAction(state, action);
-        } else {
-            return state;
-        }
+        return handleGoDownstairsAction(state, actor, actorAction);
     } else if (actorAction.type === "go-upstairs") {
-        const actorLevel = findEntityLevel(actor.id, state.levels);
-        const currentTile = actorLevel.map.get(actor.position.x, actor.position.y);
-        if (currentTile.type === TileType.UPSTAIRS) {
-            const levelIndex = state.levelOrder.indexOf(actorLevel.id);
-            const action: IChangeLevelAction = {
-                newLevel: levelIndex - 1,
-                entityId: actor.id,
-                type: "ChangeLevel",
-            };
-            return handleChangeLevelAction(state, action);
-        } else {
-            return state;
-        }
+        return handleGoUpstairsAction(state, actor, actorAction);
     } else if (actorAction.type === "pick-up-item") {
-        const actorLevel = findEntityLevel(actor.id, state.levels);
-        const item = state.entities[actorAction.itemId];
-        const itemLevel = findEntityLevel(item.id, state.levels);
-        if (!Entity.isItem(item)) {
-            throw new Error(`tried pick-up-item on a non-item entity ${JSON.stringify(item)}`);
-        }
-        if (_.isEqual(item.position, actor.position) && itemLevel === actorLevel && Entity.hasInventory(actor)) {
-            // TODO associate actions with Entity traits
-            return updateEntityLevel(state, actor.id, (level) => {
-                const newLevel = new Level(level.id, level.map, _.without(actorLevel.entities, item.id));
-                const newEntity = _.assign({}, actor, {
-                    inventory: _.assign({}, actor.inventory, {
-                        itemIds: [...actor.inventory.itemIds, item.id],
-                    }),
-                });
-                return {
-                    level: newLevel,
-                    entity: newEntity,
-                };
-            });
-        } else {
-            return state;
-        }
+        return handlePickUpItemAction(state, actor, actorAction);
     } else if (actorAction.type === "drop-item") {
-        const item = state.entities[actorAction.itemId];
-        if (!Entity.isItem(item)) {
-            throw new Error(`tried drop-item on a non-item ${JSON.stringify(item)}`);
-        }
-        if (!Entity.hasInventory(actor)) {
-            throw new Error(`Actor of type ${actor.type} tried to drop-item, but has no inventory!`);
-        }
-        const newState = updateEntityLevel(state, actor.id, (level) => {
-            const newLevel = new Level(level.id, level.map, [...level.entities, item.id]);
-            const newActor: Entity.Actor = _.assign({}, actor, {
-                inventory: _.assign({}, actor.inventory, {
-                    itemIds: _.without(actor.inventory.itemIds, item.id),
-                }),
-            });
-            return {
-                level: newLevel,
-                entity: newActor
-            };
-        });
-        // set new item on user's position
-        const newItem = _.assign({}, item, {
-            position: _.assign({}, actor.position),
-        });
-        return _.assign({}, newState, {
-            entities: _.assign({}, newState.entities, {
-                [item.id]: newItem,
-            }),
-        });
+        return handleDropItemAction(state, actor, actorAction);
     } else if (actorAction.type === "use-item") {
-        return useItem(state, actor, actorAction.itemId);
+        return handleUseItemAction(state, actor, actorAction);
     } else if (actorAction.type === "create-fruit") {
-        const fruit: Entity.IFruit = {
-            id: Math.random().toString(16).substring(2),
-            position: {
-                x: actor.position.x + (Math.random() < 0.5 ? -1 : 1),
-                y: actor.position.y + (Math.random() < 0.5 ? -1 : 1),
-            },
-            type: "fruit",
-        };
-        const level = findEntityLevel(actor.id, state.levels);
-        const newLevel = new Level(level.id, level.map, [...level.entities, fruit.id]);
-        return _.assign({}, state, {
-            entities: _.assign({}, state.entities, {
-                [fruit.id]: fruit,
-            }),
-            levels: _.assign({}, state.levels, {
-                [level.id]: newLevel,
-            }),
-        });
+        return handleCreateFruitAction(state, actor, actorAction);
     } else {
-        return state;
+        return badTypeError(actorAction);
     }
 }
 
-function useItem(state: IState, actor: Entity.Actor, itemId: string): IState {
-    const item = state.entities[itemId] as Entity.Item;
+function handleNothingAction(state: IState, actor: Entity.Actor, action: ModelActions.IDoNothingAction): IState {
+    // shallow clone state to indicate that the action was successfully performed.
+    return _.assign({}, state);
+}
+
+function handleUseItemAction(state: IState, actor: Entity.Actor, action: ModelActions.IUseItemAction): IState {
+    const item = state.entities[action.itemId] as Entity.Item;
     if (item.type === "fruit") {
         // eat the fruit: remove the item from existence and satiate the user
         const newEntities = _.assign({}, state.entities);
-        delete newEntities[itemId];
+        delete newEntities[action.itemId];
 
         if (actor.type === "user") {
             const newUser = _.assign({}, actor);
             newUser.satiation = 1;
             newUser.inventory = _.assign({}, newUser.inventory, {
-                itemIds: _.without(newUser.inventory.itemIds, itemId)
+                itemIds: _.without(newUser.inventory.itemIds, action.itemId)
             });
             newEntities[actor.id] = newUser;
         }
@@ -261,7 +184,7 @@ function useItem(state: IState, actor: Entity.Actor, itemId: string): IState {
     }
 }
 
-function moveAction(state: IState, actorId: string, action: ModelActions.IMoveAction): IState {
+function handleMoveAction(state: IState, actorId: string, action: ModelActions.IMoveAction): IState {
     const offsets = {
         "left": {
             x: -1,
@@ -314,6 +237,117 @@ function moveAction(state: IState, actorId: string, action: ModelActions.IMoveAc
                 };
             }
         }
+    });
+}
+
+function handleGoDownstairsAction(state: IState, actor: Entity.Actor, actorAtion: ModelActions.IGoDownstairsAction): IState {
+    const actorLevel = findEntityLevel(actor.id, state.levels);
+    const currentTile = actorLevel.map.get(actor.position.x, actor.position.y);
+    if (currentTile.type === TileType.DOWNSTAIRS) {
+        // COMPOSITION: dispatch a changeLevel action
+        const levelIndex = state.levelOrder.indexOf(actorLevel.id);
+        const action: IChangeLevelAction = {
+            newLevel: levelIndex + 1,
+            entityId: actor.id,
+            type: "ChangeLevel",
+        };
+        return handleChangeLevelAction(state, action);
+    } else {
+        return state;
+    }
+}
+
+function handleGoUpstairsAction(state: IState, actor: Entity.Actor, actorAtion: ModelActions.IGoUpstairsAction): IState {
+    const actorLevel = findEntityLevel(actor.id, state.levels);
+    const currentTile = actorLevel.map.get(actor.position.x, actor.position.y);
+    if (currentTile.type === TileType.UPSTAIRS) {
+        const levelIndex = state.levelOrder.indexOf(actorLevel.id);
+        const action: IChangeLevelAction = {
+            newLevel: levelIndex - 1,
+            entityId: actor.id,
+            type: "ChangeLevel",
+        };
+        return handleChangeLevelAction(state, action);
+    } else {
+        return state;
+    }
+}
+
+function handlePickUpItemAction(state: IState, actor: Entity.Actor, actorAction: ModelActions.IPickUpItemAction): IState {
+    const actorLevel = findEntityLevel(actor.id, state.levels);
+    const item = state.entities[actorAction.itemId];
+    const itemLevel = findEntityLevel(item.id, state.levels);
+    if (!Entity.isItem(item)) {
+        throw new Error(`tried pick-up-item on a non-item entity ${JSON.stringify(item)}`);
+    }
+    if (_.isEqual(item.position, actor.position) && itemLevel === actorLevel && Entity.hasInventory(actor)) {
+        // TODO associate actions with Entity traits
+        return updateEntityLevel(state, actor.id, (level) => {
+            const newLevel = new Level(level.id, level.map, _.without(actorLevel.entities, item.id));
+            const newEntity = _.assign({}, actor, {
+                inventory: _.assign({}, actor.inventory, {
+                    itemIds: [...actor.inventory.itemIds, item.id],
+                }),
+            });
+            return {
+                level: newLevel,
+                entity: newEntity,
+            };
+        });
+    } else {
+        return state;
+    }
+}
+
+function handleDropItemAction(state: IState, actor: Entity.Actor, actorAction: ModelActions.IDropItemAction): IState {
+    const item = state.entities[actorAction.itemId];
+    if (!Entity.isItem(item)) {
+        throw new Error(`tried drop-item on a non-item ${JSON.stringify(item)}`);
+    }
+    if (!Entity.hasInventory(actor)) {
+        throw new Error(`Actor of type ${actor.type} tried to drop-item, but has no inventory!`);
+    }
+    const newState = updateEntityLevel(state, actor.id, (level) => {
+        const newLevel = new Level(level.id, level.map, [...level.entities, item.id]);
+        const newActor: Entity.Actor = _.assign({}, actor, {
+            inventory: _.assign({}, actor.inventory, {
+                itemIds: _.without(actor.inventory.itemIds, item.id),
+            }),
+        });
+        return {
+            level: newLevel,
+            entity: newActor
+        };
+    });
+    // set new item on user's position
+    const newItem = _.assign({}, item, {
+        position: _.assign({}, actor.position),
+    });
+    return _.assign({}, newState, {
+        entities: _.assign({}, newState.entities, {
+            [item.id]: newItem,
+        }),
+    });
+}
+
+function handleCreateFruitAction(state: IState, actor: Entity.Actor, actorAction: ModelActions.ICreateFruitAction): IState {
+    const fruit: Entity.IFruit = {
+        id: Math.random().toString(16).substring(2),
+        position: {
+            x: actor.position.x + (Math.random() < 0.5 ? -1 : 1),
+            y: actor.position.y + (Math.random() < 0.5 ? -1 : 1),
+        },
+        type: "fruit",
+    };
+    const level = findEntityLevel(actor.id, state.levels);
+    const newLevel = new Level(level.id, level.map, [...level.entities, fruit.id]);
+    return _.assign({}, state, {
+        entities: _.assign({}, state.entities, {
+            [fruit.id]: fruit,
+        }),
+        levels: _.assign({}, state.levels, {
+            [level.id]: newLevel,
+        }),
     });
 }
 
