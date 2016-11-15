@@ -1,4 +1,4 @@
-@import "../node_modules/normalize.css";
+@import "~@blueprintjs/core/dist/blueprint.css";
 
 * {
     box-sizing: border-box;
@@ -97,6 +97,10 @@ body {
     opacity: 0.95;
 }
 
+.pt-popover-target {
+    position: initial;
+}
+
 .rg-entity-popover-description {
     font-style: italic;
     font-size: 12px;
@@ -184,6 +188,7 @@ body {
 
     .rg-row {
         height: @cell-size;
+        position: relative;
     }
 
     // item specific styles while they're on the map

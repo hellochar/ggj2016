@@ -17,7 +17,7 @@ interface IPureHeadsUpDisplayProps {
 }
 
 export class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps, {}> {
-    public handleItemDoubleClick(event: React.MouseEvent<HTMLElement>, itemId: string) {
+    public handleItemDoubleClick(itemId: string) {
         const action = createPerformActionAction(this.props.user.id, {
             itemId,
             type: "use-item",
@@ -49,8 +49,7 @@ export class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps
                                 <div className="rg-entity-info-item">
                                     <EntityComponent
                                         entity={this.props.state.entities[itemId]}
-                                        onDoubleClick={(event) => this.handleItemDoubleClick(event, itemId)}
-                                        popoverPlacement="bottom"
+                                        onDoubleClick={() => this.handleItemDoubleClick(itemId)}
                                         usePosition={false} />
                                 </div>
                             );
