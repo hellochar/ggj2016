@@ -5,7 +5,6 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var nodeModulesPath = path.join(__dirname, 'node_modules');
 
-
 var config = {
   // entry points - each will produce one bundled js file and one css file if there is any css in dependency tree
   entry: {
@@ -26,11 +25,6 @@ var config = {
 
   resolve: {
     extensions: ['', '.tsx', '.ts', '.js', '.less', '.css'],
-    modulesDirectories: ["node_modules", "resources"],
-    alias: {
-      'react': path.join(nodeModulesPath, 'react', 'react.js'),
-      'react-dom': path.join(nodeModulesPath, 'react-dom', 'dist', 'react-dom.js'),
-    },
     root: [
       path.join(__dirname, "src")
     ]

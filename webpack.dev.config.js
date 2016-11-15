@@ -7,9 +7,6 @@ var path = require("path");
 
 var mainConfig = new WebpackConfig().extend("webpack.config");
 
-// To work with webpack-dev-server
-webpackShared.removeObjectProperties(mainConfig.resolve.alias, ['react']);
-
 var devConfigExtension = {
   entry: {
       app: [
@@ -29,7 +26,7 @@ var devConfigExtension = {
   },
 
   // more options here: http://webpack.github.io/docs/configuration.html#devtool
-  devtool: 'eval-source-map',
+  devtool: "eval-source-map",
 
   watch: true,
 
