@@ -4,7 +4,7 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 /// <reference path="../react/react.d.ts" />
-/// <reference path="../redux/redux.d.ts" />
+/// <reference path="../../node_modules/@types/redux/index.d.ts" />
 
 declare namespace ReactRedux {
   type ComponentClass<P> = __React.ComponentClass<P>;

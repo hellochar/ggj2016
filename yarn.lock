@@ -8,15 +8,21 @@
   version "4.14.39"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.39.tgz#99e2180351609e4466abde8952d153a63a03eb14"
 
+"@types/redux", "@types/redux@*":
+  version "3.6.31"
+  resolved "https://registry.yarnpkg.com/@types/redux/-/redux-3.6.31.tgz#40eafa7575db36b912ce0059b85de98c205b0708"
+
+"@types/redux-logger":
+  version "2.6.32"
+  resolved "https://registry.yarnpkg.com/@types/redux-logger/-/redux-logger-2.6.32.tgz#017cac5dfeef9616f06e41114b7a03a9caa13141"
+  dependencies:
+    "@types/redux" "*"
+
 "@types/redux-thunk":
   version "2.1.31"
   resolved "https://registry.yarnpkg.com/@types/redux-thunk/-/redux-thunk-2.1.31.tgz#f07d6db2cc8d1fdae617b3c2b96d07d055c3072b"
   dependencies:
     "@types/redux" "*"
-
-"@types/redux@*":
-  version "3.6.31"
-  resolved "https://registry.yarnpkg.com/@types/redux/-/redux-3.6.31.tgz#40eafa7575db36b912ce0059b85de98c205b0708"
 
 abbrev@1:
   version "1.0.9"
