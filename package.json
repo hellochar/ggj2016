@@ -11,12 +11,10 @@
     "test-browser-debug": "karma start karma.conf.js --browsers=Chrome --single-run=false --debug --auto-watch"
   },
   "dependencies": {
-    "bootstrap": "^3.3.7",
     "classnames": "^2.2.5",
     "lodash": "^4.16.4",
     "normalize.css": "^5.0.0",
     "react": "^15.3.2",
-    "react-bootstrap": "^0.30.6",
     "react-dom": "^15.3.2",
     "react-redux": "^4.4.5",
     "redux": "^3.6.0",
@@ -27,7 +25,6 @@
     "@types/classnames": "^0.0.32",
     "@types/lodash": "^4.14.39",
     "@types/react": "^0.14.48",
-    "@types/react-bootstrap": "^0.0.36",
     "@types/react-dom": "^0.14.18",
     "@types/react-redux": "^4.4.32",
     "@types/redux": "^3.6.31",

@@ -12,12 +12,6 @@
   version "0.14.48"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-0.14.48.tgz#faab02ffdcb68c6b406f3d884697f11ec302894f"
 
-"@types/react-bootstrap":
-  version "0.0.36"
-  resolved "https://registry.yarnpkg.com/@types/react-bootstrap/-/react-bootstrap-0.0.36.tgz#92f77973ca77869a33c9cc0fdbf01877c25a7e39"
-  dependencies:
-    "@types/react" "*"
-
 "@types/react-dom":
   version "0.14.18"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-0.14.18.tgz#af4fb4092f433667f5f094e762b32c294e0010dc"
@@ -227,13 +221,6 @@ aws4@^1.2.1:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.5.0.tgz#0a29ffb79c31c9e712eeb087e8e7a64b4a56d755"
 
-babel-runtime@^6.11.6:
-  version "6.18.0"
-  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.18.0.tgz#0f4177ffd98492ef13b9f823e9994a02584c9078"
-  dependencies:
-    core-js "^2.4.0"
-    regenerator-runtime "^0.9.5"
-
 backo2@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/backo2/-/backo2-1.0.2.tgz#31ab1ac8b129363463e35b3ebb69f4dfcfba7947"
@@ -338,10 +325,6 @@ boom@2.x.x:
   resolved "https://registry.yarnpkg.com/boom/-/boom-2.10.1.tgz#39c8918ceff5799f83f9492a848f625add0c766f"
   dependencies:
     hoek "2.x.x"
-
-bootstrap:
-  version "3.3.7"
-  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-3.3.7.tgz#5a389394549f23330875a3b150656574f8a9eb71"
 
 brace-expansion@^1.0.0:
   version "1.1.6"
@@ -473,7 +456,7 @@ clap@^1.0.9:
   dependencies:
     chalk "^1.1.3"
 
-classnames, classnames@^2.2.5:
+classnames:
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.5.tgz#fb3801d453467649ef3603c7d61a02bd129bde6d"
 
@@ -643,7 +626,7 @@ core-js@^1.0.0:
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-1.2.7.tgz#652294c14651db28fa93bd2d5ff2983a4f08c636"
 
-core-js@^2.1.0, core-js@^2.4.0:
+core-js@^2.1.0:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.4.1.tgz#4de911e667b0eae9124e34254b53aea6fc618d3e"
 
@@ -824,10 +807,6 @@ di@^0.0.1:
 diff@^2.2.1:
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/diff/-/diff-2.2.3.tgz#60eafd0d28ee906e4e8ff0a52c1229521033bf99"
-
-dom-helpers@^2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-2.4.0.tgz#9bb4b245f637367b1fa670274272aa28fe06c367"
 
 dom-serialize@^2.2.0:
   version "2.2.1"
@@ -1498,7 +1477,7 @@ interpret@^0.6.4:
   version "0.6.6"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-0.6.6.tgz#fecd7a18e7ce5ca6abfb953e1f86213a49f1625b"
 
-invariant@^2.0.0, invariant@^2.1.0, invariant@^2.2.1:
+invariant@^2.0.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.1.tgz#b097010547668c7e337028ebe816ebe36c8a8d54"
   dependencies:
@@ -1795,10 +1774,6 @@ karma@~0.13.10:
 kew@~0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/kew/-/kew-0.7.0.tgz#79d93d2d33363d6fdd2970b335d9141ad591d79b"
-
-keycode@^2.1.2:
-  version "2.1.7"
-  resolved "https://registry.yarnpkg.com/keycode/-/keycode-2.1.7.tgz#7b9255919f6cff562b09a064d222dca70b020f5c"
 
 kind-of@^3.0.2:
   version "3.0.4"
@@ -2842,20 +2817,6 @@ react:
     loose-envify "^1.1.0"
     object-assign "^4.1.0"
 
-react-bootstrap:
-  version "0.30.6"
-  resolved "https://registry.yarnpkg.com/react-bootstrap/-/react-bootstrap-0.30.6.tgz#288662a245f9dbb79f7740ee595e4ec931d6a4a9"
-  dependencies:
-    babel-runtime "^6.11.6"
-    classnames "^2.2.5"
-    dom-helpers "^2.4.0"
-    invariant "^2.2.1"
-    keycode "^2.1.2"
-    react-overlays "^0.6.10"
-    react-prop-types "^0.4.0"
-    uncontrollable "^4.0.1"
-    warning "^3.0.0"
-
 react-dom:
   version "15.3.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.3.2.tgz#c46b0aa5380d7b838e7a59c4a7beff2ed315531f"
@@ -2870,21 +2831,6 @@ react-hot-loader@~1.3.0:
   dependencies:
     react-hot-api "^0.4.5"
     source-map "^0.4.4"
-
-react-overlays@^0.6.10:
-  version "0.6.10"
-  resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-0.6.10.tgz#e7e52dad47f00a0fc784eb044428c3a9e874bfa3"
-  dependencies:
-    classnames "^2.2.5"
-    dom-helpers "^2.4.0"
-    react-prop-types "^0.4.0"
-    warning "^3.0.0"
-
-react-prop-types@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/react-prop-types/-/react-prop-types-0.4.0.tgz#f99b0bfb4006929c9af2051e7c1414a5c75b93d0"
-  dependencies:
-    warning "^3.0.0"
 
 react-redux:
   version "4.4.5"
@@ -3003,10 +2949,6 @@ redux-thunk:
 regenerate@^1.2.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.3.1.tgz#0300203a5d2fdcf89116dce84275d011f5903f33"
-
-regenerator-runtime@^0.9.5:
-  version "0.9.5"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.9.5.tgz#403d6d40a4bdff9c330dd9392dcbb2d9a8bba1fc"
 
 regex-cache@^0.4.2:
   version "0.4.3"
@@ -3570,12 +3512,6 @@ ultron@1.0.x:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/ultron/-/ultron-1.0.2.tgz#ace116ab557cd197386a4e88f4685378c8b2e4fa"
 
-uncontrollable@^4.0.1:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/uncontrollable/-/uncontrollable-4.0.3.tgz#06ec76cb9e02914756085d9cea0354fc746b09b4"
-  dependencies:
-    invariant "^2.1.0"
-
 underscore.string@^3.3.4:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/underscore.string/-/underscore.string-3.3.4.tgz#2c2a3f9f83e64762fdc45e6ceac65142864213db"
@@ -3666,12 +3602,6 @@ vm-browserify@0.0.4:
 void-elements@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
-
-warning@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/warning/-/warning-3.0.0.tgz#32e5377cb572de4ab04753bdf8821c01ed605b7c"
-  dependencies:
-    loose-envify "^1.0.0"
 
 watchpack@^0.2.1:
   version "0.2.9"

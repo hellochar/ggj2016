@@ -1,7 +1,6 @@
 import * as classnames from "classnames";
-import * as _ from "lodash";
+// import * as _ from "lodash";
 import * as React from "react";
-import * as Bootstrap from "react-bootstrap";
 
 import { isItem, isActor, Entity } from "model/";
 
@@ -19,24 +18,24 @@ function getIconClassForEntity(entity: Entity) {
     }
 }
 
-function nameForEntity(entity: Entity) {
-    switch (entity.type) {
-        case "user": return entity.name;
-        default: return _.capitalize(entity.type);
-    }
-}
+// function nameForEntity(entity: Entity) {
+//     switch (entity.type) {
+//         case "user": return entity.name;
+//         default: return _.capitalize(entity.type);
+//     }
+// }
 
-function descriptionForEntity(entity: Entity) {
-    switch (entity.type) {
-        case "user": return "An aspiring adventurer.";
-        case "mercury": return "A cave-dweller, not so different from you and I.";
-        case "ring": return "The fabled Ring of Norsogoth. Who knows what would happen when it's worn?";
-        case "tree":
-            return "Sorrow is knowledge, those that know the most must mourn the deepest, the tree of knowledge is not the tree of life.";
-        case "fruit": return "The roots of education are bitter, but the fruit is sweet.";
-        case "house": return "Have nothing in your house that you do not know to be useful, or believe to be beautiful.";
-    }
-}
+// function descriptionForEntity(entity: Entity) {
+//     switch (entity.type) {
+//         case "user": return "An aspiring adventurer.";
+//         case "mercury": return "A cave-dweller, not so different from you and I.";
+//         case "ring": return "The fabled Ring of Norsogoth. Who knows what would happen when it's worn?";
+//         case "tree":
+//             return "Sorrow is knowledge, those that know the most must mourn the deepest, the tree of knowledge is not the tree of life.";
+//         case "fruit": return "The roots of education are bitter, but the fruit is sweet.";
+//         case "house": return "Have nothing in your house that you do not know to be useful, or believe to be beautiful.";
+//     }
+// }
 
 export interface IEntityProps extends React.HTMLProps<HTMLElement> {
     entity: Entity;
@@ -45,7 +44,7 @@ export interface IEntityProps extends React.HTMLProps<HTMLElement> {
 }
 
 export function EntityComponent(props: IEntityProps) {
-    const { entity, popoverPlacement = "top", usePosition = true } = props;
+    const { entity, /*popoverPlacement = "top", */usePosition = true } = props;
     const style = usePosition ? {
             left: entity.position.x * 25,
             top: entity.position.y * 25,
@@ -64,17 +63,18 @@ export function EntityComponent(props: IEntityProps) {
 
     const entityElement = <i style={style} className={className} {...props} />;
 
-    const popover = (
-        <Bootstrap.Popover title={nameForEntity(entity)}>
-            <div className="rg-entity-popover-description">
-                {descriptionForEntity(entity)}
-            </div>
-        </Bootstrap.Popover>
-    );
+    return entityElement;
+    // const popover = (
+    //     <Bootstrap.Popover title={nameForEntity(entity)}>
+    //         <div className="rg-entity-popover-description">
+    //             {descriptionForEntity(entity)}
+    //         </div>
+    //     </Bootstrap.Popover>
+    // );
 
-    return (
-        <Bootstrap.OverlayTrigger delayShow={200} placement={popoverPlacement} overlay={popover}>
-            { entityElement }
-        </Bootstrap.OverlayTrigger>
-    );
+    // return (
+    //     <Bootstrap.OverlayTrigger delayShow={200} placement={popoverPlacement} overlay={popover}>
+    //         { entityElement }
+    //     </Bootstrap.OverlayTrigger>
+    // );
 }
