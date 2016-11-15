@@ -55,7 +55,7 @@ var config = {
       { test: /\.module\.less$/,
         loader: ExtractTextPlugin.extract("style-loader","css-loader?minimize&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!less-loader?-compress"),
         include: path.resolve(__dirname, "src") },
-      { test: /\.(jpg|png|woff2?|eot|ttf|svg|gif)$/, loader: "file-loader?name=[name]_[hash].[ext]", include: path.resolve(__dirname, "src") }
+      { test: /\.(jpg|png|woff2?|eot|ttf|svg|gif)$/, loader: "file-loader?name=[name]_[hash].[ext]" }
     ]
   },
 
