@@ -1,3 +1,5 @@
+import * as _ from "lodash";
+
 import { findEntityLevel, updateEntityLevel } from "action";
 import { IChangeLevelAction, handleChangeLevelAction } from "action/changeLevel";
 import * as ModelActions from "model/action";

@@ -1,3 +1,5 @@
+import * as _ from "lodash";
+
 import { IState, Screen } from "state";
 
 export interface ISetScreenAction {

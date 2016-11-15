@@ -1,3 +1,5 @@
+import * as _ from "lodash";
+
 import { Level } from "model/level";
 import { IState } from "state";
 import { updateEntityLevel } from "./index";

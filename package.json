@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@types/classnames": "^0.0.32",
+    "@types/lodash": "^4.14.39",
     "@types/redux-thunk": "^2.1.31",
     "bootstrap": "^3.3.7",
     "classnames": "^2.2.5",

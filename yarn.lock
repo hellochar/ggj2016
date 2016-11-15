@@ -4,6 +4,10 @@
   version "0.0.32"
   resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-0.0.32.tgz#449abcd9a826807811ef101e58df9f83cfc61713"
 
+"@types/lodash":
+  version "4.14.39"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.39.tgz#99e2180351609e4466abde8952d153a63a03eb14"
+
 "@types/redux-thunk":
   version "2.1.31"
   resolved "https://registry.yarnpkg.com/@types/redux-thunk/-/redux-thunk-2.1.31.tgz#f07d6db2cc8d1fdae617b3c2b96d07d055c3072b"

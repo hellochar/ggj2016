@@ -1,3 +1,5 @@
+import * as _ from "lodash";
+
 import * as Entity from "model/entity";
 import { Level, generateMap } from "model/level";
 import { IState } from "state";

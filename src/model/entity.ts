@@ -1,3 +1,5 @@
+import * as _ from "lodash";
+
 /*
 to implement:
 fa-pied-piper-alt as a dart blower
