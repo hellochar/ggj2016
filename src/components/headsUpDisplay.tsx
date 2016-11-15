@@ -17,7 +17,7 @@ interface IPureHeadsUpDisplayProps {
 }
 
 export class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps, {}> {
-    public handleItemDoubleClick(event: React.SyntheticEvent, itemId: string) {
+    public handleItemDoubleClick(event: React.MouseEvent<HTMLElement>, itemId: string) {
         const action = createPerformActionAction(this.props.user.id, {
             itemId,
             type: "use-item",

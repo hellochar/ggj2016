@@ -11,7 +11,7 @@ export interface IUserDiedScreenProps {
 }
 
 export class PureUserDiedScreen extends React.Component<IUserDiedScreenProps, {}> {
-    public handleRetryButtonClick = (event: React.SyntheticEvent) => {
+    public handleRetryButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         this.props.dispatch(createResetGameAction());
     };
 

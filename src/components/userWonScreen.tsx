@@ -11,7 +11,7 @@ export interface IUserWonScreen {
 }
 
 export class PureUserWonScreen extends React.Component<IUserWonScreen, {}> {
-    public handleRetryButtonClick = (event: React.SyntheticEvent) => {
+    public handleRetryButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         this.props.dispatch(createResetGameAction());
     };
 

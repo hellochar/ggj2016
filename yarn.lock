@@ -8,6 +8,29 @@
   version "4.14.39"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.39.tgz#99e2180351609e4466abde8952d153a63a03eb14"
 
+"@types/react", "@types/react@*":
+  version "0.14.48"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-0.14.48.tgz#faab02ffdcb68c6b406f3d884697f11ec302894f"
+
+"@types/react-bootstrap":
+  version "0.0.36"
+  resolved "https://registry.yarnpkg.com/@types/react-bootstrap/-/react-bootstrap-0.0.36.tgz#92f77973ca77869a33c9cc0fdbf01877c25a7e39"
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-dom":
+  version "0.14.18"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-0.14.18.tgz#af4fb4092f433667f5f094e762b32c294e0010dc"
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-redux":
+  version "4.4.32"
+  resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-4.4.32.tgz#7df8dc2f6429e31cc782020bf41ae5911b24e214"
+  dependencies:
+    "@types/react" "*"
+    "@types/redux" "*"
+
 "@types/redux", "@types/redux@*":
   version "3.6.31"
   resolved "https://registry.yarnpkg.com/@types/redux/-/redux-3.6.31.tgz#40eafa7575db36b912ce0059b85de98c205b0708"
