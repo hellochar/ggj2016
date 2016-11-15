@@ -208,8 +208,8 @@ export class Level {
             let newPosition: IPosition;
             do {
                 newPosition = {
-                    x: position.x + _.random(-RANGE, RANGE + 1),
-                    y: position.y + _.random(-RANGE, RANGE + 1),
+                    x: position.x + _.random(-RANGE, RANGE),
+                    y: position.y + _.random(-RANGE, RANGE),
                 };
             } while (!this.map.isTileFree(newPosition));
 
