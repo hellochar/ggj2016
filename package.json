@@ -11,15 +11,6 @@
     "test-browser-debug": "karma start karma.conf.js --browsers=Chrome --single-run=false --debug --auto-watch"
   },
   "dependencies": {
-    "@types/classnames": "^0.0.32",
-    "@types/lodash": "^4.14.39",
-    "@types/react": "^0.14.48",
-    "@types/react-bootstrap": "^0.0.36",
-    "@types/react-dom": "^0.14.18",
-    "@types/react-redux": "^4.4.32",
-    "@types/redux": "^3.6.31",
-    "@types/redux-logger": "^2.6.32",
-    "@types/redux-thunk": "^2.1.31",
     "bootstrap": "^3.3.7",
     "classnames": "^2.2.5",
     "lodash": "^4.16.4",
@@ -33,6 +24,15 @@
     "redux-thunk": "^2.1.0"
   },
   "devDependencies": {
+    "@types/classnames": "^0.0.32",
+    "@types/lodash": "^4.14.39",
+    "@types/react": "^0.14.48",
+    "@types/react-bootstrap": "^0.0.36",
+    "@types/react-dom": "^0.14.18",
+    "@types/react-redux": "^4.4.32",
+    "@types/redux": "^3.6.31",
+    "@types/redux-logger": "^2.6.32",
+    "@types/redux-thunk": "^2.1.31",
     "css-loader": "~0.23.0",
     "extract-text-webpack-plugin": "~0.9.1",
     "file-loader": "~0.8.4",
