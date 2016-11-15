@@ -1,5 +1,3 @@
-/// <reference path="typings/node/node.d.ts"/>
-
 var path = require("path");
 var webpackShared = require("./webpack.shared");
 var webpack = require('webpack');
