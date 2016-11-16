@@ -3,19 +3,42 @@ import * as _ from "lodash";
 import { forEachOnLineInGrid, forEachInRect, forEachInCircle, IPosition } from "math";
 import * as Entity from "./entity";
 
-export enum TileType {
-    SPACE = 0,
-    WALL = 1,
-    DOWNSTAIRS = 2,
-    UPSTAIRS = 3,
-    DECORATIVE_SPACE = 4,
-}
-
-export interface ITile {
+export interface IBaseTile {
     visible: boolean;
     explored: boolean;
-    type: TileType;
 }
+
+export interface ISpaceTile extends IBaseTile {
+    type: "SPACE";
+}
+
+export interface IWallTile extends IBaseTile {
+    type: "WALL";
+    color: string;
+}
+
+export interface IDownstairsTile extends IBaseTile {
+    type: "DOWNSTAIRS";
+}
+
+export interface IUpstairsTile extends IBaseTile {
+    type: "UPSTAIRS";
+}
+
+export interface IDecorativeSpace extends IBaseTile {
+    type: "DECORATIVE_SPACE";
+}
+
+export type ITile = ISpaceTile | IWallTile | IDownstairsTile | IUpstairsTile | IDecorativeSpace;
+
+export type TileType = "SPACE" | "WALL" | "DOWNSTAIRS" | "UPSTAIRS" | "DECORATIVE_SPACE";
+export const TileType = {
+    SPACE: "SPACE" as "SPACE",
+    WALL: "WALL" as "WALL",
+    DOWNSTAIRS: "DOWNSTAIRS" as "DOWNSTAIRS",
+    UPSTAIRS: "UPSTAIRS" as "UPSTAIRS",
+    DECORATIVE_SPACE: "DECORATIVE_SPACE" as "DECORATIVE_SPACE",
+};
 
 /**
  * A 2D grid of tiles. Map's update model is to mutate in-place but also has a copy method,
@@ -23,26 +46,43 @@ export interface ITile {
  * it back to Redux.
  */
 export class Map {
-    public static generateRandomWalls(width: number, height: number, percentage: number): Map {
+    public static generateRandomWalls(width: number, height: number, percentage: number, colorTheme: string[]): Map {
         const map: ITile[][] = [];
         for (let y = 0; y < height; y += 1) {
             const row: ITile[] = [];
             for (let x = 0; x < width; x += 1) {
-                row.push({
-                    explored: false,
-                    visible: false,
-                    type: Math.random() < percentage ? TileType.WALL : TileType.SPACE
-                });
+                if (Math.random() < percentage) {
+                    row.push({
+                        explored: false,
+                        visible: false,
+                        type: TileType.WALL,
+                        color: colorTheme[colorTheme.length - 1],
+                    } as IWallTile);
+                } else {
+                    row.push({
+                        explored: false,
+                        visible: false,
+                        type: TileType.SPACE,
+                    });
+                }
             }
             map.push(row);
         }
-        return new Map(map);
+        return new Map(map, colorTheme);
     }
 
-    constructor(private tiles: ITile[][]) {}
+    constructor(private tiles: ITile[][], public colorTheme: string[]) {}
+
+    private checkSanity() {
+        _.flatten(this.tiles).forEach((tile) => {
+            if (tile.type === "WALL") {
+                if (tile.color == null) throw new Error("null colored wall");
+            }
+        })
+    }
 
     public clone(): Map {
-        return new Map(_.cloneDeep(this.tiles));
+        return new Map(_.cloneDeep(this.tiles), this.colorTheme);
     }
 
     get width() {
@@ -94,13 +134,20 @@ export class Map {
     public outlineRectWithWalls(topLeft: IPosition = {x: 0, y: 0},
                                 bottomRight: IPosition = {x: this.width - 1, y: this.height - 1}) {
         const setToWall = (p: IPosition) => {
-            this.tiles[p.y][p.x].type = TileType.WALL;
+            const { explored, visible } = this.tiles[p.y][p.x];
+            this.tiles[p.y][p.x] = {
+                type: TileType.WALL,
+                explored,
+                visible,
+                color: this.colorTheme[0],
+            };
             return false;
         };
         forEachOnLineInGrid(topLeft, {x: topLeft.x, y: bottomRight.y}, setToWall);
         forEachOnLineInGrid({x: topLeft.x, y: bottomRight.y}, bottomRight, setToWall);
         forEachOnLineInGrid(bottomRight, {x: bottomRight.x, y: topLeft.y}, setToWall);
         forEachOnLineInGrid({x: bottomRight.x, y: topLeft.y}, topLeft, setToWall);
+        this.checkSanity();
     }
 
     public drawPathBetween(lineSegments: IPosition[]) {
@@ -111,6 +158,7 @@ export class Map {
                 this.tiles[y][x].type = TileType.SPACE;
             });
         }
+        this.checkSanity();
     }
 
     // lose immediate sight of the given area (turning any visible areas into just explored areas)
@@ -147,6 +195,7 @@ export class Map {
     public lifelikeEvolve(ruleset: string) {
         const ca = new LifeLikeCA(this, ruleset);
         this.tiles = ca.simulate();
+        this.checkSanity();
     }
 
     public getDownstairsPosition(): IPosition | null {
@@ -164,7 +213,8 @@ export class Map {
         forEachInRect({x: p.x - 1, y: p.y - 1},
                       {x: p.x + 1, y: p.y + 1},
                       (p) => this.tiles[p.y][p.x].type = TileType.DECORATIVE_SPACE);
-        this.tiles[p.y][p.x].type = type;
+        const tile = this.tiles[p.y][p.x];
+        tile.type = type;
     }
 }
 
@@ -335,30 +385,44 @@ class LifeLikeCA {
     }
 
     private computeNextState(x: number, y: number): ITile {
-        const currentState = this.map.get(x, y);
+        const currentState = this.map.get(x, y)!;
         const aliveNeighbors = this.getNumAliveNeighbors(x, y);
-        let type: TileType = currentState.type;
+        const { explored, visible } = currentState;
         switch (currentState.type) {
             case TileType.SPACE:
                 if (this.birth[aliveNeighbors]) {
-                    type = TileType.WALL;
+                    return {
+                        type: TileType.WALL,
+                        explored,
+                        visible,
+                        color: this.map.colorTheme[this.map.colorTheme.length - 1],
+                    };
                 } else {
-                    type = TileType.SPACE;
+                    return {
+                        type: TileType.SPACE,
+                        explored,
+                        visible
+                    };
                 }
-                break;
             case TileType.WALL:
                 if (this.survive[aliveNeighbors]) {
-                    type = TileType.WALL;
+                    const currentColorIndex = this.map.colorTheme.indexOf(currentState.color);
+                    const newColorIndex = Math.max(currentColorIndex - Math.random() < 0.1 ? 1 : 0, 0);
+                    return {
+                        type: TileType.WALL,
+                        explored,
+                        visible,
+                        color: this.map.colorTheme[newColorIndex],
+                    };
                 } else {
-                    type = TileType.SPACE;
+                    return {
+                        type: TileType.SPACE,
+                        explored,
+                        visible,
+                    };
                 }
-                break;
         }
-        return {
-            visible: currentState.visible,
-            explored: currentState.explored,
-            type: type
-        };
+        return currentState;
     }
 
     public simulate() {
@@ -375,10 +439,10 @@ class LifeLikeCA {
     }
 }
 
-export function generateMap(upstairs: IPosition) {
+export function generateMap(upstairs: IPosition, colorTheme: string[]) {
     const width = 60;
     const height = 30;
-    let map = Map.generateRandomWalls(width, height, 0.25);
+    let map = Map.generateRandomWalls(width, height, 0.25, colorTheme);
 
     // _.times(5, () => map.lifelikeEvolve("B3/S1234"));
     // _.times(100, () => map.lifelikeEvolve("B3/S45678"));

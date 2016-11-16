@@ -15,6 +15,7 @@ function iconClassForTile(tile: TileType) {
 
 export interface ITileProps {
     tile: ITile;
+    key: string;
 }
 
 export function Tile({tile}: ITileProps) {
@@ -27,5 +28,9 @@ export function Tile({tile}: ITileProps) {
         visibilityClasses = "tile-unexplored";
     }
     const className = classnames("fa", "rg-tile", visibilityClasses);
-    return <i className={className}></i>;
+    let style: React.CSSProperties = {};
+    if (tile.type === TileType.WALL) {
+        style.color = tile.color;
+    }
+    return <i className={className} style={style}></i>;
 }

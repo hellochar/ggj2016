@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 
+import { COLOR_THEMES } from "colorThemes";
 import * as Entity from "model/entity";
 import { Level, generateMap } from "model/level";
 import { IState } from "state";
@@ -23,7 +24,7 @@ export function buildInitialState(): IState {
         satiation: 1,
     };
     entitiesToAdd.push(user);
-    const level0 = new Level("0", generateMap(center), [ user.id ]);
+    const level0 = new Level("0", generateMap(center, COLOR_THEMES.DARK_GRAY), [ user.id ]);
     entitiesToAdd.push(...level0.addTrees());
     entitiesToAdd.push(...level0.addVillage());
     level0.map.giveVision(center, 7);
@@ -33,7 +34,7 @@ export function buildInitialState(): IState {
     const levelOrder = ["0"];
     for (let depth = 1; depth < 3; depth += 1) {
         const id = depth.toString();
-        const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition());
+        const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition(), _.sample(COLOR_THEMES));
         const currentLevel = new Level(id, newMap, []);
         entitiesToAdd.push(...currentLevel.addTrees());
         entitiesToAdd.push(...currentLevel.addVillage());
