@@ -192,7 +192,9 @@ export class Level {
      */
     public entities: string[];
 
-    constructor(public id: string, public map: Map, entities: string[]) {
+    constructor(public id: string,
+                public map: Map,
+                entities: string[]) {
         this.entities = entities;
     }
 

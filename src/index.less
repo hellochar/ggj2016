@@ -90,6 +90,7 @@ body {
         padding: 5px;
         border: outset 4px #888;
         background: #444;
+        position: relative;
     }
 }
 
@@ -97,14 +98,24 @@ body {
     opacity: 0.95;
 }
 
-.pt-popover-target {
-    position: initial;
-}
+.rg-entity-popover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 
-.rg-entity-popover-description {
-    font-style: italic;
-    font-size: 12px;
-    margin-top: 5px;
+    .rg-entity-popover-target {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .rg-entity-popover-description {
+        font-style: italic;
+        font-size: 12px;
+        margin-top: 5px;
+    }
 }
 
 .rg-tile {
@@ -145,6 +156,7 @@ body {
 .rg-entity {
     .rg-map-cell-mixin();
 
+    position: relative;
     transition: @hover-transition;
 
     &:hover {
