@@ -1,44 +1,8 @@
+import { ITile, TileType, IWallTile } from "model/";
 import * as _ from "lodash";
 
 import { forEachOnLineInGrid, forEachInRect, forEachInCircle, IPosition } from "math";
 import * as Entity from "./entity";
-
-export interface IBaseTile {
-    visible: boolean;
-    explored: boolean;
-}
-
-export interface ISpaceTile extends IBaseTile {
-    type: "SPACE";
-}
-
-export interface IWallTile extends IBaseTile {
-    type: "WALL";
-    color: string;
-}
-
-export interface IDownstairsTile extends IBaseTile {
-    type: "DOWNSTAIRS";
-}
-
-export interface IUpstairsTile extends IBaseTile {
-    type: "UPSTAIRS";
-}
-
-export interface IDecorativeSpace extends IBaseTile {
-    type: "DECORATIVE_SPACE";
-}
-
-export type ITile = ISpaceTile | IWallTile | IDownstairsTile | IUpstairsTile | IDecorativeSpace;
-
-export type TileType = "SPACE" | "WALL" | "DOWNSTAIRS" | "UPSTAIRS" | "DECORATIVE_SPACE";
-export const TileType = {
-    SPACE: "SPACE" as "SPACE",
-    WALL: "WALL" as "WALL",
-    DOWNSTAIRS: "DOWNSTAIRS" as "DOWNSTAIRS",
-    UPSTAIRS: "UPSTAIRS" as "UPSTAIRS",
-    DECORATIVE_SPACE: "DECORATIVE_SPACE" as "DECORATIVE_SPACE",
-};
 
 /**
  * A 2D grid of tiles. Map's update model is to mutate in-place but also has a copy method,
@@ -72,14 +36,6 @@ export class Map {
     }
 
     constructor(private tiles: ITile[][], public colorTheme: string[]) {}
-
-    private checkSanity() {
-        _.flatten(this.tiles).forEach((tile) => {
-            if (tile.type === "WALL") {
-                if (tile.color == null) throw new Error("null colored wall");
-            }
-        })
-    }
 
     public clone(): Map {
         return new Map(_.cloneDeep(this.tiles), this.colorTheme);
@@ -147,7 +103,6 @@ export class Map {
         forEachOnLineInGrid({x: topLeft.x, y: bottomRight.y}, bottomRight, setToWall);
         forEachOnLineInGrid(bottomRight, {x: bottomRight.x, y: topLeft.y}, setToWall);
         forEachOnLineInGrid({x: bottomRight.x, y: topLeft.y}, topLeft, setToWall);
-        this.checkSanity();
     }
 
     public drawPathBetween(lineSegments: IPosition[]) {
@@ -158,7 +113,6 @@ export class Map {
                 this.tiles[y][x].type = TileType.SPACE;
             });
         }
-        this.checkSanity();
     }
 
     // lose immediate sight of the given area (turning any visible areas into just explored areas)
@@ -195,7 +149,6 @@ export class Map {
     public lifelikeEvolve(ruleset: string) {
         const ca = new LifeLikeCA(this, ruleset);
         this.tiles = ca.simulate();
-        this.checkSanity();
     }
 
     public getDownstairsPosition(): IPosition | null {

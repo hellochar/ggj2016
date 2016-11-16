@@ -4,7 +4,7 @@ import { findEntityLevel, updateEntityLevel } from "action";
 import { IChangeLevelAction, handleChangeLevelAction } from "action/changeLevel";
 import * as ModelActions from "model/action";
 import * as Entity from "model/entity";
-import { Level, TileType } from "model/level";
+import { Level, TileType } from "model/";
 import { IState } from "state";
 import { badTypeError } from "util";
 
