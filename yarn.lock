@@ -26,6 +26,10 @@
   version "0.14.48"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-0.14.48.tgz#faab02ffdcb68c6b406f3d884697f11ec302894f"
 
+"@types/react-addons-perf":
+  version "0.14.17"
+  resolved "https://registry.yarnpkg.com/@types/react-addons-perf/-/react-addons-perf-0.14.17.tgz#ac369eb5d89976ea52391c3b5d36e6d027d4108e"
+
 "@types/react-dom":
   version "0.14.18"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-0.14.18.tgz#af4fb4092f433667f5f094e762b32c294e0010dc"
@@ -2844,6 +2848,10 @@ react:
 react-addons-css-transition-group:
   version "15.3.2"
   resolved "https://registry.yarnpkg.com/react-addons-css-transition-group/-/react-addons-css-transition-group-15.3.2.tgz#d8fa52bec9bb61bdfde8b9e4652b80297cbff667"
+
+react-addons-perf:
+  version "15.3.2"
+  resolved "https://registry.yarnpkg.com/react-addons-perf/-/react-addons-perf-15.3.2.tgz#bbdbebe8649f936f9636a5750ac145bf5c620213"
 
 react-dom:
   version "15.3.2"

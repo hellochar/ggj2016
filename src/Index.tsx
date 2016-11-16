@@ -1,3 +1,4 @@
+import * as Perf from "react-addons-perf";
 import * as ReactDOM from "react-dom";
 import * as React from "react";
 import { Provider } from "react-redux";
@@ -10,6 +11,8 @@ import reducer from "reducer";
 import { buildInitialState } from "initialState";
 
 import "./index.less";
+
+(window as any).Perf = Perf;
 
 const logger = createLogger({ duration: true, timestamp: true, collapsed: () => true });
 const store = Redux.createStore(reducer, buildInitialState(), Redux.applyMiddleware(thunk, logger));
