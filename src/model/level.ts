@@ -41,6 +41,10 @@ export class Map {
         return new Map(_.cloneDeep(this.tiles), this.colorTheme);
     }
 
+    public cloneShallow(): Map {
+        return new Map(this.tiles.map((row) => row.slice()), this.colorTheme);
+    }
+
     get width() {
         return this.tiles[0].length;
     }
@@ -115,18 +119,28 @@ export class Map {
         }
     }
 
-    // lose immediate sight of the given area (turning any visible areas into just explored areas)
+    /**
+     * Lose vision of the given circle.
+     * 
+     * Assigns new objects to the this.tiles that changed.
+     */
     public removeVision(center: IPosition, radius: number) {
         forEachInCircle(center, radius, ({x, y}) => {
             this.get(x, y, (tile) => {
-                tile.visible = false;
+                this.tiles[y][x] = _.assign({}, tile, { visible: false });
             });
         });
     }
 
+    /**
+     * Give vision in the given circle.
+     * 
+     * Assigns new objects to the this.tiles that have changed.
+     */
     public giveVision(center: IPosition, radius: number) {
         forEachInCircle(center, radius, ({x, y}) => {
-            this.get(x, y, (tile) => {
+            this.get(x, y, (oldTile) => {
+                const tile = _.assign({}, oldTile);
                 if (!tile.visible) {
                     let isVisionBlocked = false;
                     forEachOnLineInGrid({x, y}, center, (position) => {
@@ -141,6 +155,7 @@ export class Map {
                     if (tile.visible) {
                         tile.explored = true;
                     }
+                    this.tiles[y][x] = tile;
                 }
             });
         });

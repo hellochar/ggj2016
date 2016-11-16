@@ -4,7 +4,8 @@ import { findEntityLevel, updateEntityLevel } from "action";
 import { IChangeLevelAction, handleChangeLevelAction } from "action/changeLevel";
 import * as ModelActions from "model/action";
 import * as Entity from "model/entity";
-import { Level, TileType } from "model/";
+import { Level } from "model/level";
+import { TileType } from "model/tile";
 import { IState } from "state";
 import { badTypeError } from "util";
 
@@ -120,7 +121,7 @@ function handleMoveAction(state: IState, actorId: string, action: ModelActions.I
             const newActor = Entity.move(actor, direction);
 
             if (actorId === "0") {
-                const newMap = level.map.clone();
+                const newMap = level.map.cloneShallow();
                 newMap.removeVision(actor.position, 7);
                 newMap.giveVision(newActor.position, 7);
                 return {
