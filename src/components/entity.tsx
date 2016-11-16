@@ -57,14 +57,24 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
 
         return (
             <div style={style} className={fooClasses}>
-                <i className={className} onDoubleClick={onDoubleClick} />
-                <EntityPopover name={this.nameForEntity(entity)} type={entity.type} />
+                <i className={className} />
+                <EntityPopover name={this.nameForEntity(entity)} onDoubleClick={onDoubleClick} type={entity.type} />
             </div>
         );
     }
 }
 
-class EntityPopover extends React.PureComponent<{ name: string, type: EntityType }, {}> {
+interface IEntityPopoverProps {
+    name: string;
+    type: EntityType;
+    onDoubleClick?: () => void;
+}
+
+/**
+ * Component for the Popover of an Entity. Refactored into a PureComponent to minimize updates, since Blueprint Popovers
+ * force synchronous layout in their DOM update callback, which can add upwards of 30ms delay to an action.
+ */
+class EntityPopover extends React.PureComponent<IEntityPopoverProps, {}> {
     private descriptionForEntity(type: EntityType) {
         switch (type) {
             case "user": return "An aspiring adventurer.";
@@ -91,13 +101,13 @@ class EntityPopover extends React.PureComponent<{ name: string, type: EntityType
 
         return <Popover className="rg-entity-popover"
                         content={popoverContent}
-                        interactionKind={PopoverInteractionKind.HOVER}
                         popoverClassName="pt-popover-content-sizing"
+                        interactionKind={PopoverInteractionKind.HOVER}
                         hoverCloseDelay={0}
                         hoverOpenDelay={200}
                         position={Position.TOP_LEFT}
                         useSmartPositioning={true}>
-                <div className="rg-entity-popover-target"></div>
+                <div className="rg-entity-popover-target" onDoubleClick={this.props.onDoubleClick}></div>
             </Popover>;
     }
 }
