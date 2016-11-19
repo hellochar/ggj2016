@@ -49,7 +49,7 @@ export class PureGame extends React.Component<IGameProps, {}> {
         // add pick-up-item if available
         const itemsBeneathUser = Entity.getEntitiesAtPosition(
             this.props.state,
-            findEntityLevel("0", this.props.state.levels).id,
+            findEntityLevel("0", this.props.state).id,
             user.position
         ).filter((entityId) => {
             return Entity.isItem(this.props.state.entities[entityId]);
@@ -90,7 +90,7 @@ export class PureGame extends React.Component<IGameProps, {}> {
     }
 
     public render() {
-        const userLevel = findEntityLevel("0", this.props.state.levels);
+        const userLevel = findEntityLevel("0", this.props.state);
         const user = this.props.state.entities["0"];
         const getEntity = (e: string) => this.props.state.entities[e];
 

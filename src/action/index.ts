@@ -1,16 +1,17 @@
 import { IChangeLevelAction } from "./changeLevel";
 import { IIterateUntilActorTurnAction } from "./iterateUntilActorTurn";
-import { IPerformActionAction } from "./performAction";
+import { IPerformActionAction, IUserPerformActionAction } from "./performAction";
 import { IResetGameAction } from "./resetGame";
-import { ISetScreenAction } from "./setScreen";
+import { SimpleUpdaterAction } from "./simpleUpdaters";
 
 export type IAction =
 IPerformActionAction
+| IUserPerformActionAction
 | IChangeLevelAction
 | IIterateUntilActorTurnAction
 | IResetGameAction
 | IReduxInitAction
-| ISetScreenAction
+| SimpleUpdaterAction
 ;
 
 export interface IReduxInitAction {
@@ -21,5 +22,5 @@ export * from "./changeLevel";
 export * from "./iterateUntilActorTurn";
 export * from "./performAction";
 export * from "./resetGame";
-export * from "./setScreen";
 export * from "./utils";
+export * from "./simpleUpdaters";

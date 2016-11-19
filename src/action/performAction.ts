@@ -1,7 +1,8 @@
 import * as _ from "lodash";
+import * as Redux from "redux";
 
-import { findEntityLevel, updateEntityLevel } from "action";
-import { IChangeLevelAction, handleChangeLevelAction } from "action/changeLevel";
+import { rotateTurnOrder, findEntityLevel, setScreen, updateLevel, updateEntity } from "action";
+import { IChangeLevelAction } from "action/changeLevel";
 import * as ModelActions from "model/action";
 import * as Entity from "model/entity";
 import { Level } from "model/level";
@@ -15,6 +16,11 @@ export interface IPerformActionAction {
     type: "PerformAction";
 }
 
+export interface IUserPerformActionAction {
+    action: ModelActions.Action;
+    type: "UserPerformAction";
+}
+
 export function createPerformActionAction(actorId: string, action: ModelActions.Action): IPerformActionAction {
     return {
         actorId,
@@ -23,11 +29,47 @@ export function createPerformActionAction(actorId: string, action: ModelActions.
     };
 }
 
+export function handleUserPerformActionAction(state: IState, action: IUserPerformActionAction) {
+    return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
+        const state = getState();
+        dispatch({
+            actorId: "0",
+            action: action.action,
+            type: "PerformAction",
+        });
+        const nextState = getState();
+
+        if (nextState !== state) {
+            // move user to the end of the turn order
+            dispatch(rotateTurnOrder());
+
+            // make user a bit hungrier
+            const user = _.assign({}, nextState.entities[0]);
+            user.satiation = Math.max(0, user.satiation - 0.001);
+            if (user.satiation <= 0) {
+                // user is starving - start dealing damage
+                user.health -= 1;
+            }
+            // kill user if dead
+            if (user.health <= 0) {
+                dispatch(setScreen("user-died"));
+            } else {
+                dispatch(updateEntity(user));
+                // take NPC turns until it's the user turn again
+                dispatch({
+                    actorId: "0",
+                    type: "IterateUntilActorTurn",
+                });
+            }
+        }
+    };
+}
+
 /**
  * Update state in response to the perform action action. Handles invalid actor/action combinations by returning
  * the same state reference.
  */
-export function handlePerformActionAction(state: IState, action: IPerformActionAction): IState {
+export function handlePerformActionAction(state: IState, action: IPerformActionAction) {
     const actorAction = action.action;
     const actor = state.entities[action.actorId] as Entity.Actor;
     if (actorAction.type === "move") {
@@ -81,7 +123,7 @@ function handleUseItemAction(state: IState, actor: Entity.Actor, action: ModelAc
     }
 }
 
-function handleMoveAction(state: IState, actorId: string, action: ModelActions.IMoveAction): IState {
+function handleMoveAction(state: IState, actorId: string, action: ModelActions.IMoveAction) {
     const offsets = {
         "left": {
             x: -1,
@@ -101,7 +143,8 @@ function handleMoveAction(state: IState, actorId: string, action: ModelActions.I
         }
     };
 
-    return updateEntityLevel(state, actorId, (level) => {
+    return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
+        const level = findEntityLevel(actorId, state);
         const actor = state.entities[actorId];
         const direction = offsets[action.direction];
         const newPosition = {
@@ -115,89 +158,83 @@ function handleMoveAction(state: IState, actorId: string, action: ModelActions.I
         if (newPositionTile == null ||
             level.map.isTileObstructed(newPosition) ||
             spaceIsOccupied) {
-            // can't move there; abort action.
-            return { level };
+            // can't move there; do nothing and abort action.
+            return;
         } else {
             const newActor = Entity.move(actor, direction);
+            dispatch(updateEntity(newActor));
 
+            // update user vision if necessary
             if (actorId === "0") {
                 const newMap = level.map.cloneShallow();
                 newMap.removeVision(actor.position, 7);
                 newMap.giveVision(newActor.position, 7);
-                return {
-                    level: new Level(level.id, newMap, level.entities),
-                    entity: newActor
-                };
-            } else {
-                return {
-                    entity: newActor
-                };
+                const newLevel = new Level(level.id, newMap, level.entities);
+                dispatch(updateLevel(newLevel));
             }
         }
-    });
+    };
 }
 
-function handleGoDownstairsAction(state: IState, actor: Entity.Actor, actorAtion: ModelActions.IGoDownstairsAction): IState {
-    const actorLevel = findEntityLevel(actor.id, state.levels);
-    const currentTile = actorLevel.map.get(actor.position.x, actor.position.y);
-    if (currentTile.type === TileType.DOWNSTAIRS) {
-        const levelIndex = state.levelOrder.indexOf(actorLevel.id);
-        // COMPOSITION: dispatch a changeLevel action
-        const action: IChangeLevelAction = {
-            newLevel: levelIndex + 1,
-            entityId: actor.id,
-            type: "ChangeLevel",
-        };
-        return handleChangeLevelAction(state, action);
-    } else {
-        return state;
+function handleGoDownstairsAction(state: IState, actor: Entity.Actor, actorAtion: ModelActions.IGoDownstairsAction) {
+    return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
+        const actorLevel = findEntityLevel(actor.id, state);
+        const currentTile = actorLevel.map.get(actor.position.x, actor.position.y);
+        if (currentTile.type === TileType.DOWNSTAIRS) {
+            const levelIndex = state.levelOrder.indexOf(actorLevel.id);
+            // go downstairs by doing a change level action
+            const action: IChangeLevelAction = {
+                newLevel: levelIndex + 1,
+                entityId: actor.id,
+                type: "ChangeLevel",
+            };
+            dispatch(action);
+        }
+    };
+}
+
+function handleGoUpstairsAction(state: IState, actor: Entity.Actor, actorAtion: ModelActions.IGoUpstairsAction) {
+    return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
+        const actorLevel = findEntityLevel(actor.id, state);
+        const currentTile = actorLevel.map.get(actor.position.x, actor.position.y);
+        if (currentTile.type === TileType.UPSTAIRS) {
+            const levelIndex = state.levelOrder.indexOf(actorLevel.id);
+            // go upstairs by doing a change level action
+            const action: IChangeLevelAction = {
+                newLevel: levelIndex - 1,
+                entityId: actor.id,
+                type: "ChangeLevel",
+            };
+            dispatch(action);
+        }
     }
 }
 
-function handleGoUpstairsAction(state: IState, actor: Entity.Actor, actorAtion: ModelActions.IGoUpstairsAction): IState {
-    const actorLevel = findEntityLevel(actor.id, state.levels);
-    const currentTile = actorLevel.map.get(actor.position.x, actor.position.y);
-    if (currentTile.type === TileType.UPSTAIRS) {
-        const levelIndex = state.levelOrder.indexOf(actorLevel.id);
-        // COMPOSITION: dispatch a changeLevel action
-        const action: IChangeLevelAction = {
-            newLevel: levelIndex - 1,
-            entityId: actor.id,
-            type: "ChangeLevel",
-        };
-        return handleChangeLevelAction(state, action);
-    } else {
-        return state;
-    }
-}
-
-function handlePickUpItemAction(state: IState, actor: Entity.Actor, actorAction: ModelActions.IPickUpItemAction): IState {
-    const actorLevel = findEntityLevel(actor.id, state.levels);
+function handlePickUpItemAction(state: IState, actor: Entity.Actor, actorAction: ModelActions.IPickUpItemAction) {
+    const actorLevel = findEntityLevel(actor.id, state);
     const item = state.entities[actorAction.itemId];
-    const itemLevel = findEntityLevel(item.id, state.levels);
+    const itemLevel = findEntityLevel(item.id, state);
     if (!Entity.isItem(item)) {
         throw new Error(`tried pick-up-item on a non-item entity ${JSON.stringify(item)}`);
     }
-    if (_.isEqual(item.position, actor.position) && itemLevel === actorLevel && Entity.hasInventory(actor)) {
-        // TODO associate actions with Entity traits
-        return updateEntityLevel(state, actor.id, (level) => {
-            const newLevel = new Level(level.id, level.map, _.without(actorLevel.entities, item.id));
+    return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
+        if (_.isEqual(item.position, actor.position) && itemLevel === actorLevel && Entity.hasInventory(actor)) {
+            // TODO associate actions with Entity traits
+
+            const newLevel = new Level(itemLevel.id, itemLevel.map, _.without(itemLevel.entities, item.id));
             const newEntity = _.assign({}, actor, {
                 inventory: _.assign({}, actor.inventory, {
                     itemIds: [...actor.inventory.itemIds, item.id],
                 }),
             });
-            return {
-                level: newLevel,
-                entity: newEntity,
-            };
-        });
-    } else {
-        return state;
-    }
+
+            dispatch(updateLevel(newLevel));
+            dispatch(updateEntity(newEntity));
+        }
+    };
 }
 
-function handleDropItemAction(state: IState, actor: Entity.Actor, actorAction: ModelActions.IDropItemAction): IState {
+function handleDropItemAction(state: IState, actor: Entity.Actor, actorAction: ModelActions.IDropItemAction) {
     const item = state.entities[actorAction.itemId];
     if (!Entity.isItem(item)) {
         throw new Error(`tried drop-item on a non-item ${JSON.stringify(item)}`);
@@ -205,27 +242,23 @@ function handleDropItemAction(state: IState, actor: Entity.Actor, actorAction: M
     if (!Entity.hasInventory(actor)) {
         throw new Error(`Actor of type ${actor.type} tried to drop-item, but has no inventory!`);
     }
-    const newState = updateEntityLevel(state, actor.id, (level) => {
+
+    return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
+        const level = findEntityLevel(actor.id, state);
         const newLevel = new Level(level.id, level.map, [...level.entities, item.id]);
         const newActor: Entity.Actor = _.assign({}, actor, {
             inventory: _.assign({}, actor.inventory, {
                 itemIds: _.without(actor.inventory.itemIds, item.id),
             }),
         });
-        return {
-            level: newLevel,
-            entity: newActor
-        };
-    });
-    // set new item on user's position
-    const newItem = _.assign({}, item, {
-        position: _.assign({}, actor.position),
-    });
-    return _.assign({}, newState, {
-        entities: _.assign({}, newState.entities, {
-            [item.id]: newItem,
-        }),
-    });
+        // set new item on user's position
+        const newItem = _.assign({}, item, {
+            position: _.assign({}, actor.position),
+        });
+        dispatch(updateLevel(newLevel));
+        dispatch(updateEntity(newActor));
+        dispatch(updateEntity(newItem));
+    };
 }
 
 function handleCreateFruitAction(state: IState, actor: Entity.Actor, actorAction: ModelActions.ICreateFruitAction): IState {
@@ -237,7 +270,7 @@ function handleCreateFruitAction(state: IState, actor: Entity.Actor, actorAction
         },
         type: "fruit",
     };
-    const level = findEntityLevel(actor.id, state.levels);
+    const level = findEntityLevel(actor.id, state);
     const newLevel = new Level(level.id, level.map, [...level.entities, fruit.id]);
     return _.assign({}, state, {
         entities: _.assign({}, state.entities, {

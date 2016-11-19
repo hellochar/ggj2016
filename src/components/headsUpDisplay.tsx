@@ -63,7 +63,7 @@ export class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps
 }
 
 function mapStateToProps(state: IState) {
-    const userLevel = findEntityLevel("0", state.levels);
+    const userLevel = findEntityLevel("0", state);
     const userFloor = state.levelOrder.indexOf(userLevel.id);
     return {
         state,

@@ -1,5 +1,7 @@
+import { rotateTurnOrder } from "./simpleUpdaters";
+import * as Redux from "redux";
+
 import * as Entity from "model/entity";
-import { handlePerformActionAction } from "./performAction";
 import { IState } from "state";
 
 export interface IIterateUntilActorTurnAction {
@@ -14,17 +16,17 @@ export function createIterateUntilActorTurnAction(actorId: string): IIterateUnti
     };
 }
 
-export function handleIterateUntilActorTurnAction(initialState: IState, action: IIterateUntilActorTurnAction): IState {
-    let state = initialState;
-    while (state.turnOrder[0] !== action.actorId) {
-        const actor = state.entities[state.turnOrder[0]] as Entity.Actor;
-        const nextAction = Entity.decideNextAction(state, actor);
-        state = handlePerformActionAction(state, {
-            actorId: actor.id,
-            action: nextAction,
-            type: "PerformAction",
-        });
-        state.turnOrder = [...state.turnOrder.splice(1), state.turnOrder[0]];
+export function handleIterateUntilActorTurnAction(initialState: IState, action: IIterateUntilActorTurnAction) {
+    return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
+        while (getState().turnOrder[0] !== action.actorId) {
+            const actor = getState().entities[getState().turnOrder[0]] as Entity.Actor;
+            const nextAction = Entity.decideNextAction(getState(), actor);
+            dispatch({
+                actorId: actor.id,
+                action: nextAction,
+                type: "PerformAction",
+            });
+            dispatch(rotateTurnOrder());
+        }
     }
-    return state;
 }

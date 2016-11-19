@@ -8,6 +8,7 @@ import thunk from "redux-thunk";
 
 import { Main } from "components/main";
 import reducer from "reducer";
+import { IState } from "state";
 import { buildInitialState } from "initialState";
 
 import "./index.less";
@@ -15,7 +16,7 @@ import "./index.less";
 (window as any).Perf = Perf;
 
 const logger = createLogger({ duration: true, timestamp: true, collapsed: () => true });
-const store = Redux.createStore(reducer, buildInitialState(), Redux.applyMiddleware(thunk, logger));
+const store = Redux.createStore<IState>(reducer as Redux.Reducer<IState>, buildInitialState(), Redux.applyMiddleware(thunk, logger));
 
 const root = document.createElement("div");
 root.id = "root";
