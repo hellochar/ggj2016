@@ -1,8 +1,7 @@
 import * as _ from "lodash";
 import * as Redux from "redux";
 
-import { entityDelete, iterateUntilActorTurn, rotateTurnOrder, findEntityLevel, setScreen, updateLevel, entityUpdate } from "action";
-import { IChangeLevelAction } from "action/changeLevel";
+import { entityDelete, entityChangeLevel, iterateUntilActorTurn, rotateTurnOrder, findEntityLevel, setScreen, updateLevel, entityUpdate } from "action";
 import * as ModelActions from "model/action";
 import * as Entity from "model/entity";
 import { Level } from "model/level";
@@ -160,12 +159,7 @@ function handleGoDownstairsAction(state: IState, actor: Entity.Actor, actorAtion
         if (currentTile.type === TileType.DOWNSTAIRS) {
             const levelIndex = state.levelOrder.indexOf(actorLevel.id);
             // go downstairs by doing a change level action
-            const action: IChangeLevelAction = {
-                newLevel: levelIndex + 1,
-                entityId: actor.id,
-                type: "ChangeLevel",
-            };
-            dispatch(action);
+            dispatch(entityChangeLevel(actor.id, levelIndex + 1));
         }
     };
 }
@@ -177,12 +171,7 @@ function handleGoUpstairsAction(state: IState, actor: Entity.Actor, actorAtion: 
         if (currentTile.type === TileType.UPSTAIRS) {
             const levelIndex = state.levelOrder.indexOf(actorLevel.id);
             // go upstairs by doing a change level action
-            const action: IChangeLevelAction = {
-                newLevel: levelIndex - 1,
-                entityId: actor.id,
-                type: "ChangeLevel",
-            };
-            dispatch(action);
+            dispatch(entityChangeLevel(actor.id, levelIndex - 1));
         }
     }
 }

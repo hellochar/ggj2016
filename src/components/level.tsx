@@ -11,7 +11,7 @@ export interface ILevelProps {
     center: IPosition;
 }
 
-export class PureLevel extends React.Component<ILevelProps, {}> {
+export class PureLevel extends React.PureComponent<ILevelProps, {}> {
     public render() {
         // Offset map such that center stays in the center
         const style = {

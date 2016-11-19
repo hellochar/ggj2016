@@ -79,6 +79,8 @@ export class PureGame extends React.Component<IGameProps, {}> {
         this.throttledHandleKeyPress.cancel();
     };
 
+    private getEntity = (e: string) => this.props.state.entities[e];
+
     public componentDidMount() {
         document.addEventListener("keydown", this.throttledHandleKeyPress, false);
         document.addEventListener("keyup", this.handleKeyUp, false);
@@ -92,12 +94,11 @@ export class PureGame extends React.Component<IGameProps, {}> {
     public render() {
         const userLevel = findEntityLevel("0", this.props.state);
         const user = this.props.state.entities["0"];
-        const getEntity = (e: string) => this.props.state.entities[e];
 
         return (
             <div className="rg-game">
                 <div className="rg-viewport">
-                    <PureLevel center={user.position} getEntity={getEntity} level={userLevel} />
+                    <PureLevel center={user.position} getEntity={this.getEntity} level={userLevel} />
                 </div>
                 <HeadsUpDisplay />
             </div>

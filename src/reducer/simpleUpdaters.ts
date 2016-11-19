@@ -41,7 +41,7 @@ function simpleScreenReducer(screen: Screen, action: SimpleAction): Screen {
 
 function simpleTurnOrderReducer(turnOrder: string[], action: SimpleAction): string[] {
     if (action.type === "RotateTurnOrder") {
-        return [...turnOrder.splice(1), turnOrder[0]];
+        return [...turnOrder.slice(1), turnOrder[0]];
     } else {
         return turnOrder;
     }

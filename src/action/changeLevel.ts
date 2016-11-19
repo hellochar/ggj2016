@@ -10,43 +10,30 @@ import { IState } from "state";
  * that can be used in many different situations (e.g. going upstairs,
  * teleporting, falling down a hole, etc.).
  */
-export interface IChangeLevelAction {
-    entityId: string;
-    newLevel: number;
-    type: "ChangeLevel";
-}
-
-export function createChangeLevelAction(entityId: string, newLevel: number): IChangeLevelAction {
-    return {
-        entityId,
-        newLevel,
-        type: "ChangeLevel"
-    };
-}
-
-export function handleChangeLevelAction(_unused: IState, action: IChangeLevelAction) {
+export function entityChangeLevel(entityId: string, newLevel: number) {
     return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
         const userHasRing = _.some(getState().entities[0].inventory.itemIds, (itemId) => {
             return getState().entities[itemId].type === "ring";
         });
         // user has gotten out!
-        if (action.newLevel === -1 && userHasRing) {
+        if (newLevel === -1 && userHasRing) {
             dispatch(setScreen("user-won"));
             return;
         }
-        const newLevelId = getState().levelOrder[action.newLevel];
+        const newLevelId = getState().levelOrder[newLevel];
         if (newLevelId !== undefined) {
-            const entity = getState().entities[action.entityId];
-            const level = findEntityLevel(action.entityId, getState());
-
-            // delete entity from old level
-            dispatch(updateLevel(new Level(level.id, level.map, _.without(level.entities, action.entityId))));
+            const entity = getState().entities[entityId];
+            const level = findEntityLevel(entityId, getState());
 
             // add entity to new level and give vision
             const newMap = getState().levels[newLevelId].map.clone();
             newMap.giveVision(entity.position, 7);
             const newLevel = new Level(newLevelId, newMap, [entity.id, ...getState().levels[newLevelId].entities]);
             dispatch(updateLevel(newLevel));
+
+            // delete entity from old level
+            dispatch(updateLevel(new Level(level.id, level.map, _.without(level.entities, entityId))));
+
         }
     };
 }
