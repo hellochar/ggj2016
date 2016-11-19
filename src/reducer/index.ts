@@ -1,9 +1,5 @@
 import {
     IAction,
-    handlePerformActionAction,
-    handleUserPerformActionAction,
-    handleChangeLevelAction,
-    handleIterateUntilActorTurnAction,
     handleResetGameAction,
     isSimpleUpdaterAction,
 } from "action";
@@ -14,16 +10,8 @@ import simpleReducer from "reducer/simpleUpdaters";
 /**
  * Top-level reducer for the game.
  */
-export default function reducer(state: IState, action: IAction) {
-    if (action.type === "PerformAction") {
-        return handlePerformActionAction(state, action);
-    } else if (action.type === "UserPerformAction") {
-        return handleUserPerformActionAction(state, action);
-    } else if (action.type === "ChangeLevel") {
-        return handleChangeLevelAction(state, action);
-    } else if (action.type === "IterateUntilActorTurn") {
-        return handleIterateUntilActorTurnAction(state, action);
-    } else if (action.type === "ResetGame") {
+export default function reducer(state: IState, action: IAction): IState {
+    if (action.type === "ResetGame") {
         return handleResetGameAction(state, action);
     } else if (isSimpleUpdaterAction(action)) {
         return simpleReducer(state, action);

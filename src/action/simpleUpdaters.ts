@@ -1,22 +1,32 @@
-import { IUpdateEntityAction } from "./simpleUpdaters";
+import { IEntityUpdateAction } from "./simpleUpdaters";
 import { IAction } from "action";
 import { Entity } from "model/entity";
 import { Level } from "model/level";
 import { Screen } from "state";
 
 export type SimpleUpdaterAction =
-IUpdateEntityAction |
+IEntityUpdateAction |
+IEntityDeleteAction |
 IUpdateLevelAction |
 ISetScreenAction |
 IRotateTurnOrderAction;
 
-export interface IUpdateEntityAction {
+export interface IEntityUpdateAction {
     entity: Entity;
-    type: "UpdateEntity";
+    type: "EntityUpdate";
 }
 
-export function updateEntity(entity: Entity): IUpdateEntityAction {
-    return { entity, type: "UpdateEntity" };
+export interface IEntityDeleteAction {
+    entityId: string;
+    type: "EntityDelete";
+}
+
+export function entityUpdate(entity: Entity): IEntityUpdateAction {
+    return { entity, type: "EntityUpdate" };
+}
+
+export function entityDelete(entityId: string): IEntityDeleteAction {
+    return { entityId, type: "EntityDelete" };
 }
 
 export interface IUpdateLevelAction {
@@ -46,7 +56,8 @@ export function rotateTurnOrder(): IRotateTurnOrderAction {
 }
 
 export function isSimpleUpdaterAction(action: IAction): action is SimpleUpdaterAction {
-    return action.type === "UpdateEntity"
+    return action.type === "EntityUpdate"
+        || action.type === "EntityDelete"
         || action.type === "UpdateLevel"
         || action.type === "SetScreen"
         || action.type === "RotateTurnOrder";

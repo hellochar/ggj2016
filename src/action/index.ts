@@ -1,15 +1,8 @@
-import { IChangeLevelAction } from "./changeLevel";
-import { IIterateUntilActorTurnAction } from "./iterateUntilActorTurn";
-import { IPerformActionAction, IUserPerformActionAction } from "./performAction";
 import { IResetGameAction } from "./resetGame";
 import { SimpleUpdaterAction } from "./simpleUpdaters";
 
 export type IAction =
-IPerformActionAction
-| IUserPerformActionAction
-| IChangeLevelAction
-| IIterateUntilActorTurnAction
-| IResetGameAction
+IResetGameAction
 | IReduxInitAction
 | SimpleUpdaterAction
 ;

@@ -3,7 +3,7 @@ import * as React from "react";
 import * as Redux from "redux";
 import { connect } from "react-redux";
 
-import { findEntityLevel, createPerformActionAction } from "action";
+import { findEntityLevel, userPerformAction } from "action";
 import { HeadsUpDisplay } from "components/headsUpDisplay";
 import { PureLevel } from "components/level";
 import * as Entity from "model/entity";
@@ -69,7 +69,7 @@ export class PureGame extends React.Component<IGameProps, {}> {
         }
 
         if (mapping[event.code]) {
-            this.props.dispatch(createPerformActionAction("0", mapping[event.code]));
+            this.props.dispatch(userPerformAction(mapping[event.code]));
         }
     };
     private throttledHandleKeyPress = _.throttle(this.handleKeyPress, 100);

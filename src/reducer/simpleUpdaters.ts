@@ -4,10 +4,14 @@ import { SimpleUpdaterAction as SimpleAction } from "action/simpleUpdaters";
 import { IEntities, ILevels, IState, Screen } from "state";
 
 function simpleEntitiesReducer(entities: IEntities, action: SimpleAction): IEntities {
-    if (action.type === "UpdateEntity") {
+    if (action.type === "EntityUpdate") {
         return _.assign({}, entities, {
             [action.entity.id]: action.entity,
         });
+    } else if (action.type === "EntityDelete") {
+        const newEntities = _.assign({}, entities);
+        delete newEntities[action.entityId];
+        return newEntities;
     } else {
         return entities;
     }

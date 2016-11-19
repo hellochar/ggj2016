@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import * as Redux from "redux";
 
-import { rotateTurnOrder, findEntityLevel, setScreen, updateLevel, updateEntity } from "action";
+import { entityDelete, iterateUntilActorTurn, rotateTurnOrder, findEntityLevel, setScreen, updateLevel, entityUpdate } from "action";
 import { IChangeLevelAction } from "action/changeLevel";
 import * as ModelActions from "model/action";
 import * as Entity from "model/entity";
@@ -10,33 +10,10 @@ import { TileType } from "model/tile";
 import { IState } from "state";
 import { badTypeError } from "util";
 
-export interface IPerformActionAction {
-    actorId: string;
-    action: ModelActions.Action;
-    type: "PerformAction";
-}
-
-export interface IUserPerformActionAction {
-    action: ModelActions.Action;
-    type: "UserPerformAction";
-}
-
-export function createPerformActionAction(actorId: string, action: ModelActions.Action): IPerformActionAction {
-    return {
-        actorId,
-        action,
-        type: "PerformAction",
-    };
-}
-
-export function handleUserPerformActionAction(state: IState, action: IUserPerformActionAction) {
+export function userPerformAction(action: ModelActions.Action) {
     return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
         const state = getState();
-        dispatch({
-            actorId: "0",
-            action: action.action,
-            type: "PerformAction",
-        });
+        dispatch(actorPerformAction("0", action));
         const nextState = getState();
 
         if (nextState !== state) {
@@ -54,12 +31,9 @@ export function handleUserPerformActionAction(state: IState, action: IUserPerfor
             if (user.health <= 0) {
                 dispatch(setScreen("user-died"));
             } else {
-                dispatch(updateEntity(user));
+                dispatch(entityUpdate(user));
                 // take NPC turns until it's the user turn again
-                dispatch({
-                    actorId: "0",
-                    type: "IterateUntilActorTurn",
-                });
+                dispatch(iterateUntilActorTurn("0"));
             }
         }
     };
@@ -69,58 +43,61 @@ export function handleUserPerformActionAction(state: IState, action: IUserPerfor
  * Update state in response to the perform action action. Handles invalid actor/action combinations by returning
  * the same state reference.
  */
-export function handlePerformActionAction(state: IState, action: IPerformActionAction) {
-    const actorAction = action.action;
-    const actor = state.entities[action.actorId] as Entity.Actor;
-    if (actorAction.type === "move") {
-        return handleMoveAction(state, action.actorId, actorAction);
-    } else if (actorAction.type === "nothing") {
-        return handleNothingAction(state, actor, actorAction);
-    } else if (actorAction.type === "go-downstairs") {
-        return handleGoDownstairsAction(state, actor, actorAction);
-    } else if (actorAction.type === "go-upstairs") {
-        return handleGoUpstairsAction(state, actor, actorAction);
-    } else if (actorAction.type === "pick-up-item") {
-        return handlePickUpItemAction(state, actor, actorAction);
-    } else if (actorAction.type === "drop-item") {
-        return handleDropItemAction(state, actor, actorAction);
-    } else if (actorAction.type === "use-item") {
-        return handleUseItemAction(state, actor, actorAction);
-    } else if (actorAction.type === "create-fruit") {
-        return handleCreateFruitAction(state, actor, actorAction);
-    } else {
-        return badTypeError(actorAction);
-    }
-}
-
-function handleNothingAction(state: IState, actor: Entity.Actor, action: ModelActions.IDoNothingAction): IState {
-    // shallow clone state to indicate that the action was successfully performed.
-    return _.assign({}, state);
-}
-
-function handleUseItemAction(state: IState, actor: Entity.Actor, action: ModelActions.IUseItemAction): IState {
-    const item = state.entities[action.itemId] as Entity.Item;
-    if (item.type === "fruit") {
-        // eat the fruit: remove the item from existence and satiate the user
-        const newEntities = _.assign({}, state.entities);
-        delete newEntities[action.itemId];
-
-        if (actor.type === "user") {
-            const newUser = _.assign({}, actor);
-            newUser.satiation = 1;
-            newUser.inventory = _.assign({}, newUser.inventory, {
-                itemIds: _.without(newUser.inventory.itemIds, action.itemId)
-            });
-            newEntities[actor.id] = newUser;
+export function actorPerformAction(actorId: string, action: ModelActions.Action) {
+    return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
+        const state = getState();
+        const actor = getState().entities[actorId] as Entity.Actor;
+        function getThunk() {
+            if (action.type === "move") {
+                return handleMoveAction(state, actorId, action);
+            } else if (action.type === "nothing") {
+                return handleNothingAction(state, actor, action);
+            } else if (action.type === "go-downstairs") {
+                return handleGoDownstairsAction(state, actor, action);
+            } else if (action.type === "go-upstairs") {
+                return handleGoUpstairsAction(state, actor, action);
+            } else if (action.type === "pick-up-item") {
+                return handlePickUpItemAction(state, actor, action);
+            } else if (action.type === "drop-item") {
+                return handleDropItemAction(state, actor, action);
+            } else if (action.type === "use-item") {
+                return handleUseItemAction(state, actor, action);
+            } else if (action.type === "create-fruit") {
+                return handleCreateFruitAction(state, actor, action);
+            } else {
+                return badTypeError(action);
+            }
         }
-
-        return _.assign({}, state, {
-            entities: _.assign({}, state.entities, newEntities)
-        });
-    } else {
-        // cannot use the item; cancel
-        return state;
+        dispatch(getThunk());
     }
+}
+
+function handleNothingAction(state: IState, actor: Entity.Actor, action: ModelActions.IDoNothingAction) {
+    return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
+        // do nothing.
+    }
+}
+
+function handleUseItemAction(state: IState, actor: Entity.Actor, action: ModelActions.IUseItemAction) {
+    const item = state.entities[action.itemId] as Entity.Item;
+
+    return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
+        if (item.type === "fruit") {
+            // eat the fruit: remove the item from existence and satiate the user
+            const newEntities = _.assign({}, state.entities);
+            delete newEntities[action.itemId];
+            dispatch(entityDelete(action.itemId));
+
+            if (actor.type === "user") {
+                const newUser = _.assign({}, actor);
+                newUser.satiation = 1;
+                newUser.inventory = _.assign({}, newUser.inventory, {
+                    itemIds: _.without(newUser.inventory.itemIds, action.itemId)
+                });
+                dispatch(entityUpdate(newUser));
+            }
+        }
+    };
 }
 
 function handleMoveAction(state: IState, actorId: string, action: ModelActions.IMoveAction) {
@@ -162,7 +139,7 @@ function handleMoveAction(state: IState, actorId: string, action: ModelActions.I
             return;
         } else {
             const newActor = Entity.move(actor, direction);
-            dispatch(updateEntity(newActor));
+            dispatch(entityUpdate(newActor));
 
             // update user vision if necessary
             if (actorId === "0") {
@@ -229,7 +206,7 @@ function handlePickUpItemAction(state: IState, actor: Entity.Actor, actorAction:
             });
 
             dispatch(updateLevel(newLevel));
-            dispatch(updateEntity(newEntity));
+            dispatch(entityUpdate(newEntity));
         }
     };
 }
@@ -256,28 +233,25 @@ function handleDropItemAction(state: IState, actor: Entity.Actor, actorAction: M
             position: _.assign({}, actor.position),
         });
         dispatch(updateLevel(newLevel));
-        dispatch(updateEntity(newActor));
-        dispatch(updateEntity(newItem));
+        dispatch(entityUpdate(newActor));
+        dispatch(entityUpdate(newItem));
     };
 }
 
-function handleCreateFruitAction(state: IState, actor: Entity.Actor, actorAction: ModelActions.ICreateFruitAction): IState {
-    const fruit: Entity.IFruit = {
-        id: Math.random().toString(16).substring(2),
-        position: {
-            x: actor.position.x + (Math.random() < 0.5 ? -1 : 1),
-            y: actor.position.y + (Math.random() < 0.5 ? -1 : 1),
-        },
-        type: "fruit",
+function handleCreateFruitAction(state: IState, actor: Entity.Actor, actorAction: ModelActions.ICreateFruitAction) {
+    return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
+        const fruit: Entity.IFruit = {
+            id: Math.random().toString(16).substring(2),
+            position: {
+                x: actor.position.x + (Math.random() < 0.5 ? -1 : 1),
+                y: actor.position.y + (Math.random() < 0.5 ? -1 : 1),
+            },
+            type: "fruit",
+        };
+        dispatch(entityUpdate(fruit));
+
+        const level = findEntityLevel(actor.id, state);
+        const newLevel = new Level(level.id, level.map, [...level.entities, fruit.id]);
+        dispatch(updateLevel(newLevel));
     };
-    const level = findEntityLevel(actor.id, state);
-    const newLevel = new Level(level.id, level.map, [...level.entities, fruit.id]);
-    return _.assign({}, state, {
-        entities: _.assign({}, state.entities, {
-            [fruit.id]: fruit,
-        }),
-        levels: _.assign({}, state.levels, {
-            [level.id]: newLevel,
-        }),
-    });
 }

@@ -4,9 +4,9 @@ import { connect } from "react-redux";
 import * as Redux from "redux";
 
 import { EntityComponent } from "components/entity";
-import { IUser, Level } from "model/";
+import { IUser, Level, IUseItemAction } from "model/";
 import { IState } from "state";
-import { createPerformActionAction, findEntityLevel } from "action";
+import { userPerformAction, findEntityLevel } from "action";
 
 interface IPureHeadsUpDisplayProps {
     dispatch: Redux.Dispatch<IState>;
@@ -18,11 +18,11 @@ interface IPureHeadsUpDisplayProps {
 
 export class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps, {}> {
     public handleItemDoubleClick(itemId: string) {
-        const action = createPerformActionAction(this.props.user.id, {
+        const action: IUseItemAction = {
             itemId,
             type: "use-item",
-        });
-        this.props.dispatch(action);
+        };
+        this.props.dispatch(userPerformAction(action));
     }
 
     public render() {
