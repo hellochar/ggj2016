@@ -1,4 +1,3 @@
-
 export type Direction = "left" | "up" | "down" | "right";
 
 export interface IMoveAction {
@@ -28,9 +27,18 @@ export interface IDropItemAction {
     type: "drop-item";
 }
 
+// TODO we're basically defining methods on the item class here; but preferably we'd allow
+// individual item types to have their own actions (eg axe should have a .cutTree(target) method, and should
+// also be of type weapon which has a .attack(target) method)
 export interface IUseItemAction {
     itemId: string;
     type: "use-item";
+}
+
+export interface IUseItemTargettedAction {
+    itemId: string;
+    targetId: string;
+    type: "use-item-target";
 }
 
 // creates a fruit in a nearby location.
@@ -46,5 +54,6 @@ IDoNothingAction |
 IPickUpItemAction |
 IDropItemAction |
 IUseItemAction |
+IUseItemTargettedAction |
 ICreateFruitAction
 ;

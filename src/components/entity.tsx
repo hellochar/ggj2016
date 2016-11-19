@@ -5,20 +5,6 @@ import { Position, Popover, PopoverInteractionKind } from "@blueprintjs/core";
 
 import { isItem, isActor, Entity, EntityType } from "model/";
 
-/**
- * Add per-entity classnames.
- */
-function getIconClassForEntity(entity: Entity) {
-    switch (entity.type) {
-        case "user": return "fa-user";
-        case "mercury": return "fa-mercury";
-        case "ring": return "fa-circle-o-notch";
-        case "tree": return "fa-tree";
-        case "fruit": return "fa-apple";
-        case "house": return "fa-home";
-    }
-}
-
 export interface IEntityProps {
     entity: Entity;
     usePosition?: boolean;
@@ -33,12 +19,32 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
         }
     }
 
+    private renderEntityElement(entity: Entity): string | JSX.Element {
+        switch (entity.type) {
+            case "user": return "fa-user";
+            case "mercury": return "fa-mercury";
+            case "ring": return "fa-circle-o-notch";
+            case "tree": return "fa-tree";
+            case "fruit": return "fa-apple";
+            case "house": return "fa-home";
+            case "axe": return <span>G</span>;
+        }
+    }
+
+
     public render() {
         const { entity, usePosition = true, onDoubleClick } = this.props;
-        const className = classnames(
-            "fa",
-            getIconClassForEntity(entity),
-        );
+        const entityElement = this.renderEntityElement(entity);
+        let element: JSX.Element;
+        if (typeof entityElement === "string") {
+            const className = classnames(
+                "fa",
+                entityElement,
+            );
+            element = <i className={className} />;
+        } else {
+            element = entityElement;
+        }
 
         const style = usePosition ? {
                 left: entity.position.x * 25,
@@ -57,7 +63,7 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
 
         return (
             <div style={style} className={fooClasses}>
-                <i className={className} />
+                { element }
                 <EntityPopover name={this.nameForEntity(entity)} onDoubleClick={onDoubleClick} type={entity.type} />
             </div>
         );
@@ -84,6 +90,7 @@ class EntityPopover extends React.PureComponent<IEntityPopoverProps, {}> {
                 return "Sorrow is knowledge, those that know the most must mourn the deepest, the tree of knowledge is not the tree of life.";
             case "fruit": return "The roots of education are bitter, but the fruit is sweet.";
             case "house": return "Have nothing in your house that you do not know to be useful, or believe to be beautiful.";
+            case "axe": return "Your trusty axe! Cuts down trees with ease.";
         }
     }
 

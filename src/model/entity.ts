@@ -1,3 +1,4 @@
+import { IBaseEntity } from "./entity";
 import * as _ from "lodash";
 
 /*
@@ -143,11 +144,11 @@ export interface IInventory {
 export type Entity = Item | Actor | IHouse;
 export type EntityType = ItemType | ActorType | "house";
 
-export type Item = IRing | IFruit;
-export type ItemType = "ring" | "fruit";
+export type Item = IRing | IFruit | IAxe;
+export type ItemType = "ring" | "fruit" | "axe";
 
 export function isItem(e: Entity) {
-    return e.type === "fruit" || e.type === "ring";
+    return e.type === "fruit" || e.type === "ring" || e.type === "axe";
 }
 
 export interface IBaseActor extends IBaseEntity, IHasPosition { }
@@ -186,12 +187,16 @@ export interface IRing extends IBaseEntity, IHasPosition {
     type: "ring";
 }
 
-export interface ITree extends IBaseActor {
-    type: "tree";
-}
-
 export interface IFruit extends IBaseEntity, IHasPosition {
     type: "fruit";
+}
+
+export interface IAxe extends IBaseEntity, IHasPosition {
+    type: "axe";
+}
+
+export interface ITree extends IBaseActor {
+    type: "tree";
 }
 
 // export interface ILeaf extends IBaseEntity, IHasHealth, IHasPosition {

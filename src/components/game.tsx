@@ -3,11 +3,10 @@ import * as React from "react";
 import * as Redux from "redux";
 import { connect } from "react-redux";
 
+import { decideUserAction } from "userInput";
 import { findEntityLevel, userPerformAction } from "action";
 import { HeadsUpDisplay } from "components/headsUpDisplay";
 import { PureLevel } from "components/level";
-import * as Entity from "model/entity";
-import * as ModelAction from "model/action";
 import { IState } from "state";
 
 export interface IGameProps {
@@ -17,59 +16,9 @@ export interface IGameProps {
 
 export class PureGame extends React.Component<IGameProps, {}> {
     private handleKeyPress = (event: KeyboardEvent) => {
-        const mapping: { [key: string]: ModelAction.Action } = {
-            KeyW: {
-                direction: "up",
-                type: "move",
-            },
-            KeyA: {
-                direction: "left",
-                type: "move",
-            },
-            KeyS: {
-                direction: "down",
-                type: "move",
-            },
-            KeyD: {
-                direction: "right",
-                type: "move",
-            },
-            KeyQ: {
-                type: "go-upstairs",
-            },
-            KeyE: {
-                type: "go-downstairs",
-            },
-            Period: {
-                type: "nothing",
-            },
-        };
-
-        const user = this.props.state.entities["0"];
-        // add pick-up-item if available
-        const itemsBeneathUser = Entity.getEntitiesAtPosition(
-            this.props.state,
-            findEntityLevel("0", this.props.state).id,
-            user.position
-        ).filter((entityId) => {
-            return Entity.isItem(this.props.state.entities[entityId]);
-        });
-        if (itemsBeneathUser.length > 0) {
-            mapping["KeyG"] = {
-                itemId: itemsBeneathUser[0],
-                type: "pick-up-item",
-            };
-        }
-
-        if (user.inventory.itemIds.length > 0) {
-            mapping["KeyP"] = {
-                itemId: user.inventory.itemIds[0],
-                type: "drop-item",
-            };
-        }
-
-        if (mapping[event.code]) {
-            this.props.dispatch(userPerformAction(mapping[event.code]));
+        const action = decideUserAction(this.props.state, event);
+        if (action !== undefined) {
+            this.props.dispatch(userPerformAction(action));
         }
     };
     private throttledHandleKeyPress = _.throttle(this.handleKeyPress, 100);

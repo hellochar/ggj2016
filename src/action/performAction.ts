@@ -1,7 +1,16 @@
 import * as _ from "lodash";
 import * as Redux from "redux";
 
-import { entityDelete, entityChangeLevel, iterateUntilActorTurn, rotateTurnOrder, findEntityLevel, setScreen, updateLevel, entityUpdate } from "action";
+import {
+    entityChangeLevel,
+    entityDelete,
+    entityUpdate,
+    findEntityLevel,
+    iterateUntilActorTurn,
+    rotateTurnOrder,
+    setScreen,
+    updateLevel,
+} from "action";
 import * as ModelActions from "model/action";
 import * as Entity from "model/entity";
 import { Level } from "model/level";
@@ -61,6 +70,8 @@ export function actorPerformAction(actorId: string, action: ModelActions.Action)
                 return handleDropItemAction(state, actor, action);
             } else if (action.type === "use-item") {
                 return handleUseItemAction(state, actor, action);
+            } else if (action.type === "use-item-target") {
+                return handleUseItemTargettedAction(state, actor, action);
             } else if (action.type === "create-fruit") {
                 return handleCreateFruitAction(state, actor, action);
             } else {
@@ -83,8 +94,6 @@ function handleUseItemAction(state: IState, actor: Entity.Actor, action: ModelAc
     return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
         if (item.type === "fruit") {
             // eat the fruit: remove the item from existence and satiate the user
-            const newEntities = _.assign({}, state.entities);
-            delete newEntities[action.itemId];
             dispatch(entityDelete(action.itemId));
 
             if (actor.type === "user") {
@@ -95,6 +104,20 @@ function handleUseItemAction(state: IState, actor: Entity.Actor, action: ModelAc
                 });
                 dispatch(entityUpdate(newUser));
             }
+        }
+    };
+}
+
+function handleUseItemTargettedAction(state: IState, actor: Entity.Actor, action: ModelActions.IUseItemTargettedAction) {
+    const item = state.entities[action.itemId] as Entity.Item;
+
+    return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
+        if (item.type === "axe") {
+            const target = state.entities[action.targetId];
+            if (target.type !== "tree") {
+                throw new Error(`Axe cannot be used on ${target.type}!`);
+            }
+            dispatch(entityDelete(target.id));
         }
     };
 }
