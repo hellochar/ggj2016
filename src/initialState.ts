@@ -10,6 +10,13 @@ export function buildInitialState(): IState {
 
     const center = {x: 30, y: 15};
 
+    const fruit: Entity.IFruit = {
+        type: "fruit",
+        position: _.clone(center),
+        id: Math.random().toString(16).substring(2),
+    };
+    entitiesToAdd.push(fruit);
+
     const user: Entity.IUser = {
         id: "0",
         type: "user",
@@ -18,7 +25,7 @@ export function buildInitialState(): IState {
         health: 10,
         maxHealth: 10,
         inventory: {
-            itemIds: [],
+            itemIds: [fruit.id],
             maxSize: 20
         },
         satiation: 1,

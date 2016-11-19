@@ -4,19 +4,18 @@ import { connect } from "react-redux";
 import * as Redux from "redux";
 
 import { EntityComponent } from "components/entity";
-import { IUser, Level, IUseItemAction } from "model/";
+import { IUser, IUseItemAction, Item } from "model/";
 import { IState } from "state";
 import { userPerformAction, findEntityLevel } from "action";
 
 interface IPureHeadsUpDisplayProps {
     dispatch: Redux.Dispatch<IState>;
-    state: IState;
     user: IUser;
-    userLevel: Level;
+    userItems: Item[];
     userFloor: number;
 }
 
-export class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps, {}> {
+export class PureHeadsUpDisplay extends React.PureComponent<IPureHeadsUpDisplayProps, {}> {
     public handleItemDoubleClick(itemId: string) {
         const action: IUseItemAction = {
             itemId,
@@ -44,12 +43,12 @@ export class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps
                 </div>
                 <div>
                     {
-                        entity.inventory.itemIds.map((itemId) => {
+                        this.props.userItems.map((item) => {
                             return (
-                                <div className="rg-entity-info-item">
+                                <div key={item.id} className="rg-entity-info-item">
                                     <EntityComponent
-                                        entity={this.props.state.entities[itemId]}
-                                        onDoubleClick={() => this.handleItemDoubleClick(itemId)}
+                                        entity={item}
+                                        onDoubleClick={() => this.handleItemDoubleClick(item.id)}
                                         usePosition={false} />
                                 </div>
                             );
@@ -62,13 +61,46 @@ export class PureHeadsUpDisplay extends React.Component<IPureHeadsUpDisplayProps
     }
 }
 
+// given the state, return the user's Item Entities.
+function getUserItemsFromState(state: IState) {
+    return state.entities["0"].inventory.itemIds.map((itemId) => {
+        return state.entities[itemId] as Item;
+    });
+}
+
+// cache getUserItemsFromState to only return a different object reference from the previous call
+// if evaluation of this instance doesn't shallow equal the previous one
+const cachedGetUserItemsFromState = (() => {
+    let previousValue: Item[];
+    return (state: IState) => {
+        const value = getUserItemsFromState(state);
+        if (previousValue === undefined) {
+            previousValue = value;
+            return value;
+        } else {
+            // compare previous to current
+            let shouldUpdate: boolean;
+            if (value.length !== previousValue.length) {
+                shouldUpdate = true;
+            } else {
+                // shallow compare array elements
+                shouldUpdate = previousValue.some((item, index) => { return item !== value[index]; });
+            }
+
+            if (shouldUpdate) {
+                previousValue = value;
+            }
+            return value;
+        }
+    };
+})();
+
 function mapStateToProps(state: IState) {
     const userLevel = findEntityLevel("0", state);
     const userFloor = state.levelOrder.indexOf(userLevel.id);
     return {
-        state,
-        user: state.entities["0"] as IUser,
-        userLevel,
+        user: state.entities["0"],
+        userItems: cachedGetUserItemsFromState(state),
         userFloor,
     };
 }
