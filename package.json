@@ -2,13 +2,9 @@
   "name": "",
   "version": "1.0.0",
   "scripts": {
-    "start": "node server.js",
     "build": "webpack",
-    "watch": "webpack -w",
-    "test": "karma start karma.conf.js",
-    "test-debug": "karma start karma.conf.js --single-run=false --debug --auto-watch",
-    "test-browser": "karma start karma.conf.js --browsers=Chrome",
-    "test-browser-debug": "karma start karma.conf.js --browsers=Chrome --single-run=false --debug --auto-watch"
+    "start": "node server.js",
+    "watch": "webpack -w"
   },
   "dependencies": {
     "@blueprintjs/core": "^1.0.1",
@@ -39,12 +35,6 @@
     "extract-text-webpack-plugin": "~0.9.1",
     "file-loader": "~0.8.4",
     "jasmine-core": "~2.3.4",
-    "karma": "~0.13.10",
-    "karma-chrome-launcher": "~0.2.0",
-    "karma-cli": "~0.1.1",
-    "karma-jasmine": "~0.3.6",
-    "karma-phantomjs-launcher": "~0.2.1",
-    "karma-sourcemap-loader": "~0.3.6",
     "karma-webpack": "~1.7.0",
     "less": "~2.5.3",
     "less-loader": "~2.2.1",
