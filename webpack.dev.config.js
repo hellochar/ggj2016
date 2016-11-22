@@ -22,7 +22,8 @@ var devConfigExtension = {
   },
 
   resolve: {
-    alias: mainConfig.resolve.alias
+    // HACKHACK https://github.com/gaearon/react-hot-loader/issues/417#issuecomment-261548082
+    alias: {'react/lib/ReactMount': 'react-dom/lib/ReactMount' }
   },
 
   // more options here: http://webpack.github.io/docs/configuration.html#devtool
@@ -50,7 +51,6 @@ var devConfigExtension = {
 };
 
 mainConfig.module.loaders = [];
-mainConfig.resolve.alias = {};
 mainConfig.plugins = [];
 
 module.exports = mainConfig.merge(devConfigExtension);
