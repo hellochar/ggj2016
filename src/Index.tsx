@@ -1,6 +1,9 @@
+import "react-hot-loader/patch";
+
 import * as Perf from "react-addons-perf";
 import * as ReactDOM from "react-dom";
 import * as React from "react";
+import { AppContainer } from "react-hot-loader";
 import { Provider } from "react-redux";
 import * as Redux from "redux";
 import * as createLogger from "redux-logger";
@@ -23,6 +26,27 @@ root.id = "root";
 document.body.appendChild(root);
 
 ReactDOM.render(
-    <Provider store={store}>
-        <Main />
-    </Provider>, root);
+    <AppContainer>
+        <Provider store={store}>
+            <Main />
+        </Provider>
+    </AppContainer>,
+    root
+);
+
+declare var module: any;
+declare var require: any;
+
+if (module.hot) {
+    module.hot.accept("components/main", () => {
+        const NextMain = require("components/main").Main;
+        ReactDOM.render(
+            <AppContainer>
+                <Provider store={store}>
+                    <NextMain />
+                </Provider>
+            </AppContainer>,
+            root
+        );
+    });
+}

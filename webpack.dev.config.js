@@ -23,7 +23,7 @@ var devConfigExtension = {
 
   resolve: {
     // HACKHACK https://github.com/gaearon/react-hot-loader/issues/417#issuecomment-261548082
-    alias: {'react/lib/ReactMount': 'react-dom/lib/ReactMount' }
+    // alias: {'react/lib/ReactMount': 'react-dom/lib/ReactMount' }
   },
 
   // more options here: http://webpack.github.io/docs/configuration.html#devtool
@@ -33,7 +33,7 @@ var devConfigExtension = {
 
   module: {
     loaders: [
-      { test: /\.ts(x?)$/, loaders: ['react-hot', 'ts-loader?instance=jsx'], include: path.resolve(__dirname, "src") },
+      { test: /\.ts(x?)$/, loaders: ['react-hot-loader/webpack', 'ts-loader?instance=jsx'], include: path.resolve(__dirname, "src") },
       { test: /\.css$/, exclude: /\.import\.css$/,  loader: "style!css", include: path.resolve(__dirname, "src") },
       { test: /\.import\.css$/,  loader: "style!css", include: path.resolve(__dirname, "src") },
       { test: /\.less$/, exclude: /\.module\.less$/, loader: "style!css!less", include: path.resolve(__dirname, "src") },
