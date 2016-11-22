@@ -79,13 +79,14 @@ export function actorPerformAction(actorId: string, action: ModelActions.Action)
             }
         }
         dispatch(getThunk());
-    }
+    };
 }
 
 function handleNothingAction(state: IState, actor: Entity.Actor, action: ModelActions.IDoNothingAction) {
     return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
-        // do nothing.
-    }
+        // do nothing by making a shallow clone of the changed actor.
+        dispatch(entityUpdate(_.assign({}, actor)));
+    };
 }
 
 function handleUseItemAction(state: IState, actor: Entity.Actor, action: ModelActions.IUseItemAction) {
@@ -196,7 +197,7 @@ function handleGoUpstairsAction(state: IState, actor: Entity.Actor, actorAtion: 
             // go upstairs by doing a change level action
             dispatch(entityChangeLevel(actor.id, levelIndex - 1));
         }
-    }
+    };
 }
 
 function handlePickUpItemAction(state: IState, actor: Entity.Actor, actorAction: ModelActions.IPickUpItemAction) {

@@ -12,5 +12,5 @@ export function iterateUntilActorTurn(actorId: string) {
             dispatch(actorPerformAction(actor.id, nextAction));
             dispatch(rotateTurnOrder());
         }
-    }
+    };
 }

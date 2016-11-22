@@ -31,7 +31,6 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
         }
     }
 
-
     public render() {
         const { entity, usePosition = true, onDoubleClick } = this.props;
         const entityElement = this.renderEntityElement(entity);
