@@ -198,6 +198,10 @@ export class Level {
         this.entities = entities;
     }
 
+    public withoutEntity(entityId: string) {
+        return new Level(this.id, this.map, _.without(this.entities, entityId));
+    }
+
     public isVisible(position: IPosition) {
         const tile = this.map.get(position.x, position.y);
         if (tile !== undefined) {

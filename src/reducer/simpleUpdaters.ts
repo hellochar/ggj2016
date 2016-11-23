@@ -26,6 +26,14 @@ function simpleLevelsReducer(levels: ILevels, action: SimpleAction): ILevels {
         return _.assign({}, levels, {
             [action.level.id]: action.level,
         });
+    } else if (action.type === "EntityDelete") {
+        // delete entity from level reference
+        const level = _.find(levels, (level) => {
+            return level.entities.some((id) => action.entityId === id);
+        });
+        return _.assign({}, levels, {
+            [level.id]: level.withoutEntity(action.entityId)
+        });
     } else {
         return levels;
     }
@@ -42,6 +50,9 @@ function simpleScreenReducer(screen: Screen, action: SimpleAction): Screen {
 function simpleTurnOrderReducer(turnOrder: string[], action: SimpleAction): string[] {
     if (action.type === "RotateTurnOrder") {
         return [...turnOrder.slice(1), turnOrder[0]];
+    } else if (action.type === "EntityDelete") {
+        // delete entity from turn order.
+        return _.without(turnOrder, action.entityId);
     } else {
         return turnOrder;
     }

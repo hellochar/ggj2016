@@ -25,6 +25,9 @@ export function entityUpdate(entity: Entity): IEntityUpdateAction {
     return { entity, type: "EntityUpdate" };
 }
 
+/**
+ * Update the state by removing an entity from memory.
+ */
 export function entityDelete(entityId: string): IEntityDeleteAction {
     return { entityId, type: "EntityDelete" };
 }

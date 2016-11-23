@@ -25,7 +25,7 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
             case "mercury": return "fa-mercury";
             case "ring": return "fa-circle-o-notch";
             case "tree": return "fa-tree";
-            case "fruit": return "fa-apple";
+            case "fruit": return "fa-lemon-o";
             case "house": return "fa-home";
             case "axe": return <span>G</span>;
         }

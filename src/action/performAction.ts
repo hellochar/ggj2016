@@ -123,44 +123,53 @@ function handleUseItemTargettedAction(state: IState, actor: Entity.Actor, action
     };
 }
 
-function handleMoveAction(state: IState, actorId: string, action: ModelActions.IMoveAction) {
-    const offsets = {
-        "left": {
-            x: -1,
-            y: 0
-        },
-        "right": {
-            x: 1,
-            y: 0
-        },
-        "up": {
-            x: 0,
-            y: -1
-        },
-        "down": {
-            x: 0,
-            y: 1
-        }
-    };
+export const MOVE_ACTION_OFFSETS = {
+    "left": {
+        x: -1,
+        y: 0
+    },
+    "right": {
+        x: 1,
+        y: 0
+    },
+    "up": {
+        x: 0,
+        y: -1
+    },
+    "down": {
+        x: 0,
+        y: 1
+    }
+};
 
+export function canActorTakeMoveAction(state: IState, actorId: string, action: ModelActions.IMoveAction) {
+    const level = findEntityLevel(actorId, state);
+    const actor = state.entities[actorId];
+    const direction = MOVE_ACTION_OFFSETS[action.direction];
+    const newPosition = {
+        x: actor.position.x + direction.x,
+        y: actor.position.y + direction.y,
+    };
+    const newPositionTile = level.map.get(newPosition.x, newPosition.y);
+    const spaceIsOccupied = Entity.getEntitiesAtPosition(state, level.id, newPosition)
+        .filter((id) => !Entity.isItem(state.entities[id]))
+        .length > 0;
+    if (newPositionTile == null ||
+        level.map.isTileObstructed(newPosition) ||
+        spaceIsOccupied) {
+        // can't move there; do nothing and abort action.
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function handleMoveAction(state: IState, actorId: string, action: ModelActions.IMoveAction) {
     return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
         const level = findEntityLevel(actorId, state);
         const actor = state.entities[actorId];
-        const direction = offsets[action.direction];
-        const newPosition = {
-            x: actor.position.x + direction.x,
-            y: actor.position.y + direction.y,
-        };
-        const newPositionTile = level.map.get(newPosition.x, newPosition.y);
-        const spaceIsOccupied = Entity.getEntitiesAtPosition(state, level.id, newPosition)
-            .filter((id) => !Entity.isItem(state.entities[id]))
-            .length > 0;
-        if (newPositionTile == null ||
-            level.map.isTileObstructed(newPosition) ||
-            spaceIsOccupied) {
-            // can't move there; do nothing and abort action.
-            return;
-        } else {
+        if (canActorTakeMoveAction(state, actorId, action)) {
+            const direction = MOVE_ACTION_OFFSETS[action.direction];
             const newActor = Entity.move(actor, direction);
             dispatch(entityUpdate(newActor));
 
