@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "build": "webpack",
-    "start": "node server.js",
-    "watch": "webpack -w"
+    "clean": "rm -rf build/",
+    "start": "node server.js"
   },
   "dependencies": {
     "@blueprintjs/core": "^1.0.1",
