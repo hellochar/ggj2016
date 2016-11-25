@@ -1,9 +1,9 @@
 import * as classnames from "classnames";
 import * as _ from "lodash";
 import * as React from "react";
-import { Position, Popover, PopoverInteractionKind } from "@blueprintjs/core";
+import { Intent, Position, Popover, PopoverInteractionKind, ProgressBar } from "@blueprintjs/core";
 
-import { isItem, isActor, Entity, EntityType } from "model/";
+import { isItem, isActor, Entity, EntityType, hasHealth } from "model/";
 
 export interface IEntityProps {
     entity: Entity;
@@ -19,7 +19,7 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
         }
     }
 
-    private renderEntityElement(entity: Entity): string | JSX.Element {
+    private getEntityClassnames(entity: Entity): string {
         switch (entity.type) {
             case "user": return "fa-user";
             case "mercury": return "fa-mercury";
@@ -27,23 +27,13 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
             case "tree": return "fa-tree";
             case "fruit": return "fa-lemon-o";
             case "house": return "fa-home";
-            case "axe": return <span>G</span>;
+            case "axe": return "fa-gavel";
         }
     }
 
     public render() {
         const { entity, usePosition = true, onDoubleClick } = this.props;
-        const entityElement = this.renderEntityElement(entity);
-        let element: JSX.Element;
-        if (typeof entityElement === "string") {
-            const className = classnames(
-                "fa",
-                entityElement,
-            );
-            element = <i className={className} />;
-        } else {
-            element = entityElement;
-        }
+        const element = <i className={classnames("rg-entity-element", "fa", this.getEntityClassnames(entity))} />;
 
         const style = usePosition ? {
                 left: entity.position.x * 25,
@@ -51,7 +41,7 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
                 position: "absolute",
             } : {};
 
-        const fooClasses = classnames(
+        const containerClasses = classnames(
             "rg-entity",
             {
                 "rg-entity-item": isItem(entity),
@@ -60,8 +50,16 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
             }
         );
 
+        const healthMeter = hasHealth(entity)
+            ? <ProgressBar
+                className="pt-no-stripes rg-health-meter"
+                intent={Intent.SUCCESS}
+                value={entity.health / entity.maxHealth} />
+            : null;
+
         return (
-            <div style={style} className={fooClasses}>
+            <div style={style} className={containerClasses}>
+                { healthMeter }
                 { element }
                 <EntityPopover name={this.nameForEntity(entity)} onDoubleClick={onDoubleClick} type={entity.type} />
             </div>
@@ -89,7 +87,7 @@ class EntityPopover extends React.PureComponent<IEntityPopoverProps, {}> {
                 return "Sorrow is knowledge, those that know the most must mourn the deepest, the tree of knowledge is not the tree of life.";
             case "fruit": return "The roots of education are bitter, but the fruit is sweet.";
             case "house": return "Have nothing in your house that you do not know to be useful, or believe to be beautiful.";
-            case "axe": return "Your trusty axe! Cuts down trees with ease.";
+            case "axe": return "Your trusty axe! Cuts down trees in one turn and does 3 damage to foes.";
         }
     }
 

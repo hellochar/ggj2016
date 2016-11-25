@@ -6,8 +6,8 @@ import { Tile } from "components/tile";
 import { EntityComponent } from "components/entity";
 
 export interface ILevelProps {
-    getEntity: (id: string) => Entity;
     level: Level;
+    levelEntities: Entity[];
     center: IPosition;
 }
 
@@ -24,8 +24,7 @@ export class PureLevel extends React.PureComponent<ILevelProps, {}> {
                     {row.map((tile, x) => <Tile tile={tile} key={`${x},${y}`} />)}
                 </div>
             ))}
-            {this.props.level.entities.map((entityId) => {
-                const entity = this.props.getEntity(entityId);
+            {this.props.levelEntities.map((entity) => {
                 if (this.props.level.isVisible(entity.position)) {
                     return <EntityComponent entity={entity} key={entity.id} />;
                 } else {
