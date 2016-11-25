@@ -114,6 +114,10 @@ export interface IHasHealth {
     maxHealth: number;
 }
 
+export function hasHealth(e: Entity): e is (Entity & IHasHealth) {
+    return e.type === "user" || e.type === "mercury";
+}
+
 export interface IHasPosition {
     /**
      * Entity's current position in the 2D universe.

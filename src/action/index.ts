@@ -19,6 +19,7 @@ export interface IReduxDevtoolsExtensionInitAction {
 }
 
 export * from "./changeLevel";
+export * from "./entityDealDamage";
 export * from "./iterateUntilActorTurn";
 export * from "./performAction";
 export * from "./resetGame";

@@ -3,6 +3,7 @@ import * as Redux from "redux";
 
 import {
     entityChangeLevel,
+    entityDealDamage,
     entityDelete,
     entityUpdate,
     findEntityLevel,
@@ -115,10 +116,11 @@ function handleUseItemTargettedAction(state: IState, actor: Entity.Actor, action
     return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
         if (item.type === "axe") {
             const target = state.entities[action.targetId];
-            if (target.type !== "tree") {
-                throw new Error(`Axe cannot be used on ${target.type}!`);
+            if (target.type === "tree") {
+                dispatch(entityDelete(target.id));
+            } else if (target.type === "mercury") {
+                dispatch(entityDealDamage(target, 3));
             }
-            dispatch(entityDelete(target.id));
         }
     };
 }

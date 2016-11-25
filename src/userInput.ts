@@ -44,31 +44,39 @@ export function decideUserAction(state: IState, event: KeyboardEvent): ModelActi
         if (canActorTakeMoveAction(state, "0", action)) {
             availableActions[key] = action;
         } else {
-            const direction = MOVE_ACTION_OFFSETS[action.direction];
             const user = state.entities[0];
-            const newPosition = {
-                x: user.position.x + direction.x,
-                y: user.position.y + direction.y,
-            };
-            // if there's a tree in the way, cut it down
-            const treesAtPosition = Entity.getEntitiesAtPosition(
-                state,
-                findEntityLevel("0", state).id,
-                newPosition
-            ).filter((entityId) => state.entities[entityId].type === "tree");
-
             const axeItem: Entity.IAxe = _.find(
                 user.inventory.itemIds.map((id) => state.entities[id]),
                 (entity) => entity.type === "axe"
             ) as Entity.IAxe;
-            if (axeItem !== undefined && treesAtPosition.length > 0) {
-                // there is a tree here - allow user to cut it down
-                const cutTreeAction: ModelAction.IUseItemTargettedAction = {
-                    itemId: axeItem.id,
-                    targetId: state.entities[treesAtPosition[0]].id,
-                    type: "use-item-target"
+
+            if (axeItem !== undefined) {
+                const direction = MOVE_ACTION_OFFSETS[action.direction];
+                const newPosition = {
+                    x: user.position.x + direction.x,
+                    y: user.position.y + direction.y,
                 };
-                availableActions[key] = cutTreeAction;
+                const entitiesInTheWay = Entity.getEntitiesAtPosition(state, findEntityLevel("0", state).id, newPosition);
+                // if there's a tree in the way, cut it down
+                const treesInTheWay = entitiesInTheWay.filter((entityId) => state.entities[entityId].type === "tree");
+                const mercuriesInTheWay = entitiesInTheWay.filter((entityId) => state.entities[entityId].type === "mercury");
+
+                if (treesInTheWay.length > 0) {
+                    // there is a tree here - allow user to cut it down
+                    const cutTreeAction: ModelAction.IUseItemTargettedAction = {
+                        itemId: axeItem.id,
+                        targetId: state.entities[treesInTheWay[0]].id,
+                        type: "use-item-target"
+                    };
+                    availableActions[key] = cutTreeAction;
+                } else if (mercuriesInTheWay.length > 0) {
+                    const mercuryAttackAction: ModelAction.IUseItemTargettedAction = {
+                        itemId: axeItem.id,
+                        targetId: state.entities[mercuriesInTheWay[0]].id,
+                        type: "use-item-target"
+                    };
+                    availableActions[key] = mercuryAttackAction;
+                }
             }
         }
     });
