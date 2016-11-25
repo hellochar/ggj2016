@@ -17,6 +17,8 @@ export default function reducer(state: IState, action: IAction): IState {
         return simpleReducer(state, action);
     } else if (action.type === "@@redux/INIT") {
         return state;
+    } else if (action.type === "@@INIT") {
+        return state;
     } else {
         return badTypeError(action);
     }

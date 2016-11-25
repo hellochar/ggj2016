@@ -21,11 +21,17 @@ import "./index.less";
 (window as any).Perf = Perf;
 
 const logger = createLogger({ duration: true, timestamp: true, collapsed: () => true });
-const storeEnhancer: Redux.GenericStoreEnhancer = Redux.compose(
+
+// add redux devtools reporting
+const compose = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || Redux.compose;
+
+const storeEnhancer: Redux.GenericStoreEnhancer = compose(
     Redux.applyMiddleware(
         thunk,
         logger
     ),
+    // only notify subscriptions (aka react-redux) to update in a debounce loop to prevent intermediate renders from
+    // redux-thunk
     batchedSubscribe(_.debounce((notify: any) => notify()))
 );
 const store = Redux.createStore<IState>(reducer as Redux.Reducer<IState>, buildInitialState(), storeEnhancer);
