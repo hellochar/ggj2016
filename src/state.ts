@@ -2,16 +2,16 @@ import { Entity, IUser } from "./model/entity";
 import { Level } from "./model/level";
 
 export interface IEntities {
-    [entityId: string]: Entity;
+    readonly [entityId: string]: Entity;
 
     /**
      * The special player entity.
      */
-    0: IUser;
+    readonly 0: IUser;
 }
 
 export interface ILevels {
-    [levelId: string]: Level;
+    readonly [levelId: string]: Level;
 }
 
 /**
@@ -21,25 +21,25 @@ export interface IState {
     /**
      * All entities in the game.
      */
-    entities: IEntities;
+    readonly entities: IEntities;
     /**
      * The order in which levels are stacked in the game.
      */
-    levelOrder: string[];
+    readonly levelOrder: string[];
     /**
      * All the levels of the game, keyed by their levelId.
      */
-    levels: ILevels;
+    readonly levels: ILevels;
     /**
      * Queue of actor ids waiting for their turn. The actor at the front of the
      * list will act, and then be pushed to the back of the turn order.
      */
-    turnOrder: string[];
+    readonly turnOrder: string[];
 
     /**
      * Which screen to show.
      */
-    screen: Screen;
+    readonly screen: Screen;
 }
 
 export type Screen = "play" | "user-died" | "user-won";
