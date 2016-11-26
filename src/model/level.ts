@@ -438,10 +438,10 @@ export function generateMap(upstairs: IPosition, colorTheme: string[]) {
         // unnamed - generally chaotic growth. A bit denser than seeds.
         "B25/S4",
 
-        // life without death - quickly fills up most of the space and leaves
-        // only tiny disconnected spaces.
-        // continued iteration creates beautiful natural looking coral like growths
-        "B3/S012345678",
+        // // life without death - quickly fills up most of the space and leaves
+        // // only tiny disconnected spaces.
+        // // continued iteration creates beautiful natural looking coral like growths
+        // "B3/S012345678",
 
         // 3-4 life; chaotic but more interesting/complex spaces; creates nice pockets
         // of space versus rock

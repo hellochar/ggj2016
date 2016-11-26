@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { Entity, Level } from "model/";
 import { IPosition } from "math";
+import { CELL_SIZE } from "components/commons";
 import { Tile } from "components/tile";
 import { EntityComponent } from "components/entity";
 
@@ -15,8 +16,8 @@ export class PureLevel extends React.PureComponent<ILevelProps, {}> {
     public render() {
         // Offset map such that center stays in the center
         const style = {
-            top: `-${this.props.center.y * 25}px`,
-            left: `-${this.props.center.x * 25}px`,
+            top: `-${this.props.center.y * CELL_SIZE}px`,
+            left: `-${this.props.center.x * CELL_SIZE}px`,
         };
         return <div className="rg-map" style={style}>
             {this.props.level.map.getTiles().map((row, y) => (

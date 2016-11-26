@@ -4,6 +4,7 @@ import * as React from "react";
 import { Intent, Position, Popover, PopoverInteractionKind, ProgressBar } from "@blueprintjs/core";
 
 import { isItem, isActor, Entity, EntityType, hasHealth } from "model/";
+import { CELL_SIZE } from "components/commons";
 
 export interface IEntityProps {
     entity: Entity;
@@ -36,8 +37,8 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
         const element = <i className={classnames("rg-entity-element", "fa", this.getEntityClassnames(entity))} />;
 
         const style = usePosition ? {
-                left: entity.position.x * 25,
-                top: entity.position.y * 25,
+                left: entity.position.x * CELL_SIZE,
+                top: entity.position.y * CELL_SIZE,
                 position: "absolute",
             } : {};
 
