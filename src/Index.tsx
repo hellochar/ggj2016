@@ -11,7 +11,7 @@ import { batchedSubscribe } from "redux-batched-subscribe";
 import * as createLogger from "redux-logger";
 import thunk from "redux-thunk";
 
-import { Main } from "components/main";
+import { Main as InitialMain } from "components/main";
 import reducer from "reducer";
 import { IState } from "state";
 import { buildInitialState } from "initialState";
@@ -40,14 +40,18 @@ const root = document.createElement("div");
 root.id = "root";
 document.body.appendChild(root);
 
-ReactDOM.render(
-    <AppContainer>
-        <Provider store={store}>
-            <Main />
-        </Provider>
-    </AppContainer>,
-    root
-);
+function renderMain(MainComponent: any) {
+    ReactDOM.render(
+        <AppContainer>
+            <Provider store={store}>
+                <MainComponent />
+            </Provider>
+        </AppContainer>,
+        root
+    );
+}
+
+renderMain(InitialMain);
 
 declare var module: any;
 declare var require: any;
@@ -55,13 +59,6 @@ declare var require: any;
 if (module.hot) {
     module.hot.accept("components/main", () => {
         const NextMain = require("components/main").Main;
-        ReactDOM.render(
-            <AppContainer>
-                <Provider store={store}>
-                    <NextMain />
-                </Provider>
-            </AppContainer>,
-            root
-        );
+        renderMain(NextMain);
     });
 }
