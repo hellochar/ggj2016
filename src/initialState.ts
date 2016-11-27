@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import { COLOR_THEMES } from "colorThemes";
 import * as Entity from "model/entity";
 import { Level } from "model/level";
-import { generateMap } from "modelGenerators/level";
+import { generateMap } from "modelGenerators/map";
 import { IState } from "state";
 
 export function buildInitialState(): IState {
