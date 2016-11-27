@@ -9,17 +9,18 @@ export const fillWithRandomWalls = (percentage: number) => (map: Map) => {
     const { tiles, width, height, colorTheme } = map;
     for (let y = 0; y < height; y += 1) {
         for (let x = 0; x < width; x += 1) {
+            const { explored, visible } = tiles[y][x];
             if (Math.random() < percentage) {
                 tiles[y][x] = {
-                    explored: false,
-                    visible: false,
+                    explored,
+                    visible,
                     type: TileType.WALL,
                     color: colorTheme[colorTheme.length - 1],
                 };
             } else {
                 tiles[y][x] = {
-                    explored: false,
-                    visible: false,
+                    explored,
+                    visible,
                     type: TileType.SPACE,
                 };
             }

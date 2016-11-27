@@ -12,8 +12,8 @@ export interface IMapMutator {
 export function emptyMap(width: number, height: number, colorTheme: string[]) {
     const tiles: ITile[][] = _.fill(new Array(height), null).map(() => _.fill(new Array(width), {
         type: TileType.SPACE,
-        visible: false,
-        explored: false,
+        visible: true,
+        explored: true,
     }));
     return new Map(tiles, colorTheme);
 }
@@ -28,6 +28,15 @@ function compose(...functions: IMapMutator[]): IMapMutator {
 
 // TODO look at http://psoup.math.wisc.edu/mcell/rullex_life.html
 const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
+    // Well-described rogue-like ca algorithm to generate nice looking caves
+    "rl-ca": () => {
+        const ca = new LifeLikeCA("B/S345678");
+        return compose(fillWithRandomWalls(0.45), ca.simulate(1));
+    },
+    "rl-ca-sparse": () => {
+        const ca = new LifeLikeCA("B/S45678");
+        return compose(fillWithRandomWalls(0.45), ca.simulate(1));
+    },
     // makes dense linear mazes with long passageways
     "MazeMine": () => {
         const ca = new LifeLikeCA("B3/S1234");
@@ -94,7 +103,7 @@ const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
     // chaotic with disconnected but whole spaces
     "WalledCities": () => {
         const ca = new LifeLikeCA("B45678/S2345");
-        return compose(fillWithRandomWalls(0.25), ca.simulate(100));
+        return compose(fillWithRandomWalls(0.20), ca.simulate(20));
     },
 
     // Assimilator - rand(0.25) turns into a few spaced out amoebas that never die
@@ -106,7 +115,8 @@ const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
 };
 
 export function generateCaveStructure(width: number, height: number, colorTheme: string[]) {
-    const algorithm = _.sample(GENERATION_ALGORITHMS)();
+    // const algorithm = _.sample(GENERATION_ALGORITHMS)();
+    const algorithm = GENERATION_ALGORITHMS["WalledCities"]();
     const map = emptyMap(width, height, colorTheme);
     algorithm(map);
     return map;
