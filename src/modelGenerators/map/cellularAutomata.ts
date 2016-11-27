@@ -7,12 +7,10 @@ import { Map } from "model/level";
  * Internal structure used to run CA simulations.
  */
 export class LifeLikeCA {
-    public map: Map;
     public survive: boolean[];
     public birth: boolean[];
 
-    constructor(map: Map, rule: string) {
-        this.map = map;
+    constructor(rule: string) {
         const match = rule.match(/B([0-8]*)\/S([0-8]*)/);
         if (match == null) {
             throw new Error("Invalid CA rule " + match);
@@ -35,11 +33,11 @@ export class LifeLikeCA {
         }
     }
 
-    private getNumAliveNeighbors(x: number, y: number) {
+    private getNumAliveNeighbors(map: Map, x: number, y: number) {
         let numAlive = 0;
         for (let yi = y - 1; yi <= y + 1; yi += 1) {
             for (let xi = x - 1; xi <= x + 1; xi += 1) {
-                this.map.get(xi, yi, (tile) => {
+                map.get(xi, yi, (tile) => {
                     if (!(yi === y && xi === x) && tile.type === TileType.WALL) {
                         numAlive += 1;
                     }
@@ -49,9 +47,9 @@ export class LifeLikeCA {
         return numAlive;
     }
 
-    private computeNextState(x: number, y: number): ITile {
-        const currentState = this.map.get(x, y)!;
-        const aliveNeighbors = this.getNumAliveNeighbors(x, y);
+    private computeNextState(map: Map, x: number, y: number): ITile {
+        const currentState = map.get(x, y)!;
+        const aliveNeighbors = this.getNumAliveNeighbors(map, x, y);
         const { explored, visible } = currentState;
         switch (currentState.type) {
             case TileType.SPACE:
@@ -60,7 +58,7 @@ export class LifeLikeCA {
                         type: TileType.WALL,
                         explored,
                         visible,
-                        color: this.map.colorTheme[this.map.colorTheme.length - 1],
+                        color: map.colorTheme[map.colorTheme.length - 1],
                     };
                 } else {
                     return {
@@ -71,13 +69,13 @@ export class LifeLikeCA {
                 }
             case TileType.WALL:
                 if (this.survive[aliveNeighbors]) {
-                    const currentColorIndex = this.map.colorTheme.indexOf(currentState.color);
+                    const currentColorIndex = map.colorTheme.indexOf(currentState.color);
                     const newColorIndex = Math.max(currentColorIndex - Math.random() < 0.1 ? 1 : 0, 0);
                     return {
                         type: TileType.WALL,
                         explored,
                         visible,
-                        color: this.map.colorTheme[newColorIndex],
+                        color: map.colorTheme[newColorIndex],
                     };
                 } else {
                     return {
@@ -90,19 +88,21 @@ export class LifeLikeCA {
         return currentState;
     }
 
-    public simulate(times: number) {
+    public simulate(times: number): (map: Map) => void {
         console.log("using ", this);
-        const {width, height} = this.map;
-        // clone map
-        for (let t = 0; t < times; t++) {
-            const newTiles: ITile[][] = _.cloneDeep(this.map.getTiles());
-            for (let y = 0; y < height; y += 1) {
-                for (let x = 0; x < width; x += 1) {
-                    const nextState = this.computeNextState(x, y);
-                    newTiles[y][x] = nextState;
+        return (map: Map) => {
+            const {width, height} = map;
+            // clone map
+            for (let t = 0; t < times; t++) {
+                const newTiles: ITile[][] = _.cloneDeep(map.getTiles());
+                for (let y = 0; y < height; y += 1) {
+                    for (let x = 0; x < width; x += 1) {
+                        const nextState = this.computeNextState(map, x, y);
+                        newTiles[y][x] = nextState;
+                    }
                 }
+                map.tiles = newTiles;
             }
-            this.map.tiles = newTiles;
-        }
+        };
     }
 }

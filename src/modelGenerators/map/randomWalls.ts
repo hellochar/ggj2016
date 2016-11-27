@@ -1,30 +1,28 @@
-import { ITile, TileType, IWallTile } from "model/tile";
+import { TileType } from "model/tile";
 import { Map } from "model/level";
 
 /**
- * Generate a map with each tile randomly chosen to be a wall with the given percentage, or a space otherwise.
+ * Fill the given map with each tile randomly selected to be a wall with the given percentage, or a space otherwise.
+ * Mutates the map.
  */
-export function generateRandomWalls(width: number, height: number, percentage: number, colorTheme: string[]): Map {
-    const map: ITile[][] = [];
+export const fillWithRandomWalls = (percentage: number) => (map: Map) => {
+    const { tiles, width, height, colorTheme } = map;
     for (let y = 0; y < height; y += 1) {
-        const row: ITile[] = [];
         for (let x = 0; x < width; x += 1) {
             if (Math.random() < percentage) {
-                row.push({
+                tiles[y][x] = {
                     explored: false,
                     visible: false,
                     type: TileType.WALL,
                     color: colorTheme[colorTheme.length - 1],
-                } as IWallTile);
+                };
             } else {
-                row.push({
+                tiles[y][x] = {
                     explored: false,
                     visible: false,
                     type: TileType.SPACE,
-                });
+                };
             }
         }
-        map.push(row);
     }
-    return new Map(map, colorTheme);
-}
+};
