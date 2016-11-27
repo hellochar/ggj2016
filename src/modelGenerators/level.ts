@@ -6,111 +6,13 @@
 import * as _ from "lodash";
 
 import { Map } from "model/level";
-import { ITile, TileType } from "model/tile";
+import { ITile, TileType, IWallTile } from "model/tile";
 import { IPosition } from "math";
-
-export class LifeLikeCA {
-    public map: Map;
-    public survive: boolean[];
-    public birth: boolean[];
-
-    constructor(map: Map, rule: string) {
-        this.map = map;
-        const match = rule.match(/B([0-8]*)\/S([0-8]*)/);
-        if (match == null) {
-            throw new Error("Invalid CA rule " + match);
-        }
-        const [, birthString, surviveString] = match;
-        this.survive = [];
-        this.birth = [];
-        for (let i = 0; i <= 8; i++) {
-            if (surviveString.indexOf(`${i}`) !== -1) {
-                this.survive[i] = true;
-            } else {
-                this.survive[i] = false;
-            }
-
-            if (birthString.indexOf(`${i}`) !== -1) {
-                this.birth[i] = true;
-            } else {
-                this.birth[i] = false;
-            }
-        }
-    }
-
-    private getNumAliveNeighbors(x: number, y: number) {
-        let numAlive = 0;
-        for (let yi = y - 1; yi <= y + 1; yi += 1) {
-            for (let xi = x - 1; xi <= x + 1; xi += 1) {
-                this.map.get(xi, yi, (tile) => {
-                    if (!(yi === y && xi === x) && tile.type === TileType.WALL) {
-                        numAlive += 1;
-                    }
-                });
-            }
-        }
-        return numAlive;
-    }
-
-    private computeNextState(x: number, y: number): ITile {
-        const currentState = this.map.get(x, y)!;
-        const aliveNeighbors = this.getNumAliveNeighbors(x, y);
-        const { explored, visible } = currentState;
-        switch (currentState.type) {
-            case TileType.SPACE:
-                if (this.birth[aliveNeighbors]) {
-                    return {
-                        type: TileType.WALL,
-                        explored,
-                        visible,
-                        color: this.map.colorTheme[this.map.colorTheme.length - 1],
-                    };
-                } else {
-                    return {
-                        type: TileType.SPACE,
-                        explored,
-                        visible
-                    };
-                }
-            case TileType.WALL:
-                if (this.survive[aliveNeighbors]) {
-                    const currentColorIndex = this.map.colorTheme.indexOf(currentState.color);
-                    const newColorIndex = Math.max(currentColorIndex - Math.random() < 0.1 ? 1 : 0, 0);
-                    return {
-                        type: TileType.WALL,
-                        explored,
-                        visible,
-                        color: this.map.colorTheme[newColorIndex],
-                    };
-                } else {
-                    return {
-                        type: TileType.SPACE,
-                        explored,
-                        visible,
-                    };
-                }
-        }
-        return currentState;
-    }
-
-    public simulate() {
-        const {width, height} = this.map;
-        // clone map
-        const newTiles = _.cloneDeep(this.map.getTiles());
-        for (let y = 0; y < height; y += 1) {
-            for (let x = 0; x < width; x += 1) {
-                const nextState = this.computeNextState(x, y);
-                newTiles[y][x] = nextState;
-            }
-        }
-        return newTiles;
-    }
-}
 
 export function generateMap(upstairs: IPosition, colorTheme: string[]) {
     const width = 60;
     const height = 30;
-    let map = Map.generateRandomWalls(width, height, 0.25, colorTheme);
+    let map = generateRandomWalls(width, height, 0.25, colorTheme);
 
     // _.times(5, () => map.lifelikeEvolve("B3/S1234"));
     // _.times(100, () => map.lifelikeEvolve("B3/S45678"));
@@ -227,4 +129,130 @@ export function generateMap(upstairs: IPosition, colorTheme: string[]) {
 
     map.outlineRectWithWalls();
     return map;
+}
+
+/**
+ * Generate a map with each tile randomly chosen to be a wall with the given percentage, or a space otherwise.
+ */
+export function generateRandomWalls(width: number, height: number, percentage: number, colorTheme: string[]): Map {
+    const map: ITile[][] = [];
+    for (let y = 0; y < height; y += 1) {
+        const row: ITile[] = [];
+        for (let x = 0; x < width; x += 1) {
+            if (Math.random() < percentage) {
+                row.push({
+                    explored: false,
+                    visible: false,
+                    type: TileType.WALL,
+                    color: colorTheme[colorTheme.length - 1],
+                } as IWallTile);
+            } else {
+                row.push({
+                    explored: false,
+                    visible: false,
+                    type: TileType.SPACE,
+                });
+            }
+        }
+        map.push(row);
+    }
+    return new Map(map, colorTheme);
+}
+
+class LifeLikeCA {
+    public map: Map;
+    public survive: boolean[];
+    public birth: boolean[];
+
+    constructor(map: Map, rule: string) {
+        this.map = map;
+        const match = rule.match(/B([0-8]*)\/S([0-8]*)/);
+        if (match == null) {
+            throw new Error("Invalid CA rule " + match);
+        }
+        const [, birthString, surviveString] = match;
+        this.survive = [];
+        this.birth = [];
+        for (let i = 0; i <= 8; i++) {
+            if (surviveString.indexOf(`${i}`) !== -1) {
+                this.survive[i] = true;
+            } else {
+                this.survive[i] = false;
+            }
+
+            if (birthString.indexOf(`${i}`) !== -1) {
+                this.birth[i] = true;
+            } else {
+                this.birth[i] = false;
+            }
+        }
+    }
+
+    private getNumAliveNeighbors(x: number, y: number) {
+        let numAlive = 0;
+        for (let yi = y - 1; yi <= y + 1; yi += 1) {
+            for (let xi = x - 1; xi <= x + 1; xi += 1) {
+                this.map.get(xi, yi, (tile) => {
+                    if (!(yi === y && xi === x) && tile.type === TileType.WALL) {
+                        numAlive += 1;
+                    }
+                });
+            }
+        }
+        return numAlive;
+    }
+
+    private computeNextState(x: number, y: number): ITile {
+        const currentState = this.map.get(x, y)!;
+        const aliveNeighbors = this.getNumAliveNeighbors(x, y);
+        const { explored, visible } = currentState;
+        switch (currentState.type) {
+            case TileType.SPACE:
+                if (this.birth[aliveNeighbors]) {
+                    return {
+                        type: TileType.WALL,
+                        explored,
+                        visible,
+                        color: this.map.colorTheme[this.map.colorTheme.length - 1],
+                    };
+                } else {
+                    return {
+                        type: TileType.SPACE,
+                        explored,
+                        visible
+                    };
+                }
+            case TileType.WALL:
+                if (this.survive[aliveNeighbors]) {
+                    const currentColorIndex = this.map.colorTheme.indexOf(currentState.color);
+                    const newColorIndex = Math.max(currentColorIndex - Math.random() < 0.1 ? 1 : 0, 0);
+                    return {
+                        type: TileType.WALL,
+                        explored,
+                        visible,
+                        color: this.map.colorTheme[newColorIndex],
+                    };
+                } else {
+                    return {
+                        type: TileType.SPACE,
+                        explored,
+                        visible,
+                    };
+                }
+        }
+        return currentState;
+    }
+
+    public simulate() {
+        const {width, height} = this.map;
+        // clone map
+        const newTiles = _.cloneDeep(this.map.getTiles());
+        for (let y = 0; y < height; y += 1) {
+            for (let x = 0; x < width; x += 1) {
+                const nextState = this.computeNextState(x, y);
+                newTiles[y][x] = nextState;
+            }
+        }
+        return newTiles;
+    }
 }

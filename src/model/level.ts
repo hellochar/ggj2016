@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 
 import { forEachOnLineInGrid, forEachInRect, forEachInCircle, IPosition } from "math";
-import { ITile, TileType, IWallTile } from "model/";
+import { ITile, TileType } from "model/";
 import * as Entity from "model/entity";
 
 /**
@@ -10,31 +10,6 @@ import * as Entity from "model/entity";
  * it back to Redux.
  */
 export class Map {
-    public static generateRandomWalls(width: number, height: number, percentage: number, colorTheme: string[]): Map {
-        const map: ITile[][] = [];
-        for (let y = 0; y < height; y += 1) {
-            const row: ITile[] = [];
-            for (let x = 0; x < width; x += 1) {
-                if (Math.random() < percentage) {
-                    row.push({
-                        explored: false,
-                        visible: false,
-                        type: TileType.WALL,
-                        color: colorTheme[colorTheme.length - 1],
-                    } as IWallTile);
-                } else {
-                    row.push({
-                        explored: false,
-                        visible: false,
-                        type: TileType.SPACE,
-                    });
-                }
-            }
-            map.push(row);
-        }
-        return new Map(map, colorTheme);
-    }
-
     constructor(public tiles: ITile[][], public colorTheme: string[]) {}
 
     public clone(): Map {
