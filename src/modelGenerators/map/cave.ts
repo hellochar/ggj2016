@@ -1,19 +1,23 @@
 import * as _ from "lodash";
 
 import { Map } from "model/level";
-import { fillWithRandomWalls } from "./randomWalls";
+import { fillWithRandomWalls } from "./fillers";
 import { LifeLikeCA } from "./cellularAutomata";
 import { ITile, TileType } from "model/";
+import { IWallTile } from "../../model/tile";
 
 export interface IMapMutator {
     (map: Map): void;
 }
 
+/**
+ * Create an empty map.
+ */
 export function emptyMap(width: number, height: number, colorTheme: string[]) {
     const tiles: ITile[][] = _.fill(new Array(height), null).map(() => _.fill(new Array(width), {
         type: TileType.SPACE,
-        visible: true,
-        explored: true,
+        visible: false,
+        explored: false,
     }));
     return new Map(tiles, colorTheme);
 }
@@ -66,7 +70,10 @@ const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
     // // life without death - quickly fills up most of the space and leaves
     // // only tiny disconnected spaces.
     // // continued iteration creates beautiful natural looking coral like growths
-    // "B3/S012345678",
+    "LifeWithoutDeath": () => {
+        const ca = new LifeLikeCA("B3/S012345678");
+        return compose(fillWithRandomWalls(0.15), ca.simulate(3));
+    },
 
     // 3-4 life; chaotic but more interesting/complex spaces; creates nice pockets
     // of space versus rock
@@ -98,12 +105,36 @@ const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
         return compose(fillWithRandomWalls(0.25), ca.simulate(100));
     },
 
+    "Persian Rug Castle": () => {
+        const ca = new LifeLikeCA("B234/S");
+        return compose((map) => {
+            const centerX = Math.floor(map.width / 2);
+            const centerY = Math.floor(map.height / 2);
+            for (let dx = -1; dx <= 1; dx++) {
+                const dy = _.random(-2, 2);
+                map.tiles[centerY + dy][centerX + dx] = {
+                    explored: false,
+                    visible: false,
+                    type: TileType.WALL,
+                    color: map.colorTheme[map.colorTheme.length - 1]
+                } as IWallTile;
+                // add it on the other side to preserve symmetry
+                map.tiles[centerY - dy][centerX + dx] = {
+                    explored: false,
+                    visible: false,
+                    type: TileType.WALL,
+                    color: map.colorTheme[map.colorTheme.length - 1]
+                } as IWallTile;
+            }
+        }, ca.simulate(70));
+    },
+
     // walled cities - rand(0.25) turns into a bunch of self-contained "cities"
     // with a continuous shell and oscillating interior. Interior is generally
     // chaotic with disconnected but whole spaces
     "WalledCities": () => {
         const ca = new LifeLikeCA("B45678/S2345");
-        return compose(fillWithRandomWalls(0.20), ca.simulate(20));
+        return compose(fillWithRandomWalls(0.22), ca.simulate(20));
     },
 
     // Assimilator - rand(0.25) turns into a few spaced out amoebas that never die
@@ -116,7 +147,7 @@ const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
 
 export function generateCaveStructure(width: number, height: number, colorTheme: string[]) {
     // const algorithm = _.sample(GENERATION_ALGORITHMS)();
-    const algorithm = GENERATION_ALGORITHMS["WalledCities"]();
+    const algorithm = GENERATION_ALGORITHMS["LifeWithoutDeath"]();
     const map = emptyMap(width, height, colorTheme);
     algorithm(map);
     return map;

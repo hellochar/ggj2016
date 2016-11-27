@@ -1,11 +1,16 @@
+/**
+ * Map Mutators that set the entire space of tiles to some initial state.
+ */
+
 import { TileType } from "model/tile";
 import { Map } from "model/level";
+import * as _ from "lodash";
 
 /**
  * Fill the given map with each tile randomly selected to be a wall with the given percentage, or a space otherwise.
  * Mutates the map.
  */
-export const fillWithRandomWalls = (percentage: number) => (map: Map) => {
+export const uniformPercentageSetWall = (percentage: number) => (map: Map) => {
     const { tiles, width, height, colorTheme } = map;
     for (let y = 0; y < height; y += 1) {
         for (let x = 0; x < width; x += 1) {
@@ -26,4 +31,16 @@ export const fillWithRandomWalls = (percentage: number) => (map: Map) => {
             }
         }
     }
+};
+
+export const setInitialSeedWalls = (count: number) => (map: Map) => {
+    const { tiles, width, height, colorTheme } = map;
+    _.times(count, () => {
+        tiles[_.random(1, height - 1)][_.random(1, width - 1)] = {
+            explored: false,
+            visible: false,
+            type: TileType.WALL,
+            color: colorTheme[colorTheme.length - 1]
+        };
+    });
 };

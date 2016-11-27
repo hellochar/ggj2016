@@ -107,6 +107,17 @@ export class Map {
         });
     }
 
+    public illuminated() {
+        const map = this.clone();
+        for (let x = 0; x < this.width; x++) {
+            for (let y = 0; y < this.height; y++) {
+                map.tiles[y][x].explored = true;
+                map.tiles[y][x].visible = true;
+            }
+        }
+        return map;
+    }
+
     /**
      * Give vision in the given circle.
      * 
