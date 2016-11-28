@@ -3,7 +3,7 @@
  */
 
 import { TileType } from "model/tile";
-import { Map } from "model/level";
+import { Map } from "model/map";
 import * as _ from "lodash";
 
 /**

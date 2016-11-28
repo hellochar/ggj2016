@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 
 import { ITile, TileType } from "model/tile";
-import { Map } from "model/level";
+import { Map } from "model/map";
 
 /**
  * Internal structure used to run CA simulations.

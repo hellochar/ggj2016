@@ -3,7 +3,7 @@
  * parameters such as random seed, or descriptive quantities e.g. difficulty/cave-like-ness/etc.
  */
 
-import { Map } from "model/level";
+import { Map } from "model/map";
 import { TileType } from "model/tile";
 import { IPosition } from "math";
 import { generateCaveStructure } from "./cave";

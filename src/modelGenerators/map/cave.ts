@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 
-import { Map } from "model/level";
-import { fillWithRandomWalls } from "./fillers";
+import { Map } from "model/map";
+import { uniformPercentageSetWall } from "./fillers";
 import { LifeLikeCA } from "./cellularAutomata";
 import { ITile, TileType } from "model/";
 import { IWallTile } from "../../model/tile";
@@ -35,16 +35,16 @@ const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
     // Well-described rogue-like ca algorithm to generate nice looking caves
     "rl-ca": () => {
         const ca = new LifeLikeCA("B/S345678");
-        return compose(fillWithRandomWalls(0.45), ca.simulate(1));
+        return compose(uniformPercentageSetWall(0.45), ca.simulate(1));
     },
     "rl-ca-sparse": () => {
         const ca = new LifeLikeCA("B/S45678");
-        return compose(fillWithRandomWalls(0.45), ca.simulate(1));
+        return compose(uniformPercentageSetWall(0.45), ca.simulate(1));
     },
     // makes dense linear mazes with long passageways
     "MazeMine": () => {
         const ca = new LifeLikeCA("B3/S1234");
-        return compose(fillWithRandomWalls(0.25), ca.simulate(100));
+        return compose(uniformPercentageSetWall(0.25), ca.simulate(100));
     },
 
     // Replicator - makes dense chaos with all-random
@@ -52,19 +52,19 @@ const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
     // cells
     "Replicator": () => {
         const ca = new LifeLikeCA("B1357/S1357");
-        return compose(fillWithRandomWalls(0.25), ca.simulate(100));
+        return compose(uniformPercentageSetWall(0.25), ca.simulate(100));
     },
 
     // seeds - generally chaotic growth. Spacious.
     "Seeds": () => {
         const ca = new LifeLikeCA("B2/S");
-        return compose(fillWithRandomWalls(0.25), ca.simulate(100));
+        return compose(uniformPercentageSetWall(0.25), ca.simulate(100));
     },
 
     // unnamed - generally chaotic growth. A bit denser than seeds.
     "DenserSeeds": () => {
         const ca = new LifeLikeCA("B25/S4");
-        return compose(fillWithRandomWalls(0.25), ca.simulate(100));
+        return compose(uniformPercentageSetWall(0.25), ca.simulate(100));
     },
 
     // // life without death - quickly fills up most of the space and leaves
@@ -72,14 +72,14 @@ const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
     // // continued iteration creates beautiful natural looking coral like growths
     "LifeWithoutDeath": () => {
         const ca = new LifeLikeCA("B3/S012345678");
-        return compose(fillWithRandomWalls(0.15), ca.simulate(3));
+        return compose(uniformPercentageSetWall(0.15), ca.simulate(3));
     },
 
     // 3-4 life; chaotic but more interesting/complex spaces; creates nice pockets
     // of space versus rock
     "3-4Life": () => {
         const ca = new LifeLikeCA("B34/S34");
-        return compose(fillWithRandomWalls(0.25), ca.simulate(100));
+        return compose(uniformPercentageSetWall(0.25), ca.simulate(100));
     },
 
     // diamoeba - will almost always die with rand(0.25). At larger scales
@@ -102,7 +102,7 @@ const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
     // has an outer shell vs the chaotic inside
     "Persian Rug": () => {
         const ca = new LifeLikeCA("B234/S");
-        return compose(fillWithRandomWalls(0.25), ca.simulate(100));
+        return compose(uniformPercentageSetWall(0.25), ca.simulate(100));
     },
 
     "Persian Rug Castle": () => {
@@ -134,14 +134,14 @@ const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
     // chaotic with disconnected but whole spaces
     "WalledCities": () => {
         const ca = new LifeLikeCA("B45678/S2345");
-        return compose(fillWithRandomWalls(0.22), ca.simulate(20));
+        return compose(uniformPercentageSetWall(0.22), ca.simulate(20));
     },
 
     // Assimilator - rand(0.25) turns into a few spaced out amoebas that never die
     // their insides are many single disconnected spaces. the outer edge is jagged.
     "Assimilator": () => {
         const ca = new LifeLikeCA("B345/S4567");
-        return compose(fillWithRandomWalls(0.25), ca.simulate(100));
+        return compose(uniformPercentageSetWall(0.25), ca.simulate(100));
     },
 };
 
