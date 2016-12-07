@@ -41,9 +41,10 @@ export function buildInitialState(): IState {
     const level0 = new Level("0", generateMap(center, COLOR_THEMES.DARK_GRAY), [ user.id ]);
     entitiesToAdd.push(...level0.addTrees());
     entitiesToAdd.push(...level0.addVillage());
-    level0.map.giveVision(center, 7);
+    const newLevel0 = level0.cloneShallowVisibility();
+    newLevel0.giveVision(center, 7);
     const levels = {
-        0: level0,
+        0: newLevel0,
     };
     const levelOrder = ["0"];
     for (let depth = 1; depth < 3; depth += 1) {

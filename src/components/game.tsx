@@ -8,7 +8,6 @@ import { findEntityLevel, updateLevel, userPerformAction } from "action";
 import { HeadsUpDisplay } from "components/headsUpDisplay";
 import { PureLevel } from "components/level";
 import { IState } from "state";
-import { Level } from "model/level";
 
 export interface IGameProps {
     dispatch: Redux.Dispatch<IState>;
@@ -19,7 +18,7 @@ export class PureGame extends React.Component<IGameProps, {}> {
     private handleKeyPress = (event: KeyboardEvent) => {
         if (event.code === "Space") {
             const level = findEntityLevel("0", this.props.state);
-            this.props.dispatch(updateLevel(new Level(level.id, level.map.illuminated(), level.entities)));
+            this.props.dispatch(updateLevel(level.illuminated()));
         }
         const action = decideUserAction(this.props.state, event);
         if (action !== undefined) {

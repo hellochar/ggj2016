@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 
-import { forEachOnLineInGrid, forEachInRect, forEachInCircle, IPosition } from "math";
+import { forEachOnLineInGrid, forEachInRect, IPosition } from "math";
 import { ITile, TileType } from "model/";
 
 /**
@@ -13,10 +13,6 @@ export class Map {
 
     public clone(): Map {
         return new Map(_.cloneDeep(this.tiles), this.colorTheme);
-    }
-
-    public cloneShallow(): Map {
-        return new Map(this.tiles.map((row) => row.slice()), this.colorTheme);
     }
 
     get width() {
@@ -68,11 +64,8 @@ export class Map {
     public outlineRectWithWalls(topLeft: IPosition = {x: 0, y: 0},
                                 bottomRight: IPosition = {x: this.width - 1, y: this.height - 1}) {
         const setToWall = (p: IPosition) => {
-            const { explored, visible } = this.tiles[p.y][p.x];
             this.tiles[p.y][p.x] = {
                 type: TileType.WALL,
-                explored,
-                visible,
                 color: this.colorTheme[0],
             };
             return false;
@@ -91,59 +84,6 @@ export class Map {
                 this.tiles[y][x].type = TileType.SPACE;
             });
         }
-    }
-
-    /**
-     * Lose vision of the given circle.
-     * 
-     * Assigns new objects to the this.tiles that changed.
-     */
-    public removeVision(center: IPosition, radius: number) {
-        forEachInCircle(center, radius, ({x, y}) => {
-            this.get(x, y, (tile) => {
-                this.tiles[y][x] = _.assign({}, tile, { visible: false });
-            });
-        });
-    }
-
-    public illuminated() {
-        const map = this.clone();
-        for (let x = 0; x < this.width; x++) {
-            for (let y = 0; y < this.height; y++) {
-                map.tiles[y][x].explored = true;
-                map.tiles[y][x].visible = true;
-            }
-        }
-        return map;
-    }
-
-    /**
-     * Give vision in the given circle.
-     * 
-     * Assigns new objects to the this.tiles that have changed.
-     */
-    public giveVision(center: IPosition, radius: number) {
-        forEachInCircle(center, radius, ({x, y}) => {
-            this.get(x, y, (oldTile) => {
-                const tile = _.assign({}, oldTile);
-                if (!tile.visible) {
-                    let isVisionBlocked = false;
-                    forEachOnLineInGrid({x, y}, center, (position) => {
-                        if (this.tiles[position.y][position.x].type === TileType.WALL) {
-                            isVisionBlocked = true;
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    });
-                    tile.visible = !isVisionBlocked;
-                    if (tile.visible) {
-                        tile.explored = true;
-                    }
-                    this.tiles[y][x] = tile;
-                }
-            });
-        });
     }
 
     public getDownstairsPosition(): IPosition | null {

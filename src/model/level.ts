@@ -1,30 +1,102 @@
 import * as _ from "lodash";
 
 import { Map } from "./map";
-import { IPosition } from "math";
+import { IPosition, forEachInCircle, forEachOnLineInGrid } from "math";
 import { TileType } from "model/";
 import * as Entity from "model/entity";
 
-export class Level {
-    /**
-     * ids of the entities in this level.
-     */
-    public entities: string[];
+export interface IVisibilityInfo {
+    visible: boolean;
+    explored: boolean;
+}
 
+export class Level {
     constructor(public id: string,
                 public map: Map,
-                entities: string[]) {
-        this.entities = entities;
+                public entities: string[],
+                public visibility: IVisibilityInfo[][] = Level.generateUnexploredVisibility(map.width, map.height)) {
+    }
+
+    private static generateUnexploredVisibility(width: number, height: number): IVisibilityInfo[][] {
+        const info: IVisibilityInfo[][] = [];
+        for (let y = 0; y < height; y++) {
+            info[y] = [];
+            for (let x = 0; x < width; x++) {
+                info[y][x] = {
+                    explored: false,
+                    visible: false,
+                };
+            }
+        }
+        return info;
+    }
+
+    public illuminated() {
+        const level = new Level(this.id, this.map, this.entities, _.cloneDeep(this.visibility));
+        for (let x = 0; x < this.map.width; x++) {
+            for (let y = 0; y < this.map.height; y++) {
+                this.visibility[y][x].explored = true;
+                this.visibility[y][x].visible = true;
+            }
+        }
+        return level;
+    }
+    
+    /**
+     * Give vision in the given circle.
+     * 
+     * Assigns new objects to the this.tiles that have changed.
+     */
+    public giveVision(center: IPosition, radius: number) {
+        forEachInCircle(center, radius, ({x, y}) => {
+            this.map.get(x, y, (oldTile) => {
+                const oldVisibility = this.visibility[y][x];
+                const visibility = _.clone(oldVisibility);
+                if (!oldVisibility.visible) {
+                    let isVisionBlocked = false;
+                    forEachOnLineInGrid({x, y}, center, (position) => {
+                        if (this.map.tiles[position.y][position.x].type === TileType.WALL) {
+                            isVisionBlocked = true;
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    });
+                    visibility.visible = !isVisionBlocked;
+                    if (visibility.visible) {
+                        visibility.explored = true;
+                    }
+                    this.visibility[y][x] = visibility;
+                }
+            });
+        });
+    }
+
+    /**
+     * Lose vision of the given circle.
+     * 
+     * Assigns new objects to the this.tiles that changed.
+     */
+    public removeVision(center: IPosition, radius: number) {
+        forEachInCircle(center, radius, ({x, y}) => {
+            this.map.get(x, y, (tile) => {
+                this.visibility[y][x] = _.assign({}, this.visibility[y][x], { visible: false });
+            });
+        });
+    }
+
+    public cloneShallowVisibility(): Level {
+        return new Level(this.id, this.map, this.entities, this.visibility.map((row) => row.slice()));
     }
 
     public withoutEntity(entityId: string) {
-        return new Level(this.id, this.map, _.without(this.entities, entityId));
+        return new Level(this.id, this.map, _.without(this.entities, entityId), this.visibility);
     }
 
     public isVisible(position: IPosition) {
         const tile = this.map.get(position.x, position.y);
         if (tile !== undefined) {
-            return tile.visible;
+            return this.visibility[position.y][position.x].visible;
         } else {
             return false;
         }

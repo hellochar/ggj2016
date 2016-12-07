@@ -5,6 +5,8 @@ import { ITile, TileType } from "model/";
 
 export interface ITileProps {
     tile: ITile;
+    visible: boolean;
+    explored: boolean;
 }
 
 export class Tile extends React.PureComponent<ITileProps, {}> {
@@ -19,12 +21,12 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
     }
 
     public render() {
-        const { tile } = this.props;
+        const { tile, visible, explored } = this.props;
 
         let visibilityClasses: string;
-        if (tile.visible) {
+        if (visible) {
             visibilityClasses = `tile-visible ${this.iconClassForTile(tile.type)}`;
-        } else if (tile.explored) {
+        } else if (explored) {
             visibilityClasses = `tile-remembered ${this.iconClassForTile(tile.type)}`;
         } else {
             visibilityClasses = "tile-unexplored";

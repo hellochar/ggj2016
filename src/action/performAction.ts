@@ -177,10 +177,9 @@ function handleMoveAction(state: IState, actorId: string, action: ModelActions.I
 
             // update user vision if necessary
             if (actorId === "0") {
-                const newMap = level.map.cloneShallow();
-                newMap.removeVision(actor.position, 7);
-                newMap.giveVision(newActor.position, 7);
-                const newLevel = new Level(level.id, newMap, level.entities);
+                const newLevel = level.cloneShallowVisibility();
+                newLevel.removeVision(actor.position, 7);
+                newLevel.giveVision(newActor.position, 7);
                 dispatch(updateLevel(newLevel));
             }
         }
@@ -222,7 +221,7 @@ function handlePickUpItemAction(state: IState, actor: Entity.Actor, actorAction:
         if (_.isEqual(item.position, actor.position) && itemLevel === actorLevel && Entity.hasInventory(actor)) {
             // TODO associate actions with Entity traits
 
-            const newLevel = new Level(itemLevel.id, itemLevel.map, _.without(itemLevel.entities, item.id));
+            const newLevel = itemLevel.withoutEntity(item.id);
             const newEntity = _.assign({}, actor, {
                 inventory: _.assign({}, actor.inventory, {
                     itemIds: [...actor.inventory.itemIds, item.id],
@@ -246,7 +245,7 @@ function handleDropItemAction(state: IState, actor: Entity.Actor, actorAction: M
 
     return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
         const level = findEntityLevel(actor.id, state);
-        const newLevel = new Level(level.id, level.map, [...level.entities, item.id]);
+        const newLevel = new Level(level.id, level.map, [...level.entities, item.id], level.visibility);
         const newActor: Entity.Actor = _.assign({}, actor, {
             inventory: _.assign({}, actor.inventory, {
                 itemIds: _.without(actor.inventory.itemIds, item.id),
@@ -275,7 +274,7 @@ function handleCreateFruitAction(state: IState, actor: Entity.Actor, actorAction
         dispatch(entityUpdate(fruit));
 
         const level = findEntityLevel(actor.id, state);
-        const newLevel = new Level(level.id, level.map, [...level.entities, fruit.id]);
+        const newLevel = new Level(level.id, level.map, [...level.entities, fruit.id], level.visibility);
         dispatch(updateLevel(newLevel));
     };
 }

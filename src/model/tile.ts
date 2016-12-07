@@ -1,26 +1,21 @@
-export interface IBaseTile {
-    visible: boolean;
-    explored: boolean;
-}
-
-export interface ISpaceTile extends IBaseTile {
+export interface ISpaceTile {
     type: "SPACE";
 }
 
-export interface IWallTile extends IBaseTile {
+export interface IWallTile {
     type: "WALL";
     color: string;
 }
 
-export interface IDownstairsTile extends IBaseTile {
+export interface IDownstairsTile {
     type: "DOWNSTAIRS";
 }
 
-export interface IUpstairsTile extends IBaseTile {
+export interface IUpstairsTile {
     type: "UPSTAIRS";
 }
 
-export interface IDecorativeSpace extends IBaseTile {
+export interface IDecorativeSpace {
     type: "DECORATIVE_SPACE";
 }
 

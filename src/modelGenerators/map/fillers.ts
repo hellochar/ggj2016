@@ -14,20 +14,13 @@ export const uniformPercentageSetWall = (percentage: number) => (map: Map) => {
     const { tiles, width, height, colorTheme } = map;
     for (let y = 0; y < height; y += 1) {
         for (let x = 0; x < width; x += 1) {
-            const { explored, visible } = tiles[y][x];
             if (Math.random() < percentage) {
                 tiles[y][x] = {
-                    explored,
-                    visible,
                     type: TileType.WALL,
                     color: colorTheme[colorTheme.length - 1],
                 };
             } else {
-                tiles[y][x] = {
-                    explored,
-                    visible,
-                    type: TileType.SPACE,
-                };
+                tiles[y][x] = { type: TileType.SPACE };
             }
         }
     }
@@ -37,8 +30,6 @@ export const setInitialSeedWalls = (count: number) => (map: Map) => {
     const { tiles, width, height, colorTheme } = map;
     _.times(count, () => {
         tiles[_.random(1, height - 1)][_.random(1, width - 1)] = {
-            explored: false,
-            visible: false,
             type: TileType.WALL,
             color: colorTheme[colorTheme.length - 1]
         };

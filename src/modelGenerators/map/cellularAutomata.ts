@@ -50,22 +50,15 @@ export class LifeLikeCA {
     private computeNextState(map: Map, x: number, y: number): ITile {
         const currentState = map.get(x, y)!;
         const aliveNeighbors = this.getNumAliveNeighbors(map, x, y);
-        const { explored, visible } = currentState;
         switch (currentState.type) {
             case TileType.SPACE:
                 if (this.birth[aliveNeighbors]) {
                     return {
                         type: TileType.WALL,
-                        explored,
-                        visible,
                         color: map.colorTheme[map.colorTheme.length - 1],
                     };
                 } else {
-                    return {
-                        type: TileType.SPACE,
-                        explored,
-                        visible
-                    };
+                    return { type: TileType.SPACE };
                 }
             case TileType.WALL:
                 if (this.survive[aliveNeighbors]) {
@@ -73,16 +66,10 @@ export class LifeLikeCA {
                     const newColorIndex = Math.max(currentColorIndex - Math.random() < 0.1 ? 1 : 0, 0);
                     return {
                         type: TileType.WALL,
-                        explored,
-                        visible,
                         color: map.colorTheme[newColorIndex],
                     };
                 } else {
-                    return {
-                        type: TileType.SPACE,
-                        explored,
-                        visible,
-                    };
+                    return { type: TileType.SPACE };
                 }
         }
         return currentState;

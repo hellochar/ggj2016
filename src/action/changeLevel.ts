@@ -10,29 +10,30 @@ import { IState } from "state";
  * that can be used in many different situations (e.g. going upstairs,
  * teleporting, falling down a hole, etc.).
  */
-export function entityChangeLevel(entityId: string, newLevel: number) {
+export function entityChangeLevel(entityId: string, newLevelIndex: number) {
     return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
         const userHasRing = _.some(getState().entities[0].inventory.itemIds, (itemId) => {
             return getState().entities[itemId].type === "ring";
         });
         // user has gotten out!
-        if (newLevel === -1 && userHasRing) {
+        if (newLevelIndex === -1 && userHasRing) {
             dispatch(setScreen("user-won"));
             return;
         }
-        const newLevelId = getState().levelOrder[newLevel];
+        const newLevelId = getState().levelOrder[newLevelIndex];
         if (newLevelId !== undefined) {
             const entity = getState().entities[entityId];
-            const level = findEntityLevel(entityId, getState());
+            const oldLevel = findEntityLevel(entityId, getState());
+            let newLevel = getState().levels[newLevelId];
 
             // add entity to new level and give vision
-            const newMap = getState().levels[newLevelId].map.clone();
-            newMap.giveVision(entity.position, 7);
-            const newLevel = new Level(newLevelId, newMap, [entity.id, ...getState().levels[newLevelId].entities]);
+            newLevel = newLevel.cloneShallowVisibility();
+            newLevel.giveVision(entity.position, 7);
+            newLevel = new Level(newLevel.id, newLevel.map, [entity.id, ...newLevel.entities], newLevel.visibility);
             dispatch(updateLevel(newLevel));
 
             // delete entity from old level
-            dispatch(updateLevel(new Level(level.id, level.map, _.without(level.entities, entityId))));
+            dispatch(updateLevel(oldLevel.withoutEntity(entityId)));
 
         }
     };
