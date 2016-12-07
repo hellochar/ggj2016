@@ -38,6 +38,26 @@ export class Map {
         }
     }
 
+    /**
+     * Mutates.
+     */
+    public set(p: IPosition, tile: ITile) {
+        this.tiles[p.y][p.x] = tile;
+    }
+
+    public isInBounds(position: IPosition) {
+        return this.get(position.x, position.y) !== undefined;
+    }
+
+    public getNeighbors(position: IPosition) {
+        return [
+            { x: position.x - 1, y: position.y },
+            { x: position.x + 1, y: position.y },
+            { x: position.x, y: position.y - 1 },
+            { x: position.x, y: position.y + 1 },
+        ].filter((position) => this.isInBounds(position));
+    }
+
     public getTiles() {
         return this.tiles;
     }

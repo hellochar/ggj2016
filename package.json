@@ -17,7 +17,8 @@
     "redux": "^3.6.0",
     "redux-batched-subscribe": "^0.1.6",
     "redux-logger": "^2.7.4",
-    "redux-thunk": "^2.1.0"
+    "redux-thunk": "^2.1.0",
+    "streamjs": "^1.6.4"
   },
   "devDependencies": {
     "@types/classnames": "^0.0.32",
@@ -31,6 +32,7 @@
     "@types/redux": "^3.6.31",
     "@types/redux-logger": "^2.6.32",
     "@types/redux-thunk": "^2.1.31",
+    "@types/streamjs": "^1.5.27",
     "css-loader": "~0.23.0",
     "extract-text-webpack-plugin": "~0.9.1",
     "file-loader": "~0.8.4",

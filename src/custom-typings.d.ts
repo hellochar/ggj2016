@@ -6,3 +6,7 @@ declare module "redux-batched-subscribe" {
     }
     function batchedSubscribe(fn: (notify: NotifyFn) => void): Redux.GenericStoreEnhancer;
 }
+
+declare module "streamjs" {
+    export = Stream;
+}

@@ -15,9 +15,7 @@ export interface IMapMutator {
  */
 export function emptyMap(width: number, height: number, colorTheme: string[]) {
     const tiles: ITile[][] = _.fill(new Array(height), null).map(() => _.fill(new Array(width), {
-        type: TileType.SPACE,
-        visible: false,
-        explored: false,
+        type: TileType.SPACE
     }));
     return new Map(tiles, colorTheme);
 }
@@ -110,18 +108,15 @@ const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
         return compose((map) => {
             const centerX = Math.floor(map.width / 2);
             const centerY = Math.floor(map.height / 2);
+            // seed the area with some initial walls
             for (let dx = -1; dx <= 1; dx++) {
                 const dy = _.random(-2, 2);
                 map.tiles[centerY + dy][centerX + dx] = {
-                    explored: false,
-                    visible: false,
                     type: TileType.WALL,
                     color: map.colorTheme[map.colorTheme.length - 1]
                 } as IWallTile;
                 // add it on the other side to preserve symmetry
                 map.tiles[centerY - dy][centerX + dx] = {
-                    explored: false,
-                    visible: false,
                     type: TileType.WALL,
                     color: map.colorTheme[map.colorTheme.length - 1]
                 } as IWallTile;

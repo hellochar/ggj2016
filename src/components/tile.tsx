@@ -17,6 +17,7 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
             case TileType.DOWNSTAIRS: return "fa-chevron-down";
             case TileType.UPSTAIRS: return "fa-chevron-up";
             case TileType.DECORATIVE_SPACE: return "fa-slack rg-tile-space";
+            case TileType.WATER: return "fa-tint";
         }
     }
 

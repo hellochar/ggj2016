@@ -33,10 +33,10 @@ export class Level {
 
     public illuminated() {
         const level = new Level(this.id, this.map, this.entities, _.cloneDeep(this.visibility));
-        for (let x = 0; x < this.map.width; x++) {
-            for (let y = 0; y < this.map.height; y++) {
-                this.visibility[y][x].explored = true;
-                this.visibility[y][x].visible = true;
+        for (let x = 0; x < level.map.width; x++) {
+            for (let y = 0; y < level.map.height; y++) {
+                level.visibility[y][x].explored = true;
+                level.visibility[y][x].visible = true;
             }
         }
         return level;
