@@ -1,4 +1,5 @@
 @import "~@blueprintjs/core/dist/blueprint.css";
+@import "~@blueprintjs/core/dist/variables.less";
 
 * {
     box-sizing: border-box;
@@ -17,6 +18,7 @@
     width: @cell-size;
     height: @cell-size;
     font-size: @cell-size;
+    line-height: 1;
     text-align: center;
 }
 
@@ -120,13 +122,16 @@ body {
 
 .rg-tile {
     .rg-map-cell-mixin();
+
+    display: inline-block;
+    overflow: hidden;
     transition: color 0.1s, @hover-transition;
 
     &.rg-tile-space {
         color: rgba(1,1,1, 0.20);
     }
 
-    &.tile-remembered {
+    &.rg-tile-remembered {
         color: rgba(0.5,0.5,0.5,0.75);
         background-color: #999;
 
@@ -135,21 +140,41 @@ body {
         }
     }
 
-    &.tile-visible {
+    &.rg-tile-visible {
         background: white;
     }
 
-    &.tile-unexplored {
+    &.rg-tile-unexplored {
         &::before {
-            // add space character to fix bug where unexplored tiles weren't
+            // add empty content to fix bug where unexplored tiles weren't
             // aligned with the other tiles properly
-            content: " ";
+            content: "";
         }
     }
 
     &:hover {
         transform: scale(1.1);
         box-shadow: 3px 3px 2px 1px rgba(0, 0, 0, 0.15);
+    }
+
+    &.rg-tile-water {
+        animation: water-wave 2s linear infinite alternate;
+
+        &::before {
+            content: "~";
+        }
+
+        @keyframes water-wave {
+            from {
+                background: lighten(desaturate(@blue2, 30%), 45%);
+                color: lighten(desaturate(@blue1, 30%), 40%);
+            }
+
+            to {
+                background: lighten(desaturate(@blue5, 20%), 5%);
+                color: lighten(desaturate(@blue4, 20%), 0%);
+            }
+        }
     }
 }
 

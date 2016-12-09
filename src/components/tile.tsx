@@ -10,29 +10,48 @@ export interface ITileProps {
 }
 
 export class Tile extends React.PureComponent<ITileProps, {}> {
-    private iconClassForTile(tile: TileType) {
-        switch (tile) {
-            case TileType.SPACE: return "fa-square-o rg-tile-space";
-            case TileType.WALL: return "fa-stop";
-            case TileType.DOWNSTAIRS: return "fa-chevron-down";
-            case TileType.UPSTAIRS: return "fa-chevron-up";
-            case TileType.DECORATIVE_SPACE: return "fa-slack rg-tile-space";
-            case TileType.WATER: return "fa-tint";
+    public render() {
+        const { visible, explored } = this.props;
+
+        if (visible) {
+            return this.renderTile("rg-tile-visible");
+        } else if (explored) {
+            return this.renderTile("rg-tile-remembered");
+        } else {
+            return this.renderUnexplored();
         }
     }
 
-    public render() {
-        const { tile, visible, explored } = this.props;
+    private renderUnexplored() {
+        return <i className="rg-tile rg-tile-unexplored" />;
+    }
 
-        let visibilityClasses: string;
-        if (visible) {
-            visibilityClasses = `tile-visible ${this.iconClassForTile(tile.type)}`;
-        } else if (explored) {
-            visibilityClasses = `tile-remembered ${this.iconClassForTile(tile.type)}`;
-        } else {
-            visibilityClasses = "tile-unexplored";
+    private renderTile(visibilityClass: string) {
+        const tileElement = this.getRenderTileElement();
+        return React.cloneElement(tileElement, {
+            className: classnames(tileElement.props.className, visibilityClass),
+        });
+    }
+
+    private getRenderTileElement() {
+        switch (this.props.tile.type) {
+            case TileType.SPACE: return this.renderFontAwesomeIcon("fa-square-o rg-tile-space");
+            case TileType.WALL: return this.renderFontAwesomeIcon("fa-stop");
+            case TileType.DOWNSTAIRS: return this.renderFontAwesomeIcon("fa-chevron-down");
+            case TileType.UPSTAIRS: return this.renderFontAwesomeIcon("fa-chevron-up");
+            case TileType.DECORATIVE_SPACE: return this.renderFontAwesomeIcon("fa-slack rg-tile-space");
+            case TileType.WATER: return this.renderWater();
         }
-        const className = classnames("fa", "rg-tile", visibilityClasses);
+    }
+
+    private renderWater() {
+        return <i className="rg-tile rg-tile-water" />;
+    }
+
+    private renderFontAwesomeIcon(iconClass: string) {
+        const { tile } = this.props;
+
+        const className = classnames("fa", "rg-tile", iconClass);
         let style: React.CSSProperties = {};
         if (tile.type === TileType.WALL) {
             style.color = tile.color;
