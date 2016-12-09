@@ -10,7 +10,7 @@
 // A set of common transition properties that should animate smoothly on hover
 // of entities. Use this when overriding the transition property on a specific
 // component, but you don't want to lose the existing transition effects.
-@hover-transition: background 0.1s, transform 0.1s, box-shadow 0.1s;
+@hover-transition: transform 0.1s, box-shadow 0.1s;
 
 // A mixin to make a component adhere to the cell-size. Use on tiles, entities,
 // and other things that are one cell large.
@@ -126,7 +126,7 @@ body {
     background: white;
     display: inline-block;
     overflow: hidden;
-    transition: color 0.1s, @hover-transition;
+    transition: color 0.15s, opacity 0.15s, @hover-transition;
 
     &.rg-tile-space {
         color: rgba(1,1,1, 0.20);
@@ -187,7 +187,6 @@ body {
     &:hover {
         transform: scale(1.2);
         box-shadow: 0 0 1px 5px rgba(79, 136, 177, 0.8);
-        // background: white;
         border-radius: 2px;
     }
 
