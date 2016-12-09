@@ -14,11 +14,18 @@ export interface ILevelProps {
 
 export class PureLevel extends React.PureComponent<ILevelProps, {}> {
     public render() {
+        return (
+            <div className="rg-map-positioner">
+                { this.renderMap() }
+            </div>
+        );
+    }
+
+    private renderMap() {
         const { level, levelEntities, center } = this.props;
         // Offset map such that center stays in the center
         const style = {
-            top: `-${center.y * CELL_SIZE}px`,
-            left: `-${center.x * CELL_SIZE}px`,
+            transform: `translate(-${center.x * CELL_SIZE}px, -${center.y * CELL_SIZE}px)`
         };
         return <div className="rg-map" style={style}>
             {level.map.getTiles().map((row, y) => (

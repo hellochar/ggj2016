@@ -224,11 +224,15 @@ body {
     }
 }
 
+.rg-map-positioner {
+    position: relative;
+    transform: translate(50%, 50%);
+}
+
 .rg-map {
     margin: 0;
     position: relative;
-    transform: translate(50%, 50%);
-    transition: top 0.05s, left 0.05s;
+    transition: transform 0.1s;
     white-space: pre;
 
     // center the square-o in the cell
