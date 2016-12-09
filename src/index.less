@@ -123,6 +123,7 @@ body {
 .rg-tile {
     .rg-map-cell-mixin();
 
+    background: white;
     display: inline-block;
     overflow: hidden;
     transition: color 0.1s, @hover-transition;
@@ -132,19 +133,15 @@ body {
     }
 
     &.rg-tile-remembered {
-        color: rgba(0.5,0.5,0.5,0.75);
-        background-color: #999;
-
-        &.rg-tile-space {
-            color: rgba(0.9,0.9,0.5, 0.1);
-        }
+        opacity: 0.4;
     }
 
     &.rg-tile-visible {
-        background: white;
     }
 
     &.rg-tile-unexplored {
+        opacity: 0;
+
         &::before {
             // add empty content to fix bug where unexplored tiles weren't
             // aligned with the other tiles properly
@@ -153,8 +150,10 @@ body {
     }
 
     &:hover {
-        transform: scale(1.1);
-        box-shadow: 3px 3px 2px 1px rgba(0, 0, 0, 0.15);
+        transform: scale(1.0);
+        box-shadow: 0 0 5px 8px fade(@black, 15%);
+        position: relative;
+        z-index: 1;
     }
 
     &.rg-tile-water {
