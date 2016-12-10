@@ -6,6 +6,8 @@ import { CELL_SIZE } from "components/commons";
 import { Tile } from "components/tile";
 import { EntityComponent } from "components/entity";
 
+import "./level.less";
+
 export interface ILevelProps {
     level: Level;
     levelEntities: Entity[];
@@ -15,7 +17,7 @@ export interface ILevelProps {
 export class PureLevel extends React.PureComponent<ILevelProps, {}> {
     public render() {
         return (
-            <div className="rg-map-positioner">
+            <div className="rg-level-positioner">
                 { this.renderMap() }
             </div>
         );
@@ -27,7 +29,7 @@ export class PureLevel extends React.PureComponent<ILevelProps, {}> {
         const style = {
             transform: `translate(-${center.x * CELL_SIZE}px, -${center.y * CELL_SIZE}px)`
         };
-        return <div className="rg-map" style={style}>
+        return <div className="rg-level" style={style}>
             {level.map.getTiles().map((row, y) => (
                 <div className="rg-row" key={y}>
                     {

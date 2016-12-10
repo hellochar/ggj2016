@@ -1,0 +1,54 @@
+@import "../commons";
+
+.rg-level-positioner {
+    position: relative;
+    // position the top-left of the .rg-level (my only child) in the very center of this element.
+    // Then the rg-map can be further translated to set the center of the viewport in the same coordinate
+    // system as IPositions
+    transform: translate(50%, 50%);
+}
+
+.rg-level {
+    margin: 0;
+    position: relative;
+    transition: transform 0.1s;
+    white-space: pre;
+
+    // center the square-o in the cell
+    .fa-square-o:before {
+        position: relative;
+        top: 1.2px;
+    }
+
+    .rg-row {
+        height: @cell-size;
+        position: relative;
+    }
+
+    // item specific styles while they're on the map
+    .rg-entity-item {
+        // shrink items a bit to make them appear different than full entities
+        transform: scale(0.65);
+
+        // make items bobble up and down on the map
+        animation-duration: 1s;
+        animation-name: bobble;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+        animation-timing-function: ease-in-out;
+
+        @keyframes bobble {
+            from {
+                margin-top: -5px;
+            }
+
+            to {
+                margin-top: 3px;
+            }
+        }
+    }
+
+    .rg-entity-user {
+        color: red;
+    }
+}

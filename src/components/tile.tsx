@@ -3,6 +3,8 @@ import * as React from "react";
 
 import { ITile, TileType } from "model/";
 
+import "./tile.less";
+
 export interface ITileProps {
     tile: ITile;
     visible: boolean;
