@@ -8,6 +8,8 @@ import { IUser, IUseItemAction, Item } from "model/";
 import { IState } from "state";
 import { userPerformAction, findEntityLevel } from "action";
 
+import "./headsUpDisplay.less";
+
 interface IPureHeadsUpDisplayProps {
     dispatch: Redux.Dispatch<IState>;
     user: IUser;
@@ -27,25 +29,25 @@ export class PureHeadsUpDisplay extends React.PureComponent<IPureHeadsUpDisplayP
     public render() {
         const { user: entity } = this.props;
         const healthPercentage = entity.health / entity.maxHealth;
-        const healthIndicatorClassnames = classnames("rg-entity-info-health", {
+        const healthIndicatorClassnames = classnames("rg-hud-health", {
             "good": healthPercentage >= 0.7,
             "ok": healthPercentage < 0.7 && healthPercentage >= 0.2,
             "bad": healthPercentage <= 0.2
         });
 
         return (
-            <div className="rg-entity-info">
+            <div className="rg-hud">
                 <div>
-                    <span className="rg-entity-info-name">{entity.name}</span>
+                    <span className="rg-hud-name">{entity.name}</span>
                     <span className={healthIndicatorClassnames}>{entity.health} / {entity.maxHealth}</span>
-                    <span className="rg-entity-info-hunger">fullness: {entity.satiation}</span>
-                    <span className="rg-entity-info-floor">floor {this.props.userFloor + 1}</span>
+                    <span className="rg-hud-hunger">fullness: {entity.satiation}</span>
+                    <span className="rg-hud-floor">floor {this.props.userFloor + 1}</span>
                 </div>
                 <div>
                     {
                         this.props.userItems.map((item) => {
                             return (
-                                <div key={item.id} className="rg-entity-info-item">
+                                <div key={item.id} className="rg-hud-item">
                                     <EntityComponent
                                         entity={item}
                                         onDoubleClick={() => this.handleItemDoubleClick(item.id)}
@@ -54,7 +56,7 @@ export class PureHeadsUpDisplay extends React.PureComponent<IPureHeadsUpDisplayP
                             );
                         })
                     }
-                    <span className="rg-entity-info-floor">inventory: {entity.inventory.itemIds.length} / {entity.inventory.maxSize}</span>
+                    <span className="rg-hud-floor">inventory: {entity.inventory.itemIds.length} / {entity.inventory.maxSize}</span>
                 </div>
             </div>
         );
