@@ -1,0 +1,23 @@
+/**
+ * Holds common constants and variables across LESS files.
+ */
+
+@import "~@blueprintjs/core/dist/variables";
+
+// pixel size of each cell (tile or entity) in the map.
+@cell-size: 40px;
+// A set of common transition properties that should animate smoothly on hover
+// of entities. Use this when overriding the transition property on a specific
+// component, but you don't want to lose the existing transition effects.
+@hover-transition: transform 0.1s, box-shadow 0.1s;
+
+// A mixin to make a component adhere to the cell-size. Use on tiles, entities,
+// and other things that are one cell large.
+.rg-map-cell-mixin() {
+    width: @cell-size;
+    height: @cell-size;
+    font-size: @cell-size;
+    line-height: 1;
+    text-align: center;
+}
+

@@ -6,6 +6,8 @@ import { Intent, Position, Popover, PopoverInteractionKind, ProgressBar } from "
 import { isItem, isActor, Entity, EntityType, hasHealth } from "model/";
 import { CELL_SIZE } from "components/commons";
 
+import "./entity.less";
+
 export interface IEntityProps {
     entity: Entity;
     usePosition?: boolean;

@@ -1,25 +1,9 @@
 @import "~@blueprintjs/core/dist/blueprint.css";
-@import "~@blueprintjs/core/dist/variables.less";
+
+@import "./commons";
 
 * {
     box-sizing: border-box;
-}
-
-// pixel size of each cell (tile or entity) in the map.
-@cell-size: 40px;
-// A set of common transition properties that should animate smoothly on hover
-// of entities. Use this when overriding the transition property on a specific
-// component, but you don't want to lose the existing transition effects.
-@hover-transition: transform 0.1s, box-shadow 0.1s;
-
-// A mixin to make a component adhere to the cell-size. Use on tiles, entities,
-// and other things that are one cell large.
-.rg-map-cell-mixin() {
-    width: @cell-size;
-    height: @cell-size;
-    font-size: @cell-size;
-    line-height: 1;
-    text-align: center;
 }
 
 html {
@@ -100,26 +84,6 @@ body {
     opacity: 0.95;
 }
 
-.rg-entity-popover {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-
-    .rg-entity-popover-target {
-        position: relative;
-        width: 100%;
-        height: 100%;
-    }
-
-    .rg-entity-popover-description {
-        font-style: italic;
-        font-size: 12px;
-        margin-top: 5px;
-    }
-}
-
 .rg-tile {
     .rg-map-cell-mixin();
 
@@ -176,57 +140,6 @@ body {
                 color: lighten(desaturate(@blue4, 20%), 0%);
             }
         }
-    }
-}
-
-.rg-positioner {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: transform 0.05s;
-}
-
-// entity container
-.rg-entity {
-    transition: @hover-transition;
-
-    &:hover {
-        transform: scale(1.2);
-        box-shadow: 0 0 1px 5px rgba(79, 136, 177, 0.8);
-        border-radius: 2px;
-    }
-
-    &.rg-entity-actor {
-        transition: @hover-transition;
-
-        animation-name: active;
-        animation-duration: 2s;
-        animation-timing-function: steps(2);
-        animation-iteration-count: infinite;
-        @keyframes active {
-            from {
-                margin-top: -3px;
-            }
-
-            to {
-                margin-top: 0px;
-            }
-        }
-    }
-
-    .rg-entity-element {
-        .rg-map-cell-mixin();
-    }
-
-    // place the bottom of the health meter at the top of the container (top of the entity element)
-    .rg-health-meter {
-        bottom: calc(~"100% + 2px");
-        height: 5px;
-        opacity: 0.8;
-        position: absolute;
-        z-index: 1;
-        width: 80%;
-        margin: 0 10%;
     }
 }
 
