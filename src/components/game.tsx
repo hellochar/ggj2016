@@ -9,6 +9,8 @@ import { HeadsUpDisplay } from "components/headsUpDisplay";
 import { PureLevel } from "components/level";
 import { IState } from "state";
 
+import "./game.less";
+
 export interface IGameProps {
     dispatch: Redux.Dispatch<IState>;
     state: IState;
