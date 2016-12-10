@@ -33,14 +33,27 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
     }
 
     public render() {
-        const { entity, usePosition = true, onDoubleClick } = this.props;
-        const element = <i className={classnames("rg-entity-element", "fa", this.getEntityClassnames(entity))} />;
+        const { entity, usePosition = true } = this.props;
 
-        const style = usePosition ? {
-                left: entity.position.x * CELL_SIZE,
-                top: entity.position.y * CELL_SIZE,
-                position: "absolute",
-            } : {};
+        const style = {
+            transform: `translate(${entity.position.x * CELL_SIZE}px, ${entity.position.y * CELL_SIZE}px)`,
+        };
+
+        const entityElement = this.renderEntityElement();
+
+        if (usePosition) {
+            return (
+                <div className="rg-positioner" style={style}>
+                    { entityElement }
+                </div>
+            );
+        } else {
+            return entityElement;
+        }
+    }
+
+    private renderEntityElement() {
+        const { entity, onDoubleClick } = this.props;
 
         const containerClasses = classnames(
             "rg-entity",
@@ -58,8 +71,9 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
                 value={entity.health / entity.maxHealth} />
             : null;
 
+        const element = <i className={classnames("rg-entity-element", "fa", this.getEntityClassnames(entity))} />;
         return (
-            <div style={style} className={containerClasses}>
+            <div className={containerClasses}>
                 { healthMeter }
                 { element }
                 <EntityPopover name={this.nameForEntity(entity)} onDoubleClick={onDoubleClick} type={entity.type} />

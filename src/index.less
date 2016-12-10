@@ -179,9 +179,15 @@ body {
     }
 }
 
+.rg-positioner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.05s;
+}
+
 // entity container
 .rg-entity {
-    position: relative;
     transition: @hover-transition;
 
     &:hover {
@@ -191,7 +197,7 @@ body {
     }
 
     &.rg-entity-actor {
-        transition: @hover-transition, top 0.05s, left 0.05s;
+        transition: @hover-transition;
 
         animation-name: active;
         animation-duration: 2s;
