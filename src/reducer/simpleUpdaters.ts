@@ -31,9 +31,13 @@ function simpleLevelsReducer(levels: ILevels, action: SimpleAction): ILevels {
         const level = _.find(levels, (level) => {
             return level.entities.some((id) => action.entityId === id);
         });
-        return _.assign({}, levels, {
-            [level.id]: level.withoutEntity(action.entityId)
-        });
+        if (level !== undefined) {
+            return _.assign({}, levels, {
+                [level.id]: level.withoutEntity(action.entityId)
+            });
+        } else {
+            return levels;
+        }
     } else {
         return levels;
     }
