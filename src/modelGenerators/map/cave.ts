@@ -5,6 +5,7 @@ import { uniformPercentageSetWall } from "./fillers";
 import { LifeLikeCA } from "./cellularAutomata";
 import { ITile, TileType } from "model/";
 import { IWallTile } from "../../model/tile";
+import { allTiles } from "./commons";
 
 export interface IMapMutator {
     (map: Map): void;
@@ -19,6 +20,27 @@ export function emptyMap(width: number, height: number, colorTheme: string[]) {
     }));
     return new Map(tiles, colorTheme);
 }
+
+/**
+ * Remove walls that aren't directly connected to another wall - this gets rid of lots of annoying
+ * diagonals that might frustrate users and opens the map more.
+ */
+const removeDiagonalOnlyWalls: IMapMutator = (map: Map) => {
+    allTiles(map)
+        // find walls
+        .filter((p) => map.get(p.x, p.y).type === TileType.WALL)
+        // who don't have any directly adjacent walls
+        .filter((p) => {
+            const adjacentWalls = map.getVonNeumannNeighborhood(p).filter((p) => map.get(p.x, p.y).type === TileType.WALL);
+            return adjacentWalls.length === 0;
+        })
+        // and remove the wall
+        .forEach((p) => {
+            map.set(p, {
+                type: TileType.SPACE
+            });
+        });
+};
 
 function compose(...functions: IMapMutator[]): IMapMutator {
     return (map: Map) => {
@@ -144,5 +166,6 @@ export function generateCaveStructure(width: number, height: number, colorTheme:
     const algorithm = _.sample(GENERATION_ALGORITHMS)();
     const map = emptyMap(width, height, colorTheme);
     algorithm(map);
+    removeDiagonalOnlyWalls(map);
     return map;
 }
