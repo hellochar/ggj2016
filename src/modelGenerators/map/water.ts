@@ -1,8 +1,5 @@
-import * as _ from "lodash";
-import * as Stream from "streamjs";
-
-import { IPosition } from "math";
 import { Map } from "model/map";
+import { randomMapPoints, floodFill } from "./commons";
 
 /**
  * Ideas for water:
@@ -21,29 +18,4 @@ export function addWater(map: Map) {
             type: "WATER"
         });
     });
-}
-
-function randomMapPoints(map: Map): Stream<IPosition> {
-    return Stream.generate(() => ({
-        x: _.random(0, map.width - 1),
-        y: _.random(0, map.height - 1),
-    }));
-}
-
-function floodFill(map: Map, start: IPosition, shouldAdd: (p: IPosition) => boolean): Stream<IPosition> {
-    const visited: { [key: string]: true } = {};
-    const queue = [start];
-    return Stream.generate(() => {
-        const next = queue.shift();
-        if (next !== undefined) {
-            map
-                .getNeighbors(next)
-                .filter((p) => visited[`${p.x},${p.y}`] === undefined && shouldAdd(p))
-                .forEach((position) => {
-                    visited[`${position.x},${position.y}`] = true;
-                    queue.push(position);
-                });
-        }
-        return next;
-    }).takeWhile((isEnd) => isEnd !== undefined) as Stream<IPosition>;
 }

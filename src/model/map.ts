@@ -23,6 +23,10 @@ export class Map {
         return this.tiles.length;
     }
 
+    /**
+     * Return the tile at the given position, or undefined. If passed a callback, get() will invoke the callback when 
+     * the tile exists.
+     */
     public get(x: number, y: number, then?: (t: ITile) => void): ITile | void {
         const row = this.tiles[y];
         if (row != null) {
@@ -31,11 +35,8 @@ export class Map {
                 then(tile);
             }
             return tile;
-        } else {
-            if (then === undefined) {
-                throw new Error(`Cannot get ${x},${y}`);
-            }
         }
+        return undefined;
     }
 
     /**
@@ -49,12 +50,32 @@ export class Map {
         return this.get(position.x, position.y) !== undefined;
     }
 
-    public getNeighbors(position: IPosition) {
+    /**
+     * Returns the in-bounds von Neumann neighborhood (adjacent not including diagonals) positions for the given input position.
+     */
+    public getVonNeumannNeighborhood(center: IPosition) {
         return [
-            { x: position.x - 1, y: position.y },
-            { x: position.x + 1, y: position.y },
-            { x: position.x, y: position.y - 1 },
-            { x: position.x, y: position.y + 1 },
+            { x: center.x - 1, y: center.y },
+            { x: center.x + 1, y: center.y },
+            { x: center.x, y: center.y - 1 },
+            { x: center.x, y: center.y + 1 },
+        ].filter((position) => this.isInBounds(position));
+    }
+
+    /**
+     * Returns the in-bounds Moore neighborhood (adjacent including diagonals) positions for the given input position.
+     */
+    public getMooreNeighborhood(center: IPosition) {
+        return [
+            { x: center.x - 1, y: center.y - 1 },
+            { x: center.x, y: center.y - 1 },
+            { x: center.x + 1, y: center.y - 1 },
+            { x: center.x - 1, y: center.y },
+            // { x: center.x, y: center.y },
+            { x: center.x + 1, y: center.y },
+            { x: center.x - 1, y: center.y + 1 },
+            { x: center.x, y: center.y + 1 },
+            { x: center.x + 1, y: center.y + 1 },
         ].filter((position) => this.isInBounds(position));
     }
 
@@ -66,15 +87,6 @@ export class Map {
         const tile = this.get(p.x, p.y);
         if (tile) {
             return tile.type === TileType.WALL;
-        } else {
-            return true;
-        }
-    }
-
-    public isTileFree(p: IPosition) {
-        const tile = this.get(p.x, p.y);
-        if (tile) {
-            return tile.type === TileType.SPACE;
         } else {
             return true;
         }

@@ -8,6 +8,7 @@ import { TileType } from "model/tile";
 import { IPosition } from "math";
 import { generateCaveStructure } from "./cave";
 import { addWater } from "./water";
+import { addGrass } from "./grass";
 
 /**
  * Generate a random cave-like Map with space, walls, and an upstairs and downstairs that will connect.
@@ -19,6 +20,7 @@ export function generateMap(upstairs: IPosition, colorTheme: string[]): Map {
     let map = generateCaveStructure(width, height, colorTheme);
     map.outlineRectWithWalls();
     addWater(map);
+    addGrass(map);
 
     // inset relevant features such as downstairs and path endpoints by this much into the map.
     const inset = 3;

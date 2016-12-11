@@ -2,7 +2,6 @@ import * as _ from "lodash";
 
 import { ITile, TileType } from "model/tile";
 import { Map } from "model/map";
-
 /**
  * Internal structure used to run CA simulations.
  */
@@ -34,17 +33,7 @@ export class LifeLikeCA {
     }
 
     private getNumAliveNeighbors(map: Map, x: number, y: number) {
-        let numAlive = 0;
-        for (let yi = y - 1; yi <= y + 1; yi += 1) {
-            for (let xi = x - 1; xi <= x + 1; xi += 1) {
-                map.get(xi, yi, (tile) => {
-                    if (!(yi === y && xi === x) && tile.type === TileType.WALL) {
-                        numAlive += 1;
-                    }
-                });
-            }
-        }
-        return numAlive;
+        return map.getMooreNeighborhood({ x, y}).filter((p) => map.get(p.x, p.y).type === TileType.WALL).length;
     }
 
     private computeNextState(map: Map, x: number, y: number): ITile {

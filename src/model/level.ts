@@ -126,7 +126,7 @@ export class Level {
                     x: position.x + _.random(-RANGE, RANGE),
                     y: position.y + _.random(-RANGE, RANGE),
                 };
-            } while (!this.map.isTileFree(newPosition));
+            } while (this.map.get(newPosition.x, newPosition.y).type === TileType.WALL);
 
             const home: Entity.IHouse = {
                 id: Math.random().toString(16).substring(2),

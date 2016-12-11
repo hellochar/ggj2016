@@ -5,6 +5,7 @@
 
     background: white;
     display: inline-block;
+    font-style: normal;
     overflow: hidden;
     transition: color 0.15s, opacity 0.15s, @hover-transition;
 
@@ -55,6 +56,29 @@
                 background: lighten(desaturate(@blue5, 20%), 5%);
                 color: lighten(desaturate(@blue4, 20%), 0%);
             }
+        }
+    }
+
+    &.rg-tile-grass {
+        @grass-bg-color: lighten(desaturate(@green3, 40%), 40%);
+        @grass-color: lighten(desaturate(@green1, 30%), 20%);
+        background: @grass-bg-color;
+        color: @grass-color;
+
+        + .rg-tile-grass {
+            background: lighten(@grass-bg-color, 10%);
+            // color: lighten(@grass-color, 10%);
+        }
+
+        &:nth-child(3n) {
+            // background: darken(@grass-bg-color, 10%);
+            color: darken(@grass-color, 10%);
+        }
+
+        &::before {
+            content: "෴";
+            transform: translate(-25%, 0) scale(0.66);
+            display: inline-block;
         }
     }
 }

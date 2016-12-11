@@ -42,12 +42,14 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
             case TileType.DOWNSTAIRS: return this.renderFontAwesomeIcon("fa-chevron-down");
             case TileType.UPSTAIRS: return this.renderFontAwesomeIcon("fa-chevron-up");
             case TileType.DECORATIVE_SPACE: return this.renderFontAwesomeIcon("fa-slack rg-tile-space");
-            case TileType.WATER: return this.renderWater();
+            case TileType.WATER: return this.renderSimpleTile("rg-tile-water");
+            case TileType.GRASS: return this.renderSimpleTile("rg-tile-grass");
         }
     }
 
-    private renderWater() {
-        return <i className="rg-tile rg-tile-water" />;
+    private renderSimpleTile(iconClass: string) {
+        const className = classnames("rg-tile", iconClass);
+        return <i className={className} />;
     }
 
     private renderFontAwesomeIcon(iconClass: string) {
