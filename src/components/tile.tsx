@@ -40,7 +40,7 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
             case TileType.SPACE: return this.renderFontAwesomeIcon("fa-square-o rg-tile-space");
             case TileType.WALL: return this.renderFontAwesomeIcon("fa-stop");
             case TileType.DOWNSTAIRS: return this.renderFontAwesomeIcon("fa-chevron-down");
-            case TileType.UPSTAIRS: return this.renderFontAwesomeIcon("fa-chevron-up");
+            case TileType.UPSTAIRS: return this.renderUpstairs();
             case TileType.DECORATIVE_SPACE: return this.renderFontAwesomeIcon("fa-slack rg-tile-space");
             case TileType.WATER: return this.renderSimpleTile("rg-tile-water");
             case TileType.GRASS: return this.renderSimpleTile("rg-tile-grass");
@@ -50,6 +50,10 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
     private renderSimpleTile(iconClass: string) {
         const className = classnames("rg-tile", iconClass);
         return <i className={className} />;
+    }
+
+    private renderUpstairs() {
+        return this.renderFontAwesomeIcon("fa-chevron-up rg-tile-upstairs");
     }
 
     private renderFontAwesomeIcon(iconClass: string) {
