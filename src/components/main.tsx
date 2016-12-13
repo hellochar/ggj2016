@@ -6,6 +6,10 @@ import { UserDiedScreen } from "components/userDiedScreen";
 import { UserWonScreen } from "components/userWonScreen";
 import { IState, Screen } from "state";
 import { badTypeError } from "util";
+import * as classnames from "classnames";
+import QUERY_STRING from "queryString";
+
+import "./main.less";
 
 export interface IMainProps {
     screen: Screen;
@@ -13,6 +17,15 @@ export interface IMainProps {
 
 export class PureMain extends React.Component<IMainProps, {}> {
     public render() {
+        const className = classnames("rg-main-container", { "no-animation": QUERY_STRING.noAnimation });
+        return (
+            <div className={className}>
+                { this.renderScreen() }
+            </div>
+        )
+    }
+
+    private renderScreen() {
         if (this.props.screen === "play") {
             return <Game />;
         } else if (this.props.screen === "user-died") {
