@@ -38,9 +38,10 @@ export class PureLevel extends React.PureComponent<ILevelProps, {}> {
                             return (
                                 <Tile
                                     tile={tile}
-                                    key={`${x},${y}`}
                                     explored={visibility.explored}
                                     visible={visibility.visible}
+                                    x={x}
+                                    y={y}
                                 />
                             );
                         })

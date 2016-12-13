@@ -7,7 +7,8 @@
     display: inline-block;
     font-style: normal;
     overflow: hidden;
-    transition: color 0.15s, opacity 0.15s, @hover-transition;
+    position: absolute;
+    transition: opacity 0.15s, @hover-transition;
 
     &.rg-tile-space {
         color: rgba(1,1,1, 0.20);
@@ -16,16 +17,6 @@
     &.rg-tile-remembered {
         opacity: 0.4;
         animation-play-state: paused;
-    }
-
-    &.rg-tile-unexplored {
-        opacity: 0;
-
-        &::before {
-            // add empty content to fix bug where unexplored tiles weren't
-            // aligned with the other tiles properly
-            content: "";
-        }
     }
 
     &:hover {
@@ -82,4 +73,3 @@
         }
     }
 }
-

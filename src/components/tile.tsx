@@ -1,11 +1,14 @@
 import * as classnames from "classnames";
 import * as React from "react";
 
+import { CELL_SIZE } from "./commons";
 import { ITile, TileType } from "model/";
 
 import "./tile.less";
 
 export interface ITileProps {
+    x: number;
+    y: number;
     tile: ITile;
     visible: boolean;
     explored: boolean;
@@ -20,12 +23,8 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
         } else if (explored) {
             return this.renderTile("rg-tile-remembered");
         } else {
-            return this.renderUnexplored();
+            return null;
         }
-    }
-
-    private renderUnexplored() {
-        return <i className="rg-tile rg-tile-unexplored" />;
     }
 
     private renderTile(visibilityClass: string) {
@@ -49,7 +48,7 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
 
     private renderSimpleTile(iconClass: string) {
         const className = classnames("rg-tile", iconClass);
-        return <i className={className} />;
+        return this.getIElement(className);
     }
 
     private renderFontAwesomeIcon(iconClass: string) {
@@ -60,6 +59,12 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
         if (tile.type === TileType.WALL) {
             style.color = tile.color;
         }
-        return <i className={className} style={style}></i>;
+        return this.getIElement(className, style);
+    }
+
+    private getIElement(className: string, style: React.CSSProperties = {}) {
+        style.top = this.props.y * CELL_SIZE;
+        style.left = this.props.x * CELL_SIZE;
+        return <i className={className} style={style} />;
     }
 }
