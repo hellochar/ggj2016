@@ -7,7 +7,7 @@ import { UserWonScreen } from "components/userWonScreen";
 import { IState, Screen } from "state";
 import { badTypeError } from "util";
 import * as classnames from "classnames";
-import QUERY_STRING from "queryString";
+import DEBUG_FLAGS from "debugFlags";
 
 import "./main.less";
 
@@ -17,7 +17,7 @@ export interface IMainProps {
 
 export class PureMain extends React.Component<IMainProps, {}> {
     public render() {
-        const className = classnames("rg-main-container", { "no-animation": QUERY_STRING.noAnimation });
+        const className = classnames("rg-main-container", { "no-animation": DEBUG_FLAGS.noAnimation });
         return (
             <div className={className}>
                 { this.renderScreen() }

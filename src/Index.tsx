@@ -14,14 +14,14 @@ import { Main as InitialMain } from "components/main";
 import reducer from "reducer";
 import { IState } from "state";
 import { buildInitialState } from "initialState";
-import QUERY_STRING from "queryString";
+import DEBUG_FLAGS from "debugFlags";
 
 import "./index.less";
 
 (window as any).Perf = Perf;
 
 // add redux devtools reporting if debug query param exists
-const compose = QUERY_STRING.debug ? (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : Redux.compose;
+const compose = DEBUG_FLAGS.debug ? (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : Redux.compose;
 
 const storeEnhancer: Redux.GenericStoreEnhancer = compose(
     Redux.applyMiddleware(
