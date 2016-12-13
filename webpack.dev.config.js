@@ -27,7 +27,7 @@ var devConfigExtension = {
   },
 
   // more options here: http://webpack.github.io/docs/configuration.html#devtool
-  devtool: "eval-source-map",
+  devtool: "source-map",
 
   watch: true,
 

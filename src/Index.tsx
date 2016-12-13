@@ -8,7 +8,6 @@ import { AppContainer } from "react-hot-loader";
 import { Provider } from "react-redux";
 import * as Redux from "redux";
 import { batchedSubscribe } from "redux-batched-subscribe";
-import * as createLogger from "redux-logger";
 import thunk from "redux-thunk";
 
 import { Main as InitialMain } from "components/main";
@@ -20,15 +19,12 @@ import "./index.less";
 
 (window as any).Perf = Perf;
 
-const logger = createLogger({ duration: true, timestamp: true, collapsed: () => true });
-
-// add redux devtools reporting
-const compose = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || Redux.compose;
+// add redux devtools reporting if debug query param exists
+const compose = (window.location.search === "?debug") ? (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : Redux.compose;
 
 const storeEnhancer: Redux.GenericStoreEnhancer = compose(
     Redux.applyMiddleware(
-        thunk,
-        logger
+        thunk
     ),
     // only notify subscriptions (aka react-redux) to update in a debounce loop to prevent intermediate renders from
     // redux-thunk
