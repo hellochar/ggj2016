@@ -158,8 +158,7 @@ export class Level {
     }
 
     /**
-     * Create a bunch of leaves and add references to them. The caller must immediately
-     * add them to the game.
+     * Add trees. The caller should add them to the game.
      */
     public addTrees(): Entity.ITree[] {
         const offsetX = Math.random() * 100;
@@ -167,9 +166,9 @@ export class Level {
         const trees: Entity.ITree[] = [];
         for (let x = 0; x < this.map.width; x++) {
             for (let y = 0; y < this.map.height; y++) {
-                if (this.map.get(x, y).type === TileType.SPACE) {
-                    const z = this.treeTexture(x * 0.35 + offsetX, y * 0.35 + offsetY) + Math.random() * 0.25 - 0.125;
-                    if (z > 0.98) {
+                if (this.map.get(x, y).type === TileType.GRASS) {
+                    const z = this.treeTexture(x * 0.75 + offsetX, y * 0.75 + offsetY) + Math.random() * 0.25;
+                    if (z > 0.55) {
                         const id = Math.random().toString(16).substring(2);
                         const tree: Entity.ITree = {
                             id,
