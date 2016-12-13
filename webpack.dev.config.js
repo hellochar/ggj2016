@@ -53,4 +53,17 @@ var devConfigExtension = {
 mainConfig.module.loaders = [];
 mainConfig.plugins = [];
 
+if (webpackShared.isProduction) {
+  devConfigExtension.plugins.push(new webpack.optimize.UglifyJsPlugin({
+     compress: {
+        warnings: false
+    }
+  }));
+  devConfigExtension.plugins.push(new webpack.DefinePlugin({
+    'process.env': {NODE_ENV: '"production"'}
+  }));
+
+  delete devConfigExtension.devtool;
+}
+
 module.exports = mainConfig.merge(devConfigExtension);
