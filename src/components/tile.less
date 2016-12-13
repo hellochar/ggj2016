@@ -10,66 +10,72 @@
     position: absolute;
     transition: opacity 0.15s, @hover-transition;
 
-    &.rg-tile-space {
-        color: rgba(1,1,1, 0.20);
-    }
-
-    &.rg-tile-remembered {
-        opacity: 0.4;
-        animation-play-state: paused;
-    }
-
     &:hover {
-        transform: scale(1.0);
-        box-shadow: 0 0 5px 8px fade(@black, 15%);
-        position: relative;
+        // transform: scale(1.2);
+        // box-shadow: 0 0 5px 8px fade(@black, 15%);
+        border: 0.5px solid @black;
         z-index: 1;
     }
+}
 
-    &.rg-tile-water {
-        animation-name: water-wave;
-        animation-duration: 2s;
-        animation-timing-function: linear;
-        animation-iteration-count: infinite;
-        animation-direction: alternate;
+.rg-tile-space {
+    color: rgba(1,1,1, 0.20);
 
-        &::before {
-            content: "~";
-        }
+    // center the square-o in the cell
+    &:before {
+        position: relative;
+        top: 1.2px;
+    }
+}
 
-        @keyframes water-wave {
-            from {
-                background: lighten(desaturate(@blue2, 30%), 45%);
-                color: lighten(desaturate(@blue1, 30%), 40%);
-            }
+.rg-tile-remembered {
+    opacity: 0.4;
+    animation-play-state: paused;
+}
 
-            to {
-                background: lighten(desaturate(@blue5, 20%), 5%);
-                color: lighten(desaturate(@blue4, 20%), 0%);
-            }
-        }
+.rg-tile-water {
+    animation-name: water-wave;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+
+    &::before {
+        content: "~";
     }
 
-    &.rg-tile-grass {
-        @grass-bg-color: lighten(desaturate(@green3, 40%), 40%);
-        @grass-color: lighten(desaturate(@green1, 30%), 20%);
-        background: @grass-bg-color;
-        color: @grass-color;
-
-        + .rg-tile-grass {
-            background: lighten(@grass-bg-color, 10%);
-            // color: lighten(@grass-color, 10%);
+    @keyframes water-wave {
+        from {
+            background: lighten(desaturate(@blue2, 30%), 45%);
+            color: lighten(desaturate(@blue1, 30%), 40%);
         }
 
-        &:nth-child(3n) {
-            // background: darken(@grass-bg-color, 10%);
-            color: darken(@grass-color, 10%);
+        to {
+            background: lighten(desaturate(@blue5, 20%), 5%);
+            color: lighten(desaturate(@blue4, 20%), 0%);
         }
+    }
+}
 
-        &::before {
-            content: "෴";
-            transform: translate(-25%, 0) scale(0.66);
-            display: inline-block;
-        }
+.rg-tile-grass {
+    @grass-bg-color: lighten(desaturate(@green3, 40%), 40%);
+    @grass-color: lighten(desaturate(@green1, 30%), 20%);
+    background: @grass-bg-color;
+    color: @grass-color;
+
+    + .rg-tile-grass {
+        background: lighten(@grass-bg-color, 10%);
+        // color: lighten(@grass-color, 10%);
+    }
+
+    &:nth-child(3n) {
+        // background: darken(@grass-bg-color, 10%);
+        color: darken(@grass-color, 10%);
+    }
+
+    &::before {
+        content: "෴";
+        transform: translate(-25%, 0) scale(0.66);
+        display: inline-block;
     }
 }
