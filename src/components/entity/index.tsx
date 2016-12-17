@@ -7,6 +7,7 @@ import { isItem, isActor, Entity, EntityType, hasHealth } from "model/";
 import { CELL_SIZE } from "components/commons";
 
 import "./entity.less";
+import descriptionForEntity from "./descriptions";
 
 export interface IEntityProps {
     entity: Entity;
@@ -95,19 +96,6 @@ interface IEntityPopoverProps {
  * force synchronous layout in their DOM update callback, which can add upwards of 30ms delay to an action.
  */
 class EntityPopover extends React.PureComponent<IEntityPopoverProps, {}> {
-    private descriptionForEntity(type: EntityType) {
-        switch (type) {
-            case "user": return "An aspiring adventurer.";
-            case "mercury": return "A cave-dweller, not so different from you and I.";
-            case "ring": return "The fabled Ring of Norsogoth. Who knows what would happen when it's worn?";
-            case "tree":
-                return "Sorrow is knowledge, those that know the most must mourn the deepest, the tree of knowledge is not the tree of life.";
-            case "fruit": return "The roots of education are bitter, but the fruit is sweet.";
-            case "house": return "Have nothing in your house that you do not know to be useful, or believe to be beautiful.";
-            case "axe": return "Your trusty axe! Cuts down trees in one turn and does 3 damage to foes.";
-        }
-    }
-
     public render() {
         const popoverContent = (
             <div>
@@ -115,7 +103,7 @@ class EntityPopover extends React.PureComponent<IEntityPopoverProps, {}> {
                     {this.props.name}
                 </h3>
                 <div className="rg-entity-popover-description">
-                    {this.descriptionForEntity(this.props.type)}
+                    {descriptionForEntity(this.props.type)}
                 </div>
             </div>
         );
