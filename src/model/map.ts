@@ -129,11 +129,14 @@ export class Map {
         return null;
     }
 
-    public setImportantTile(p: IPosition, type: TileType) {
+    public setImportantTile(p: IPosition, tile: ITile) {
         forEachInRect({x: p.x - 1, y: p.y - 1},
                       {x: p.x + 1, y: p.y + 1},
-                      (p) => this.tiles[p.y][p.x].type = TileType.DECORATIVE_SPACE);
-        const tile = this.tiles[p.y][p.x];
-        tile.type = type;
+                      (p) => this.set(p, {
+                          type: TileType.PAVED_FLOOR,
+                          decorative: true
+                        })
+        );
+        this.set(p, tile);
     }
 }

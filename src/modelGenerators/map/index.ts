@@ -40,7 +40,7 @@ export function generateMap(upstairs: IPosition, colorTheme: string[]): Map {
             y: randomY(),
         };
     } while (Math.abs(downstairs.x - upstairs.x) < 2 && Math.abs(downstairs.y - upstairs.y) < 2);
-    map.setImportantTile(downstairs, TileType.DOWNSTAIRS);
+    map.setImportantTile(downstairs, { type: TileType.DOWNSTAIRS });
     // generate a random path from upstairs to downstairs
     const lineSegments = [ upstairs ];
     for (let k = 0 ; k < 3 || Math.random() < 0.8 && k % 2 === 0; k++) {
@@ -66,8 +66,8 @@ export function generateMap(upstairs: IPosition, colorTheme: string[]): Map {
     });
     lineSegments.push(downstairs);
     map.drawPathBetween(lineSegments);
-    map.setImportantTile(downstairs, TileType.DOWNSTAIRS);
-    map.setImportantTile(upstairs, TileType.UPSTAIRS);
+    map.setImportantTile(downstairs, { type: TileType.DOWNSTAIRS });
+    map.setImportantTile(upstairs, { type: TileType.UPSTAIRS });
 
     map.outlineRectWithWalls();
     return map;

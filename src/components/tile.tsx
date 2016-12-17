@@ -5,6 +5,7 @@ import { CELL_SIZE } from "./commons";
 import { ITile, TileType } from "model/";
 
 import "./tile.less";
+import { IPavedFloorTile } from "../model/tile";
 
 export interface ITileProps {
     x: number;
@@ -35,14 +36,22 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
     }
 
     private getRenderTileElement() {
-        switch (this.props.tile.type) {
-            case TileType.PAVED_FLOOR: return this.renderFontAwesomeIcon("fa-square-o rg-tile-paved-floor");
+        const { tile } = this.props;
+        switch (tile.type) {
+            case TileType.PAVED_FLOOR: return this.renderPavedFloor(tile);
             case TileType.WALL: return this.renderFontAwesomeIcon("fa-stop");
             case TileType.DOWNSTAIRS: return this.renderFontAwesomeIcon("fa-chevron-down");
             case TileType.UPSTAIRS: return this.renderFontAwesomeIcon("fa-chevron-up");
-            case TileType.DECORATIVE_SPACE: return this.renderFontAwesomeIcon("fa-slack rg-tile-decorative-space");
             case TileType.WATER: return this.renderSimpleTile("rg-tile-water");
             case TileType.GRASS: return this.renderSimpleTile("rg-tile-grass");
+        }
+    }
+
+    private renderPavedFloor(tile: IPavedFloorTile) {
+        if (tile.decorative) {
+            return this.renderFontAwesomeIcon("fa-slack rg-tile-decorative-space");
+        } else {
+            return this.renderFontAwesomeIcon("fa-square-o rg-tile-paved-floor");
         }
     }
 

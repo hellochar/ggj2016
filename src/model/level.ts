@@ -189,7 +189,7 @@ export class Level {
         if (ringPosition == null) {
             throw new Error("ringPosition somehow null!");
         }
-        this.map.setImportantTile(ringPosition, TileType.DECORATIVE_SPACE);
+        this.map.setImportantTile(ringPosition, { type: TileType.PAVED_FLOOR, decorative: true });
         const ringEntity: Entity.IRing = {
             id: Math.random().toString(16).substring(2),
             type: "ring",
