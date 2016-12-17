@@ -20,7 +20,7 @@ export const uniformPercentageSetWall = (percentage: number) => (map: Map) => {
                     color: colorTheme[colorTheme.length - 1],
                 };
             } else {
-                tiles[y][x] = { type: TileType.SPACE };
+                tiles[y][x] = { type: TileType.PAVED_FLOOR };
             }
         }
     }

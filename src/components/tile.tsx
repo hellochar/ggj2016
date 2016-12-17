@@ -36,11 +36,11 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
 
     private getRenderTileElement() {
         switch (this.props.tile.type) {
-            case TileType.SPACE: return this.renderFontAwesomeIcon("fa-square-o rg-tile-space");
+            case TileType.PAVED_FLOOR: return this.renderFontAwesomeIcon("fa-square-o rg-tile-paved-floor");
             case TileType.WALL: return this.renderFontAwesomeIcon("fa-stop");
             case TileType.DOWNSTAIRS: return this.renderFontAwesomeIcon("fa-chevron-down");
             case TileType.UPSTAIRS: return this.renderFontAwesomeIcon("fa-chevron-up");
-            case TileType.DECORATIVE_SPACE: return this.renderFontAwesomeIcon("fa-slack rg-tile-space");
+            case TileType.DECORATIVE_SPACE: return this.renderFontAwesomeIcon("fa-slack rg-tile-decorative-space");
             case TileType.WATER: return this.renderSimpleTile("rg-tile-water");
             case TileType.GRASS: return this.renderSimpleTile("rg-tile-grass");
         }

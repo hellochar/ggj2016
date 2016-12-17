@@ -17,8 +17,8 @@ export interface IGrassTile {
     type: "GRASS";
 }
 
-export interface ISpaceTile {
-    type: "SPACE";
+export interface IPavedFloorTile {
+    type: "PAVED_FLOOR";
 }
 
 export interface IWallTile {
@@ -38,11 +38,11 @@ export interface IDecorativeSpace {
     type: "DECORATIVE_SPACE";
 }
 
-export type ITile = ISpaceTile | IWallTile | IDownstairsTile | IUpstairsTile | IDecorativeSpace | IWaterTile | IGrassTile;
+export type ITile = IPavedFloorTile | IWallTile | IDownstairsTile | IUpstairsTile | IDecorativeSpace | IWaterTile | IGrassTile;
 
-export type TileType = "SPACE" | "WALL" | "DOWNSTAIRS" | "UPSTAIRS" | "DECORATIVE_SPACE" | "WATER" | "GRASS";
+export type TileType = "PAVED_FLOOR" | "WALL" | "DOWNSTAIRS" | "UPSTAIRS" | "DECORATIVE_SPACE" | "WATER" | "GRASS";
 export const TileType = {
-    SPACE: "SPACE" as "SPACE",
+    PAVED_FLOOR: "PAVED_FLOOR" as "PAVED_FLOOR",
     WALL: "WALL" as "WALL",
     DOWNSTAIRS: "DOWNSTAIRS" as "DOWNSTAIRS",
     UPSTAIRS: "UPSTAIRS" as "UPSTAIRS",

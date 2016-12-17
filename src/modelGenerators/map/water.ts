@@ -1,5 +1,6 @@
 import { Map } from "model/map";
 import { randomMapPoints, floodFill } from "./commons";
+import { TileType } from "model/tile";
 
 /**
  * Ideas for water:
@@ -10,8 +11,8 @@ import { randomMapPoints, floodFill } from "./commons";
  */
 
 export function addWater(map: Map) {
-    const emptyPosition = randomMapPoints(map).filter(( {x, y} ) => map.tiles[y][x].type === "SPACE").findFirst().get();
-    const emptyNearbyTiles = floodFill(map, emptyPosition, (p) => map.get(p.x, p.y).type === "SPACE");
+    const emptyPosition = randomMapPoints(map).filter(( {x, y} ) => map.tiles[y][x].type === TileType.PAVED_FLOOR).findFirst().get();
+    const emptyNearbyTiles = floodFill(map, emptyPosition, (p) => map.get(p.x, p.y).type === TileType.PAVED_FLOOR);
 
     emptyNearbyTiles.limit(300).forEach((p) => {
         map.set(p, {

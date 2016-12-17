@@ -113,7 +113,7 @@ export class Map {
             const from = lineSegments[k];
             const to = lineSegments[k + 1];
             forEachOnLineInGrid(from, to, ({x, y}) => {
-                this.tiles[y][x].type = TileType.SPACE;
+                this.tiles[y][x].type = TileType.PAVED_FLOOR;
             });
         }
     }
