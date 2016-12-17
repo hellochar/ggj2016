@@ -2,10 +2,35 @@ import * as _ from "lodash";
 
 import { findEntityLevel, canActorTakeMoveAction, MOVE_ACTION_OFFSETS } from "action";
 import * as Entity from "model/entity";
-import * as ModelAction from "model/action";
 import { IState } from "state";
+import {
+    Action,
+    IUseItemTargettedAction,
+    IMoveAction,
+    IGoUpstairsAction,
+    IGoDownstairsAction,
+    IDoNothingAction,
+    IPickUpItemAction,
+    IDropItemAction
+} from "./model/action";
 
-const DIRECTIONAL_MOVE_ACTIONS: { [key: string]: ModelAction.IMoveAction } = {
+/**
+ * Defines which keyboard keys (that come from KeyboardEvent.code) map to action types.
+ */
+interface IUserActionKeyMapping {
+    // [key: string]: ModelAction.Action;
+    KeyW?: IMoveAction;
+    KeyA?: IMoveAction;
+    KeyS?: IMoveAction;
+    KeyD?: IMoveAction;
+    KeyQ?: IGoUpstairsAction;
+    KeyE?: IGoDownstairsAction;
+    KeyG?: IPickUpItemAction;
+    KeyP?: IDropItemAction;
+    Period?: IDoNothingAction;
+}
+
+const DIRECTIONAL_MOVE_ACTIONS: IUserActionKeyMapping = {
     KeyW: {
         direction: "up",
         type: "move",
@@ -24,8 +49,8 @@ const DIRECTIONAL_MOVE_ACTIONS: { [key: string]: ModelAction.IMoveAction } = {
     }
 };
 
-export function decideUserAction(state: IState, event: KeyboardEvent): ModelAction.Action | undefined {
-    const availableActions: { [key: string]: ModelAction.Action } = {
+export function decideUserAction(state: IState, event: KeyboardEvent): Action | undefined {
+    const availableActions: IUserActionKeyMapping = {
         KeyQ: {
             type: "go-upstairs",
         },
@@ -63,14 +88,14 @@ export function decideUserAction(state: IState, event: KeyboardEvent): ModelActi
 
                 if (treesInTheWay.length > 0) {
                     // there is a tree here - allow user to cut it down
-                    const cutTreeAction: ModelAction.IUseItemTargettedAction = {
+                    const cutTreeAction: IUseItemTargettedAction = {
                         itemId: axeItem.id,
                         targetId: state.entities[treesInTheWay[0]].id,
                         type: "use-item-target"
                     };
                     availableActions[key] = cutTreeAction;
                 } else if (mercuriesInTheWay.length > 0) {
-                    const mercuryAttackAction: ModelAction.IUseItemTargettedAction = {
+                    const mercuryAttackAction: IUseItemTargettedAction = {
                         itemId: axeItem.id,
                         targetId: state.entities[mercuriesInTheWay[0]].id,
                         type: "use-item-target"
@@ -91,14 +116,14 @@ export function decideUserAction(state: IState, event: KeyboardEvent): ModelActi
         return Entity.isItem(state.entities[entityId]);
     });
     if (itemsBeneathUser.length > 0) {
-        availableActions["KeyG"] = {
+        availableActions.KeyG = {
             itemId: itemsBeneathUser[0],
             type: "pick-up-item",
         };
     }
 
     if (user.inventory.itemIds.length > 0) {
-        availableActions["KeyP"] = {
+        availableActions.KeyP = {
             itemId: user.inventory.itemIds[0],
             type: "drop-item",
         };
