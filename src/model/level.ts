@@ -109,6 +109,18 @@ export class Level {
 
     // add entities and people
     public addVillage(): Entity.Entity[] {
+        // new algorithm:
+        /**
+         * Find a spot that has at least ~25 empty dirt tiles.
+         * Flood fill from that area and add homes in randomly chosen areas in the floodfilled space.
+         * Try this 10 times; abort if failed.
+         */
+
+        // for (let tryIndex = 0; tryIndex < 10; tryIndex++) {
+        //     this.map.randomMapPoints().map((p) => this.map.floodFill(p, (position) => this.map.get(position).type === TileType.DIRT)
+        // }
+        // return [];
+
         const numHomes = _.random(1, 5);
         // center of the homes
         const RANGE = 4;

@@ -5,7 +5,6 @@ import { uniformPercentageSetWall } from "./fillers";
 import { LifeLikeCA } from "./cellularAutomata";
 import { ITile, TileType } from "model/";
 import { IWallTile } from "../../model/tile";
-import { allTiles } from "./commons";
 
 export interface IMapMutator {
     (map: Map): void;
@@ -26,7 +25,7 @@ export function emptyMap(width: number, height: number, colorTheme: string[]) {
  * diagonals that might frustrate users and opens the map more.
  */
 const removeDiagonalOnlyWalls: IMapMutator = (map: Map) => {
-    allTiles(map)
+    map.allTiles()
         // find walls
         .filter((p) => map.get(p.x, p.y).type === TileType.WALL)
         // who don't have any directly adjacent walls
