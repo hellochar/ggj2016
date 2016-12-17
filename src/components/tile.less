@@ -18,7 +18,7 @@
     }
 }
 
-.rg-tile-paved-floor, .rg-tile-decorative-space {
+.rg-tile-paved-floor {
     color: rgba(1,1,1, 0.20);
 
     // center the square-o in the cell
@@ -28,12 +28,35 @@
     }
 }
 
+.rg-tile-dirt {
+    background-color: lighten(desaturate(@sepia1, 32%), 33%);
+    color: lighten(desaturate(@sepia1, 30%), 25%);
+
+    &:before {
+        // // "rain" emoji: 
+        // content: "\26C6";
+        // transform: translate(0, -4px) scale(1.21);
+        // display: block;
+        // font-weight: 100;
+
+        // ⛶
+        // content: "⛶";
+           
+        // •
+        content: "\2022";
+    }
+}
+
 .rg-tile-remembered {
     opacity: 0.4;
     animation-play-state: paused;
 }
 
 .rg-tile-water {
+    // set default colors for no-animation case
+    background: lighten(desaturate(@blue2, 25%), 35%);
+    color: lighten(desaturate(@blue1, 25%), 30%);
+
     animation-name: water-wave;
     animation-duration: 2s;
     animation-timing-function: linear;

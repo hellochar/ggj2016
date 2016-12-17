@@ -44,12 +44,13 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
             case TileType.UPSTAIRS: return this.renderFontAwesomeIcon("fa-chevron-up");
             case TileType.WATER: return this.renderSimpleTile("rg-tile-water");
             case TileType.GRASS: return this.renderSimpleTile("rg-tile-grass");
+            case TileType.DIRT: return this.renderSimpleTile("rg-tile-dirt");
         }
     }
 
     private renderPavedFloor(tile: IPavedFloorTile) {
         if (tile.decorative) {
-            return this.renderFontAwesomeIcon("fa-slack rg-tile-decorative-space");
+            return this.renderFontAwesomeIcon("fa-slack rg-tile-paved-floor");
         } else {
             return this.renderFontAwesomeIcon("fa-square-o rg-tile-paved-floor");
         }

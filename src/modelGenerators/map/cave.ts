@@ -16,7 +16,7 @@ export interface IMapMutator {
  */
 export function emptyMap(width: number, height: number, colorTheme: string[]) {
     const tiles: ITile[][] = _.fill(new Array(height), null).map(() => _.fill(new Array(width), {
-        type: TileType.PAVED_FLOOR
+        type: TileType.DIRT
     }));
     return new Map(tiles, colorTheme);
 }
@@ -37,7 +37,7 @@ const removeDiagonalOnlyWalls: IMapMutator = (map: Map) => {
         // and remove the wall
         .forEach((p) => {
             map.set(p, {
-                type: TileType.PAVED_FLOOR
+                type: TileType.DIRT
             });
         });
 };

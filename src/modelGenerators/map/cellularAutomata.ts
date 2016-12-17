@@ -40,14 +40,14 @@ export class LifeLikeCA {
         const currentState = map.get(x, y)!;
         const aliveNeighbors = this.getNumAliveNeighbors(map, x, y);
         switch (currentState.type) {
-            case TileType.PAVED_FLOOR:
+            case TileType.DIRT:
                 if (this.birth[aliveNeighbors]) {
                     return {
                         type: TileType.WALL,
                         color: map.colorTheme[map.colorTheme.length - 1],
                     };
                 } else {
-                    return { type: TileType.PAVED_FLOOR };
+                    return { type: TileType.DIRT };
                 }
             case TileType.WALL:
                 if (this.survive[aliveNeighbors]) {
@@ -58,7 +58,7 @@ export class LifeLikeCA {
                         color: map.colorTheme[newColorIndex],
                     };
                 } else {
-                    return { type: TileType.PAVED_FLOOR };
+                    return { type: TileType.DIRT };
                 }
         }
         return currentState;

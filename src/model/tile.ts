@@ -22,6 +22,10 @@ export interface IPavedFloorTile {
     decorative?: boolean;
 }
 
+export interface IDirtTile {
+    type: "DIRT";
+}
+
 export interface IWallTile {
     type: "WALL";
     color: string;
@@ -35,9 +39,10 @@ export interface IUpstairsTile {
     type: "UPSTAIRS";
 }
 
-export type ITile = IPavedFloorTile | IWallTile | IDownstairsTile | IUpstairsTile | IWaterTile | IGrassTile;
+export type ITile = IPavedFloorTile | IWallTile | IDownstairsTile | IUpstairsTile | IWaterTile | IGrassTile | IDirtTile;
 
-export type TileType = "PAVED_FLOOR" | "WALL" | "DOWNSTAIRS" | "UPSTAIRS" | "WATER" | "GRASS";
+export type TileType = "PAVED_FLOOR" | "WALL" | "DOWNSTAIRS" | "UPSTAIRS" | "WATER" | "GRASS" | "DIRT";
+
 export const TileType = {
     PAVED_FLOOR: "PAVED_FLOOR" as "PAVED_FLOOR",
     WALL: "WALL" as "WALL",
@@ -45,4 +50,5 @@ export const TileType = {
     UPSTAIRS: "UPSTAIRS" as "UPSTAIRS",
     WATER: "WATER" as "WATER",
     GRASS: "GRASS" as "GRASS",
+    DIRT: "DIRT" as "DIRT",
 };
