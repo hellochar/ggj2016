@@ -8,8 +8,8 @@ export function iterateUntilActorTurn(actorId: string) {
     return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
         while (getState().turnOrder[0] !== actorId) {
             const actor = getState().entities[getState().turnOrder[0]] as Entity.Actor;
-            const nextAction = Entity.decideNextAction(getState(), actor);
-            dispatch(actorPerformAction(actor.id, nextAction));
+            const { action: nextAction, timeTaken } = Entity.decideNextAction(getState(), actor);
+            dispatch(actorPerformAction(actor.id, nextAction, timeTaken));
             dispatch(rotateTurnOrder());
         }
     };

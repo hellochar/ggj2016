@@ -52,7 +52,7 @@ export function userPerformAction(action: ModelActions.Action) {
  * Update state in response to the perform action action. Handles invalid actor/action combinations by returning
  * the same state reference.
  */
-export function actorPerformAction(actorId: string, action: ModelActions.Action) {
+export function actorPerformAction(actorId: string, action: ModelActions.Action, timeTaken: number) {
     return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
         const state = getState();
         const actor = getState().entities[actorId] as Entity.Actor;

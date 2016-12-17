@@ -43,7 +43,7 @@ export function move<T extends IHasPosition>(e: T, offset: IPosition) {
     });
 }
 
-export function decideNextAction(state: IState, actor: Actor): Actions.Action {
+export function decideNextAction(state: IState, actor: Actor): { action: Actions.Action, timeTaken: number } {
     switch (actor.type) {
         case "user": throw new Error("decideNextAction called on user!");
         case "mercury":
@@ -64,17 +64,9 @@ export function decideNextAction(state: IState, actor: Actor): Actions.Action {
                     type: "move"
                 }
             ];
-            return _.sample(possibleActions) as Actions.Action;
+            return { action: _.sample(possibleActions) as Actions.Action, timeTaken: 1 };
         case "tree":
-            if (Math.random() < 0.02) {
-                return {
-                    type: "create-fruit",
-                };
-            } else {
-                return {
-                    type: "nothing",
-                };
-            }
+            return { action: { type: "create-fruit" }, timeTaken: 50 };
     }
 }
 

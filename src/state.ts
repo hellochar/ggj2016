@@ -1,5 +1,6 @@
 import { Entity, IUser } from "./model/entity";
 import { Level } from "./model/level";
+import PriorityQueue from "./priorityQueue";
 
 export interface IEntities {
     readonly [entityId: string]: Entity;
@@ -34,7 +35,7 @@ export interface IState {
      * Queue of actor ids waiting for their turn. The actor at the front of the
      * list will act, and then be pushed to the back of the turn order.
      */
-    readonly turnOrder: string[];
+    readonly turnOrder: PriorityQueue<{ time: number, actorId: string}>;
 
     /**
      * Which screen to show.
