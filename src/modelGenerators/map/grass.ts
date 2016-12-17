@@ -11,7 +11,9 @@ import { TileType } from "model/tile";
 
 export function addGrass(map: Map) {
     const seedGrassTiles = map.allTiles()
+        // find dirt tiles
         .filter((p) => map.get(p).type === TileType.DIRT)
+        // that are touching multiple rocks
         .filter((p) => map.getMooreNeighborhood(p).filter(
             (pAdjacent) => map.get(pAdjacent).type === TileType.WALL
             ).length >= 5);
@@ -20,8 +22,7 @@ export function addGrass(map: Map) {
         //     ).length >= 3);
 
     seedGrassTiles.forEach((seed) => {
-        // grow the seed by 3 squares each
-        map.floodFill(seed, (p) => map.get(p).type === TileType.DIRT).limit(9).forEach((p) => {
+        map.floodFill(seed, (p) => map.get(p).type === TileType.DIRT).limit(5).forEach((p) => {
             map.set(p, {
                 type: "GRASS"
             });

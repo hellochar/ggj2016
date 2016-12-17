@@ -109,64 +109,66 @@ export class Level {
 
     // add entities and people
     public addVillage(): Entity.Entity[] {
-        // new algorithm:
         /**
-         * Find a spot that has at least ~25 empty dirt tiles.
+         * Find a spot that has at least some open space.
          * Flood fill from that area and add homes in randomly chosen areas in the floodfilled space.
          * Try this 10 times; abort if failed.
          */
+        const VILLAGE_SIZE = 50;
 
-        // for (let tryIndex = 0; tryIndex < 10; tryIndex++) {
-        //     this.map.randomMapPoints().map((p) => this.map.floodFill(p, (position) => this.map.get(position).type === TileType.DIRT)
-        // }
-        // return [];
+        const maybeOpenArea = this.map.randomMapPoints()
+            .limit(10)
+            .map((possibleCenter) => this.map.floodFill(
+                possibleCenter,
+                (position) => {
+                    const tile = this.map.get(position);
+                    return tile.type === TileType.DIRT || tile.type === TileType.GRASS;
+                }).limit(VILLAGE_SIZE).toArray())
+            .filter((possibleArea) => possibleArea.length === VILLAGE_SIZE)
+            .findFirst();
 
-        const numHomes = _.random(1, 5);
-        // center of the homes
-        const RANGE = 4;
-        const position = {
-            x: _.random(RANGE + 1, this.map.width - RANGE - 1),
-            y: _.random(RANGE + 1, this.map.height - RANGE - 1)
-        };
+        const maybeVillage = maybeOpenArea.map((villageTiles) => {
+            villageTiles.forEach((position) => this.map.set(position, { type: TileType.PAVED_FLOOR }));
 
-        const entities: Entity.Entity[] = [];
+            const entities: Entity.Entity[] = [];
 
-        _.times(numHomes, () => {
-            let newPosition: IPosition;
-            do {
-                newPosition = {
-                    x: position.x + _.random(-RANGE, RANGE),
-                    y: position.y + _.random(-RANGE, RANGE),
+            const numHomes = _.random(3, 15);
+
+            let possibleHomeTiles = villageTiles.slice();
+
+            _.times(numHomes, () => {
+                const newPosition = _.sample(possibleHomeTiles);
+                possibleHomeTiles = _.without(possibleHomeTiles, newPosition);
+                const home: Entity.IHouse = {
+                    id: Math.random().toString(16).substring(2),
+                    type: "house",
+                    position: newPosition,
                 };
-            } while (this.map.get(newPosition).type === TileType.WALL);
 
-            const home: Entity.IHouse = {
-                id: Math.random().toString(16).substring(2),
-                type: "house",
-                position: newPosition,
-            };
+                this.entities.push(home.id);
+                entities.push(home);
 
-            this.entities.push(home.id);
-            entities.push(home);
+                const person: Entity.IMercury = {
+                    id: Math.random().toString(16).substring(2),
+                    type: "mercury",
+                    position: newPosition,
+                    // name: Math.random().toString(36).substring(7), // random string
+                    health: 10,
+                    maxHealth: 10,
+                    inventory: {
+                        itemIds: [],
+                        maxSize: 20,
+                    },
+                };
 
-            const person: Entity.IMercury = {
-                id: Math.random().toString(16).substring(2),
-                type: "mercury",
-                position: newPosition,
-                // name: Math.random().toString(36).substring(7), // random string
-                health: 10,
-                maxHealth: 10,
-                inventory: {
-                    itemIds: [],
-                    maxSize: 20,
-                },
-            };
+                this.entities.push(person.id);
+                entities.push(person);
+            });
 
-            this.entities.push(person.id);
-            entities.push(person);
+            return entities;
         });
 
-        return entities;
+        return maybeVillage.orElse([]);
     }
 
     /**
