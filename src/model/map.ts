@@ -1,4 +1,5 @@
 import * as _ from "lodash";
+import * as Stream from "streamjs";
 
 import { forEachOnLineInGrid, forEachInRect, IPosition } from "math";
 import { ITile, TileType } from "model/";
@@ -27,10 +28,10 @@ export class Map {
      * Return the tile at the given position, or undefined. If passed a callback, get() will invoke the callback when 
      * the tile exists.
      */
-    public get(x: number, y: number, then?: (t: ITile) => void): ITile | void {
-        const row = this.tiles[y];
+    public get(position: IPosition, then?: (t: ITile) => void): ITile | void {
+        const row = this.tiles[position.y];
         if (row != null) {
-            const tile = row[x];
+            const tile = row[position.x];
             if (tile != null && then != null) {
                 then(tile);
             }
@@ -47,7 +48,7 @@ export class Map {
     }
 
     public isInBounds(position: IPosition) {
-        return this.get(position.x, position.y) !== undefined;
+        return this.get(position) !== undefined;
     }
 
     /**
@@ -83,8 +84,8 @@ export class Map {
         return this.tiles;
     }
 
-    public isTileObstructed(p: IPosition) {
-        const tile = this.get(p.x, p.y);
+    public isTileObstructed(position: IPosition) {
+        const tile = this.get(position);
         if (tile) {
             return tile.type === TileType.WALL;
         } else {

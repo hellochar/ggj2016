@@ -48,13 +48,13 @@ export class Level {
      * Assigns new objects to the this.tiles that have changed.
      */
     public giveVision(center: IPosition, radius: number) {
-        forEachInCircle(center, radius, ({x, y}) => {
-            this.map.get(x, y, (oldTile) => {
-                const oldVisibility = this.visibility[y][x];
+        forEachInCircle(center, radius, (p) => {
+            this.map.get(p, (oldTile) => {
+                const oldVisibility = this.visibility[p.y][p.x];
                 const visibility = _.clone(oldVisibility);
                 if (!oldVisibility.visible) {
                     let isVisionBlocked = false;
-                    forEachOnLineInGrid({x, y}, center, (position) => {
+                    forEachOnLineInGrid(p, center, (position) => {
                         if (this.map.tiles[position.y][position.x].type === TileType.WALL) {
                             isVisionBlocked = true;
                             return true;
@@ -66,7 +66,7 @@ export class Level {
                     if (visibility.visible) {
                         visibility.explored = true;
                     }
-                    this.visibility[y][x] = visibility;
+                    this.visibility[p.y][p.x] = visibility;
                 }
             });
         });
@@ -78,9 +78,9 @@ export class Level {
      * Assigns new objects to the this.tiles that changed.
      */
     public removeVision(center: IPosition, radius: number) {
-        forEachInCircle(center, radius, ({x, y}) => {
-            this.map.get(x, y, (tile) => {
-                this.visibility[y][x] = _.assign({}, this.visibility[y][x], { visible: false });
+        forEachInCircle(center, radius, (p) => {
+            this.map.get(p, (tile) => {
+                this.visibility[p.y][p.x] = _.assign({}, this.visibility[p.y][p.x], { visible: false });
             });
         });
     }
@@ -94,7 +94,7 @@ export class Level {
     }
 
     public isVisible(position: IPosition) {
-        const tile = this.map.get(position.x, position.y);
+        const tile = this.map.get(position);
         if (tile !== undefined) {
             return this.visibility[position.y][position.x].visible;
         } else {
@@ -138,7 +138,7 @@ export class Level {
                     x: position.x + _.random(-RANGE, RANGE),
                     y: position.y + _.random(-RANGE, RANGE),
                 };
-            } while (this.map.get(newPosition.x, newPosition.y).type === TileType.WALL);
+            } while (this.map.get(newPosition).type === TileType.WALL);
 
             const home: Entity.IHouse = {
                 id: Math.random().toString(16).substring(2),
@@ -178,7 +178,7 @@ export class Level {
         const trees: Entity.ITree[] = [];
         for (let x = 0; x < this.map.width; x++) {
             for (let y = 0; y < this.map.height; y++) {
-                if (this.map.get(x, y).type === TileType.GRASS) {
+                if (this.map.get({x, y}).type === TileType.GRASS) {
                     const z = this.treeTexture(x * 0.75 + offsetX, y * 0.75 + offsetY) + Math.random() * 0.25;
                     if (z > 0.55) {
                         const id = Math.random().toString(16).substring(2);

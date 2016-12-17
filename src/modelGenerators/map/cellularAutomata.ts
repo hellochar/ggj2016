@@ -33,11 +33,11 @@ export class LifeLikeCA {
     }
 
     private getNumAliveNeighbors(map: Map, x: number, y: number) {
-        return map.getMooreNeighborhood({ x, y}).filter((p) => map.get(p.x, p.y).type === TileType.WALL).length;
+        return map.getMooreNeighborhood({x, y}).filter((p) => map.get(p).type === TileType.WALL).length;
     }
 
     private computeNextState(map: Map, x: number, y: number): ITile {
-        const currentState = map.get(x, y)!;
+        const currentState = map.get({x, y})!;
         const aliveNeighbors = this.getNumAliveNeighbors(map, x, y);
         switch (currentState.type) {
             case TileType.DIRT:

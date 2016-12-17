@@ -10,8 +10,8 @@ import { TileType } from "model/tile";
  */
 
 export function addWater(map: Map) {
-    const emptyPosition = map.randomMapPoints().filter(( {x, y} ) => map.tiles[y][x].type === TileType.DIRT).findFirst().get();
-    const emptyNearbyTiles = map.floodFill(emptyPosition, (p) => map.get(p.x, p.y).type === TileType.DIRT);
+    const emptyPosition = map.randomMapPoints().filter((p) => map.get(p).type === TileType.DIRT).findFirst().get();
+    const emptyNearbyTiles = map.floodFill(emptyPosition, (p) => map.get(p).type === TileType.DIRT);
 
     emptyNearbyTiles.limit(300).forEach((p) => {
         map.set(p, {

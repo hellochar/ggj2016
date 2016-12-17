@@ -18,6 +18,7 @@ import { Level } from "model/level";
 import { TileType } from "model/tile";
 import { IState } from "state";
 import { badTypeError } from "util";
+import { IPosition } from "math";
 
 export function userPerformAction(action: ModelActions.Action) {
     return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
@@ -151,8 +152,8 @@ export function canActorTakeMoveAction(state: IState, actorId: string, action: M
     const newPosition = {
         x: actor.position.x + direction.x,
         y: actor.position.y + direction.y,
-    };
-    const newPositionTile = level.map.get(newPosition.x, newPosition.y);
+    } as IPosition;
+    const newPositionTile = level.map.get(newPosition);
     const spaceIsOccupied = Entity.getEntitiesAtPosition(state, level.id, newPosition)
         .filter((id) => !Entity.isItem(state.entities[id]))
         .length > 0;
@@ -189,7 +190,7 @@ function handleMoveAction(state: IState, actorId: string, action: ModelActions.I
 function handleGoDownstairsAction(state: IState, actor: Entity.Actor, actorAtion: ModelActions.IGoDownstairsAction) {
     return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
         const actorLevel = findEntityLevel(actor.id, state);
-        const currentTile = actorLevel.map.get(actor.position.x, actor.position.y);
+        const currentTile = actorLevel.map.get(actor.position);
         if (currentTile.type === TileType.DOWNSTAIRS) {
             const levelIndex = state.levelOrder.indexOf(actorLevel.id);
             // go downstairs by doing a change level action
@@ -201,7 +202,7 @@ function handleGoDownstairsAction(state: IState, actor: Entity.Actor, actorAtion
 function handleGoUpstairsAction(state: IState, actor: Entity.Actor, actorAtion: ModelActions.IGoUpstairsAction) {
     return (dispatch: Redux.Dispatch<IState>, getState: () => IState) => {
         const actorLevel = findEntityLevel(actor.id, state);
-        const currentTile = actorLevel.map.get(actor.position.x, actor.position.y);
+        const currentTile = actorLevel.map.get(actor.position);
         if (currentTile.type === TileType.UPSTAIRS) {
             const levelIndex = state.levelOrder.indexOf(actorLevel.id);
             // go upstairs by doing a change level action

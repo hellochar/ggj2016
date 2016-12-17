@@ -27,10 +27,10 @@ export function emptyMap(width: number, height: number, colorTheme: string[]) {
 const removeDiagonalOnlyWalls: IMapMutator = (map: Map) => {
     map.allTiles()
         // find walls
-        .filter((p) => map.get(p.x, p.y).type === TileType.WALL)
+        .filter((p) => map.get(p).type === TileType.WALL)
         // who don't have any directly adjacent walls
         .filter((p) => {
-            const adjacentWalls = map.getVonNeumannNeighborhood(p).filter((p) => map.get(p.x, p.y).type === TileType.WALL);
+            const adjacentWalls = map.getVonNeumannNeighborhood(p).filter((p) => map.get(p).type === TileType.WALL);
             return adjacentWalls.length === 0;
         })
         // and remove the wall
