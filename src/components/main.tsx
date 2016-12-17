@@ -22,7 +22,7 @@ export class PureMain extends React.Component<IMainProps, {}> {
             <div className={className}>
                 { this.renderScreen() }
             </div>
-        )
+        );
     }
 
     private renderScreen() {
