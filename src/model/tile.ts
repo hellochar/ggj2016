@@ -21,10 +21,6 @@ export interface ISpaceTile {
     type: "SPACE";
 }
 
-export interface IGrassTile {
-
-}
-
 export interface IWallTile {
     type: "WALL";
     color: string;
