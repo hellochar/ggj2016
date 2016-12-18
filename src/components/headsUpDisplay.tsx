@@ -1,4 +1,5 @@
 import * as classnames from "classnames";
+import * as _ from "lodash";
 import * as React from "react";
 import { connect } from "react-redux";
 import * as Redux from "redux";
@@ -43,23 +44,40 @@ export class PureHeadsUpDisplay extends React.PureComponent<IPureHeadsUpDisplayP
                     <span className="rg-hud-hunger">fullness: {entity.satiation}</span>
                     <span className="rg-hud-floor">floor {this.props.userFloor + 1}</span>
                 </div>
-                <div>
-                    {
-                        this.props.userItems.map((item) => {
-                            return (
-                                <div key={item.id} className="rg-hud-item">
-                                    <EntityComponent
-                                        entity={item}
-                                        onDoubleClick={() => this.handleItemDoubleClick(item.id)}
-                                        usePosition={false} />
-                                </div>
-                            );
-                        })
-                    }
-                    <span className="rg-hud-floor">inventory: {entity.inventory.itemIds.length} / {entity.inventory.maxSize}</span>
-                </div>
+                { this.renderInventory() }
             </div>
         );
+    }
+
+    private renderInventory() {
+        const { user } = this.props;
+        return (
+            <div className="rg-hud-inventory">
+                {
+                    _.range(0, user.inventory.maxSize).map((index) =>
+                        this.maybeRenderItem(index)
+                    )
+                }
+            </div>
+        );
+    }
+
+    private maybeRenderItem(index: number) {
+        const item = this.props.userItems[index];
+        const itemElement = (item === undefined)
+            ? null
+            : <EntityComponent
+                entity={item}
+                onDoubleClick={() => this.handleItemDoubleClick(item.id)}
+                usePosition={false} />;
+
+        const className = classnames("rg-hud-item", {
+            "rg-hud-item-empty": item === undefined
+        });
+
+        return <div key={index} className={className}>
+            { itemElement }
+        </div>;
     }
 }
 

@@ -181,6 +181,16 @@ export interface IUser extends IBaseActor, IHasHealth, IHasInventory {
      * completely full, 0 means starving.
      */
     satiation: number;
+
+    /**
+     * Degrees Celcius describing how warm the user's skin/extremities are. Some datapoints:
+     * 
+     * 10 -> 25 degrees C - "normal" warmth.
+     * 0 -> 10 degrees C - "cold". At this level, doing things gets a bit harder.
+     * -10 -> 0 degrees C - "freezing". You are cold.
+     * -20 -> -10 - "superfreezing". If you don't wear really warm clothes, you are going to freeze quickly.
+     */
+    temperature: number;
 }
 
 export interface IMercury extends IBaseActor, IHasHealth, IHasInventory {
