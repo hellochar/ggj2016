@@ -3,10 +3,10 @@ import * as React from "react";
 import { Entity, Level } from "model/";
 import { IPosition } from "math";
 import { CELL_SIZE } from "components/commons";
-import { Tile } from "components/tile";
 import { EntityComponent } from "components/entity";
 
 import "./level.less";
+import { PureMap } from "./map";
 
 export interface ILevelProps {
     level: Level;
@@ -18,37 +18,19 @@ export class PureLevel extends React.PureComponent<ILevelProps, {}> {
     public render() {
         return (
             <div className="rg-level-positioner">
-                { this.renderMap() }
+                { this.renderLevel() }
             </div>
         );
     }
 
-    private renderMap() {
+    private renderLevel() {
         const { level, levelEntities, center } = this.props;
         // Offset map such that center stays in the center
         const style = {
             transform: `translate(-${center.x * CELL_SIZE}px, -${center.y * CELL_SIZE}px)`
         };
         return <div className="rg-level" style={style}>
-            {level.map.getTiles().map((row, y) => (
-                <div className="rg-row" key={y}>
-                    {
-                        row.map((tile, x) => {
-                            const visibility = level.visibility[y][x];
-                            return (
-                                <Tile
-                                    key={`${x},${y}`}
-                                    tile={tile}
-                                    explored={visibility.explored}
-                                    visible={visibility.visible}
-                                    x={x}
-                                    y={y}
-                                />
-                            );
-                        })
-                    }
-                </div>
-            ))}
+            <PureMap map={level.map} visibility={level.visibility} />
             {levelEntities.map((entity) => {
                 if (level.isVisible(entity.position)) {
                     return <EntityComponent entity={entity} key={entity.id} />;

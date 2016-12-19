@@ -162,7 +162,7 @@ const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
 };
 
 export function generateCaveStructure(width: number, height: number, colorTheme: string[]) {
-    const algorithmName = _.sample(Object.keys(GENERATION_ALGORITHMS))
+    const algorithmName = _.sample(Object.keys(GENERATION_ALGORITHMS));
     console.log("using ", algorithmName);
     const algorithm = GENERATION_ALGORITHMS[algorithmName]();
     const map = emptyMap(width, height, colorTheme);
