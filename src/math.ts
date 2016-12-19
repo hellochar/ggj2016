@@ -9,7 +9,7 @@ export interface IPosition {
 }
 
 /**
- * Stream points that form a rasterized line going from start to end. Ignores the first start position.
+ * Stream points that form a rasterized line going from start to end. Excludes the last position.
  */
 export function rasterizedLine(start: IPosition, end: IPosition): Stream<IPosition> {
     let x0 = start.x;
@@ -26,18 +26,16 @@ export function rasterizedLine(start: IPosition, end: IPosition): Stream<IPositi
     let err = dx - dy;
 
     return Stream.generate(() => {
+        const ret = { x: x0, y: y0 };
         let e2 = 2 * err;
         if (e2 > -dy) { err -= dy; x0 += sx; }
         if (e2 < dx) { err += dx; y0 += sy; }
-        return {
-            x: x0,
-            y: y0,
-        };
+        return ret;
     }).takeWhile( ({ x: x0, y: y0 }) => !(x0 === x1 && y0 === y1) );
 }
 
 /**
- * Return the rasterized line segments defined by successive pairs of the given points. Ignores the first start position.
+ * Return the rasterized line segments defined by successive pairs of the given points.
  */
 export function rasterizedPath(points: IPosition[]): IPosition[] {
     const path: IPosition[] = [];
@@ -46,6 +44,8 @@ export function rasterizedPath(points: IPosition[]): IPosition[] {
         const to = points[k + 1];
         path.push(...rasterizedLine(from, to).toArray());
     }
+    // add the very last point
+    path.push(points[points.length - 1]);
     return path;
 }
 
