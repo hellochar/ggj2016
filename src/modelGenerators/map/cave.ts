@@ -157,7 +157,7 @@ export const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
     // their insides are many single disconnected spaces. the outer edge is jagged.
     "Assimilator": () => {
         const ca = new LifeLikeCA("B345/S4567");
-        return compose(uniformPercentageSetWall(0.25), ca.simulate(100));
+        return compose(uniformPercentageSetWall(0.20), ca.simulate(40));
     },
 };
 

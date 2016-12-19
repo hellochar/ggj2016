@@ -7,23 +7,29 @@ import { COLOR_THEMES } from "colorThemes";
 import { PureMap } from "components/map";
 import { generateCaveStructure, GENERATION_ALGORITHMS } from "modelGenerators/map/cave";
 import { Map } from "model/map";
-import { fillInMap } from "./modelGenerators/map/index";
+import { fillInMap } from "modelGenerators/map/index";
 
-import "./index.less";
+import "../index.less";
 
 const root = document.createElement("div");
-root.id = "level-debug";
+root.id = "wizard";
 document.body.appendChild(root);
 
-const mapSample = _.transform(GENERATION_ALGORITHMS, (allAlgorithmSamples, algorithm, name) => {
-    const map = generateCaveStructure(60, 30, COLOR_THEMES.DARK_GRAY, algorithm());
+// const mapSample = _.transform(GENERATION_ALGORITHMS, (allAlgorithmSamples, algorithm, name) => {
+//     const map = generateCaveStructure(60, 30, COLOR_THEMES.DARK_GRAY, algorithm());
+
+//     fillInMap(map, {x: _.random(3, map.width - 4), y: _.random(3, map.height - 4)});
+//     allAlgorithmSamples[name!] = map;
+//     return allAlgorithmSamples;
+// }, {} as { [name: string]: Map });
+const mapSample = _.range(0, 10).map((index) => {
+    const map = generateCaveStructure(60, 30, COLOR_THEMES.DARK_GRAY, GENERATION_ALGORITHMS["Assimilator"]());
 
     fillInMap(map, {x: _.random(3, map.width - 4), y: _.random(3, map.height - 4)});
-    allAlgorithmSamples[name!] = map;
-    return allAlgorithmSamples;
-}, {} as { [name: string]: Map });
+    return map;
+});
 
-class MapDebugger extends React.Component<{ map: Map, name: string }, {}> {
+class MapDebugger extends React.Component<{ map: Map, name: number | string }, {}> {
     public render() {
         const {map, name} = this.props;
         return (

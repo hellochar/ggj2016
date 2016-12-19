@@ -14,8 +14,8 @@ var devConfigExtension = {
       'webpack-dev-server/client?http://localhost:3333',
       'webpack/hot/only-dev-server',
     ].concat(mainConfig.entry.app),
-    "levelDebug": [
-      path.join(__dirname, 'src', 'levelDebug.tsx')
+    wizard: [
+      path.join(__dirname, 'src', 'wizard', 'index.tsx')
     ]
   },
 
