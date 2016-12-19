@@ -65,7 +65,6 @@ export class LifeLikeCA {
     }
 
     public simulate(times: number): (map: Map) => void {
-        console.log("using ", this);
         return (map: Map) => {
             const {width, height} = map;
             // clone map
