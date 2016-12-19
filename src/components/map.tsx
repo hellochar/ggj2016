@@ -28,7 +28,7 @@ export class PureMap extends React.PureComponent<IMapProps, {}> {
         const { map } = this.props;
 
         return (
-            <div className="rg-map" style={ { width: map.width * CELL_SIZE, height: map.height * CELL_SIZE, position: "relative" } }>
+            <div className="rg-map" style={ { width: map.width * CELL_SIZE, height: map.height * CELL_SIZE } }>
                 {map.getTiles().map((row, y) => (
                     <div className="rg-map-row" key={y}>
                         {
