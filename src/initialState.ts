@@ -53,8 +53,8 @@ export function buildInitialState(): IState {
         const id = depth.toString();
         const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition(), _.sample(COLOR_THEMES));
         const currentLevel = new Level(id, newMap, []);
-        entitiesToAdd.push(...currentLevel.addTrees());
         entitiesToAdd.push(...currentLevel.addVillage());
+        entitiesToAdd.push(...currentLevel.addTrees());
         levels[id] = currentLevel;
         levelOrder.push(id);
     }
