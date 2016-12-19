@@ -10,6 +10,7 @@ import { generateCaveStructure } from "./cave";
 import { addWater } from "./water";
 import { addGrass } from "./grass";
 import { rasterizedPath } from "../../math";
+import * as _ from "lodash";
 
 /**
  * Generate a random cave-like Map with space, walls, and an upstairs and downstairs that will connect.
@@ -68,7 +69,18 @@ export function generateMap(upstairs: IPosition, colorTheme: string[]): Map {
     rasterizedPath(lineSegments).forEach((p) => {
         map.get(p, (currentTile) => {
             if (currentTile.type === TileType.WALL) {
-                map.set(p, { type: TileType.DIRT });
+                // Detect if I'm mostly surrounded by water or by dirt and fill the tile with the correct "replacement" for my environment
+                const neighborCount = _.map(
+                    _.groupBy(map.getVonNeumannNeighborhood(p).map((neighbor) => map.get(neighbor) !), (t) => t.type),
+                    ((tiles) => tiles.length)
+                );
+                const numDirtNeighbors = neighborCount[TileType.DIRT];
+                const numWaterNeighbors = neighborCount[TileType.WATER];
+                if (numWaterNeighbors > numDirtNeighbors) {
+                    map.set(p, { type: TileType.PAVED_FLOOR });
+                } else {
+                    map.set(p, { type: TileType.DIRT });
+                }
             } else if (currentTile.type === TileType.WATER) {
                 map.set(p, { type: TileType.PAVED_FLOOR });
             }
