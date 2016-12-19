@@ -35,14 +35,29 @@ class MapDebugger extends React.Component<{ map: Map, name: string }, {}> {
     }
 }
 
-ReactDOM.render(
-    <AppContainer>
-        <div className="no-animation" style={ { overflow: "auto", width: "100%", height: "100%" } } >
-            {
-                _.map(mapSample, (map, name) => {
-                    return <MapDebugger key={name} map={map} name={name!} />;
-                })
-            }
-        </div>
-    </AppContainer>
-, root);
+function render() {
+    ReactDOM.render(
+        <AppContainer>
+            <div className="no-animation" style={ { overflow: "auto", width: "100%", height: "100%" } } >
+                {
+                    _.map(mapSample, (map, name) => {
+                        return <MapDebugger key={name} map={map} name={name!} />;
+                    })
+                }
+            </div>
+        </AppContainer>
+    , root);
+}
+
+render();
+
+// declare var module: any;
+// declare var require: any;
+
+// if (module.hot) {
+//     module.hot.accept();
+
+//     module.hot.dispose(() => {
+//         // remove whatever this module had previously done
+//     });
+// }

@@ -5,6 +5,8 @@ import { Tile } from "./tile";
 import { IVisibilityInfo } from "../model/level";
 import { CELL_SIZE } from "components/commons";
 
+import "./map.less";
+
 export interface IMapProps {
     map: Map;
     visibility?: IVisibilityInfo[][];
