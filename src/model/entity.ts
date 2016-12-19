@@ -191,6 +191,13 @@ export interface IUser extends IBaseActor, IHasHealth, IHasInventory {
      * -20 -> -10 - "superfreezing". If you don't wear really warm clothes, you are going to freeze quickly.
      */
     temperature: number;
+
+    /**
+     * Number from 0 to 1 describing how energetic and/or alert this entity is. 1 means this entity is
+     * fully energetic and ready to perform actions. 0 means this entity has absolutely no energy left
+     * and falls unconscious.
+     */
+    energy: number;
 }
 
 export interface IMercury extends IBaseActor, IHasHealth, IHasInventory {

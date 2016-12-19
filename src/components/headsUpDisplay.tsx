@@ -41,7 +41,9 @@ export class PureHeadsUpDisplay extends React.PureComponent<IPureHeadsUpDisplayP
                 <div>
                     <span className="rg-hud-name">{entity.name}</span>
                     <span className={healthIndicatorClassnames}>{entity.health} / {entity.maxHealth}</span>
-                    <span className="rg-hud-hunger">fullness: {entity.satiation}</span>
+                    <span className="rg-hud-hunger">fullness: {_.round(entity.satiation * 100)}%</span>
+                    <span className="rg-hud-temperature">Warmth: {entity.temperature} &deg;C</span>
+                    <span className="rg-hud-energy">Energy: {_.round(entity.energy * 100)}%</span>
                     <span className="rg-hud-floor">floor {this.props.userFloor + 1}</span>
                 </div>
                 { this.renderInventory() }

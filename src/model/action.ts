@@ -1,4 +1,33 @@
+import { badTypeError } from "util";
 export type Direction = "left" | "up" | "down" | "right";
+
+export function getBaseEnergyCost(action: Action): number {
+    switch (action.type) {
+        // special actions that the user will never use
+        case "create-fruit":
+            return 0;
+
+        // doing nothing is extremely cheap
+        case "nothing":
+            return 1e-5;
+
+        // simple movement actions take "a standard" amount of energy
+        case "move":
+        case "go-downstairs":
+        case "go-upstairs":
+        case "pick-up-item":
+        case "drop-item":
+        // using an item (e.g. eating fruit, reading a scroll) is also a "simple" action
+        case "use-item":
+            return 1e-4;
+
+        // using items on other targets (e.g. attacking an enemy, chopping down a tree, etc.)
+        // is more expensive
+        case "use-item-target":
+            return 1e-3;
+        default: return badTypeError(action);
+    }
+}
 
 export interface IMoveAction {
     type: "move";

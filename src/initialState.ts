@@ -37,6 +37,7 @@ export function buildInitialState(): IState {
         },
         satiation: 1,
         temperature: 20,
+        energy: 1,
     };
     entitiesToAdd.push(user);
     const level0 = new Level("0", generateMap(center, COLOR_THEMES.DARK_GRAY), [ user.id ]);

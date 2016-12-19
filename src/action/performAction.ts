@@ -30,9 +30,12 @@ export function userPerformAction(action: ModelActions.Action) {
             // move user to the end of the turn order
             dispatch(rotateTurnOrder());
 
-            // make user a bit hungrier
             const user = _.assign({}, nextState.entities[0]);
-            user.satiation = Math.max(0, user.satiation - 0.001);
+            // make user a bit hungrier
+            user.satiation = Math.max(0, user.satiation - 1e-3);
+            // use up some user energy depending on the action taken
+            const energyCost = ModelActions.getBaseEnergyCost(action);
+            user.energy = Math.max(0, user.energy - energyCost);
             if (user.satiation <= 0) {
                 // user is starving - start dealing damage
                 user.health -= 1;
