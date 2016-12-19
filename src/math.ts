@@ -1,10 +1,17 @@
+import * as Stream from "streamjs";
+
+/**
+ * Backbone 2d position property. Used extensively in the code to represent positions and vectors.
+ */
 export interface IPosition {
     x: number;
     y: number;
 }
 
-// ignores the first start position. callback should return TRUE if we should stop iteration
-export function forEachOnLineInGrid(start: IPosition, end: IPosition, callback: (p: IPosition) => boolean | void) {
+/**
+ * Stream points that form a rasterized line going from start to end. Ignores the first start position.
+ */
+export function rasterizedLine(start: IPosition, end: IPosition): Stream<IPosition> {
     let x0 = start.x;
     let y0 = start.y;
 
@@ -18,21 +25,33 @@ export function forEachOnLineInGrid(start: IPosition, end: IPosition, callback: 
     let sy = (y0 < y1) ? 1 : -1;
     let err = dx - dy;
 
-    while (true) {
-        if ( x0 === x1 && y0 === y1 ) {
-            break;
-        }
+    return Stream.generate(() => {
         let e2 = 2 * err;
         if (e2 > -dy) { err -= dy; x0 += sx; }
         if (e2 < dx) { err += dx; y0 += sy; }
-
-        const shouldStop = callback({ x: x0, y: y0 });
-        if (shouldStop) {
-            break;
-        }
-    }
+        return {
+            x: x0,
+            y: y0,
+        };
+    }).takeWhile( ({ x: x0, y: y0 }) => !(x0 === x1 && y0 === y1) );
 }
 
+/**
+ * Return the rasterized line segments defined by successive pairs of the given points. Ignores the first start position.
+ */
+export function rasterizedPath(points: IPosition[]): IPosition[] {
+    const path: IPosition[] = [];
+    for ( let k = 0; k < points.length - 1; k++ ) {
+        const from = points[k];
+        const to = points[k + 1];
+        path.push(...rasterizedLine(from, to).toArray());
+    }
+    return path;
+}
+
+/**
+ * Iterate through points that form a rasterized rectangle defined by the topLeft and bottomRight. Edge values are included.
+ */
 export function forEachInRect(topLeft: IPosition, bottomRight: IPosition, cb: (p: IPosition) => any) {
     for (let x = topLeft.x; x <= bottomRight.x; x += 1) {
         for (let y = topLeft.y; y <= bottomRight.y; y += 1) {

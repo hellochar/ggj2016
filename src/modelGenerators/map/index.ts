@@ -9,6 +9,7 @@ import { IPosition } from "math";
 import { generateCaveStructure } from "./cave";
 import { addWater } from "./water";
 import { addGrass } from "./grass";
+import { rasterizedPath } from "../../math";
 
 /**
  * Generate a random cave-like Map with space, walls, and an upstairs and downstairs that will connect.
@@ -20,7 +21,6 @@ export function generateMap(upstairs: IPosition, colorTheme: string[]): Map {
     let map = generateCaveStructure(width, height, colorTheme);
     map.outlineRectWithWalls();
     addWater(map);
-    addGrass(map);
 
     // inset relevant features such as downstairs and path endpoints by this much into the map.
     const inset = 3;
@@ -65,9 +65,19 @@ export function generateMap(upstairs: IPosition, colorTheme: string[]): Map {
         y: downstairs.y
     });
     lineSegments.push(downstairs);
-    map.drawPathBetween(lineSegments);
+    rasterizedPath(lineSegments).forEach((p) => {
+        map.get(p, (currentTile) => {
+            if (currentTile.type === TileType.WALL) {
+                map.set(p, { type: TileType.DIRT });
+            } else if (currentTile.type === TileType.WATER) {
+                map.set(p, { type: TileType.PAVED_FLOOR });
+            }
+        });
+    });
     map.setImportantTile(downstairs, { type: TileType.DOWNSTAIRS });
     map.setImportantTile(upstairs, { type: TileType.UPSTAIRS });
+
+    addGrass(map);
 
     map.outlineRectWithWalls();
     return map;

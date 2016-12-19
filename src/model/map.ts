@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import * as Stream from "streamjs";
 
-import { forEachOnLineInGrid, forEachInRect, IPosition } from "math";
+import { rasterizedLine, forEachInRect, IPosition } from "math";
 import { ITile, TileType } from "model/";
 
 /**
@@ -97,26 +97,15 @@ export class Map {
     public outlineRectWithWalls(topLeft: IPosition = {x: 0, y: 0},
                                 bottomRight: IPosition = {x: this.width - 1, y: this.height - 1}) {
         const setToWall = (p: IPosition) => {
-            this.tiles[p.y][p.x] = {
+            this.set(p, {
                 type: TileType.WALL,
                 color: this.colorTheme[0],
-            };
-            return false;
-        };
-        forEachOnLineInGrid(topLeft, {x: topLeft.x, y: bottomRight.y}, setToWall);
-        forEachOnLineInGrid({x: topLeft.x, y: bottomRight.y}, bottomRight, setToWall);
-        forEachOnLineInGrid(bottomRight, {x: bottomRight.x, y: topLeft.y}, setToWall);
-        forEachOnLineInGrid({x: bottomRight.x, y: topLeft.y}, topLeft, setToWall);
-    }
-
-    public drawPathBetween(lineSegments: IPosition[]) {
-        for ( let k = 0; k < lineSegments.length - 1; k++ ) {
-            const from = lineSegments[k];
-            const to = lineSegments[k + 1];
-            forEachOnLineInGrid(from, to, ({x, y}) => {
-                this.tiles[y][x].type = TileType.PAVED_FLOOR;
             });
-        }
+        };
+        rasterizedLine(topLeft, {x: topLeft.x, y: bottomRight.y}).forEach(setToWall);
+        rasterizedLine({x: topLeft.x, y: bottomRight.y}, bottomRight).forEach(setToWall);
+        rasterizedLine(bottomRight, {x: bottomRight.x, y: topLeft.y}).forEach(setToWall);
+        rasterizedLine({x: bottomRight.x, y: topLeft.y}, topLeft).forEach(setToWall);
     }
 
     public getDownstairsPosition(): IPosition | null {

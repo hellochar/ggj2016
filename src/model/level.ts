@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 
 import { Map } from "./map";
-import { IPosition, forEachInCircle, forEachOnLineInGrid } from "math";
+import { IPosition, forEachInCircle, rasterizedLine } from "math";
 import { TileType } from "model/";
 import * as Entity from "model/entity";
 
@@ -53,15 +53,7 @@ export class Level {
                 const oldVisibility = this.visibility[p.y][p.x];
                 const visibility = _.clone(oldVisibility);
                 if (!oldVisibility.visible) {
-                    let isVisionBlocked = false;
-                    forEachOnLineInGrid(p, center, (position) => {
-                        if (this.map.tiles[position.y][position.x].type === TileType.WALL) {
-                            isVisionBlocked = true;
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    });
+                    const isVisionBlocked = rasterizedLine(p, center).anyMatch((p) => this.map.get(p).type === TileType.WALL);
                     visibility.visible = !isVisionBlocked;
                     if (visibility.visible) {
                         visibility.explored = true;
