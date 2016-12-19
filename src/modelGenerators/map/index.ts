@@ -6,7 +6,7 @@
 import { Map } from "model/map";
 import { TileType } from "model/tile";
 import { IPosition } from "math";
-import { generateCaveStructure } from "./cave";
+import { generateRandomCaveStructure } from "./cave";
 import { addWater } from "./water";
 import { addGrass } from "./grass";
 import { rasterizedPath } from "../../math";
@@ -19,7 +19,13 @@ import * as _ from "lodash";
 export function generateMap(upstairs: IPosition, colorTheme: string[]): Map {
     const width = 60;
     const height = 30;
-    let map = generateCaveStructure(width, height, colorTheme);
+    let map = generateRandomCaveStructure(width, height, colorTheme);
+    fillInMap(map, upstairs);
+    return map;
+}
+
+export function fillInMap(map: Map, upstairs: IPosition): void {
+    const {width, height} = map;
     map.outlineRectWithWalls();
     addWater(map);
 
@@ -92,5 +98,4 @@ export function generateMap(upstairs: IPosition, colorTheme: string[]): Map {
     addGrass(map);
 
     map.outlineRectWithWalls();
-    return map;
 }

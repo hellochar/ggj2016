@@ -9,11 +9,14 @@ var mainConfig = new WebpackConfig().extend("webpack.config");
 
 var devConfigExtension = {
   entry: {
-      app: [
-        // We are using next two entries for hot-reload
-        'webpack-dev-server/client?http://localhost:3333',
-        'webpack/hot/only-dev-server',
-      ].concat(mainConfig.entry.app)
+    app: [
+      // We are using next two entries for hot-reload
+      'webpack-dev-server/client?http://localhost:3333',
+      'webpack/hot/only-dev-server',
+    ].concat(mainConfig.entry.app),
+    "levelDebug": [
+      path.join(__dirname, 'src', 'levelDebug.tsx')
+    ]
   },
 
   output: {

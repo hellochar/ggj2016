@@ -20,26 +20,26 @@ export function emptyMap(width: number, height: number, colorTheme: string[]) {
     return new Map(tiles, colorTheme);
 }
 
-/**
- * Remove walls that aren't directly connected to another wall - this gets rid of lots of annoying
- * diagonals that might frustrate users and opens the map more.
- */
-const removeDiagonalOnlyWalls: IMapMutator = (map: Map) => {
-    map.allTiles()
-        // find walls
-        .filter((p) => map.get(p).type === TileType.WALL)
-        // who don't have any directly adjacent walls
-        .filter((p) => {
-            const adjacentWalls = map.getVonNeumannNeighborhood(p).filter((p) => map.get(p).type === TileType.WALL);
-            return adjacentWalls.length === 0;
-        })
-        // and remove the wall
-        .forEach((p) => {
-            map.set(p, {
-                type: TileType.DIRT
-            });
-        });
-};
+// /**
+//  * Remove walls that aren't directly connected to another wall - this gets rid of lots of annoying
+//  * diagonals that might frustrate users and opens the map more.
+//  */
+// const removeDiagonalOnlyWalls: IMapMutator = (map: Map) => {
+//     map.allTiles()
+//         // find walls
+//         .filter((p) => map.get(p).type === TileType.WALL)
+//         // who don't have any directly adjacent walls
+//         .filter((p) => {
+//             const adjacentWalls = map.getVonNeumannNeighborhood(p).filter((p) => map.get(p).type === TileType.WALL);
+//             return adjacentWalls.length === 0;
+//         })
+//         // and remove the wall
+//         .forEach((p) => {
+//             map.set(p, {
+//                 type: TileType.DIRT
+//             });
+//         });
+// };
 
 function compose(...functions: IMapMutator[]): IMapMutator {
     return (map: Map) => {
@@ -50,7 +50,7 @@ function compose(...functions: IMapMutator[]): IMapMutator {
 }
 
 // TODO look at http://psoup.math.wisc.edu/mcell/rullex_life.html
-const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
+export const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
     // Well-described rogue-like ca algorithm to generate nice looking caves
     "rl-ca": () => {
         const ca = new LifeLikeCA("B/S345678");
@@ -161,12 +161,16 @@ const GENERATION_ALGORITHMS: { [name: string]: () => IMapMutator } = {
     },
 };
 
-export function generateCaveStructure(width: number, height: number, colorTheme: string[]) {
+export function generateRandomCaveStructure(width: number, height: number, colorTheme: string[]) {
     const algorithmName = _.sample(Object.keys(GENERATION_ALGORITHMS));
     console.log("using ", algorithmName);
     const algorithm = GENERATION_ALGORITHMS[algorithmName]();
+    return generateCaveStructure(width, height, colorTheme, algorithm);
+}
+
+export function generateCaveStructure(width: number, height: number, colorTheme: string[], algorithm: IMapMutator) {
     const map = emptyMap(width, height, colorTheme);
     algorithm(map);
-    removeDiagonalOnlyWalls(map);
+    // removeDiagonalOnlyWalls(map);
     return map;
 }
