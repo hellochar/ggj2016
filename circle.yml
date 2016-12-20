@@ -1,0 +1,13 @@
+compile:
+  override:
+    - npm run build
+
+deployment:
+  develop:
+    branch: master
+    commands:
+      - ./make_dev_build.sh
+
+general:
+  artifacts:
+    - "build"

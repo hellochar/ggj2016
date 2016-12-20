@@ -32,7 +32,7 @@ var config = {
 
   output: {
       path: path.join(__dirname, 'build'),
-      filename: '[name]_[chunkhash].js'
+      filename: '[name].js'
   },
 
   module: {
@@ -52,7 +52,7 @@ var config = {
   },
 
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors_[chunkhash].js'),
+    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js'),
     new ExtractTextPlugin('[name].css', { allChunks: true })
   ],
 
