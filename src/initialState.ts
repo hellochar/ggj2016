@@ -72,5 +72,8 @@ export function buildInitialState(): IState {
         levels,
         turnOrder: turnOrder,
         screen: "play",
+        globalTriggers: {
+            seenIntro: false,
+        }
     };
 }

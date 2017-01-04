@@ -2,6 +2,7 @@ import * as _ from "lodash";
 
 import { SimpleUpdaterAction as SimpleAction } from "action/simpleUpdaters";
 import { IEntities, ILevels, IState, Screen } from "state";
+import { IGlobalTriggers } from "../state";
 
 function simpleEntitiesReducer(entities: IEntities, action: SimpleAction): IEntities {
     if (action.type === "EntityUpdate") {
@@ -62,6 +63,16 @@ function simpleTurnOrderReducer(turnOrder: string[], action: SimpleAction): stri
     }
 }
 
+function simpleGlobalTriggersReducer(globalTriggers: IGlobalTriggers, action: SimpleAction): IGlobalTriggers {
+    if (action.type === "SetGlobalTrigger") {
+        return _.assign({}, globalTriggers, {
+            [action.name]: action.value
+        });
+    } else {
+        return globalTriggers;
+    }
+}
+
 export default function simpleReducer(state: IState, action: SimpleAction): IState {
     return {
         entities: simpleEntitiesReducer(state.entities, action),
@@ -69,5 +80,6 @@ export default function simpleReducer(state: IState, action: SimpleAction): ISta
         levels: simpleLevelsReducer(state.levels, action),
         screen: simpleScreenReducer(state.screen, action),
         turnOrder: simpleTurnOrderReducer(state.turnOrder, action),
+        globalTriggers: simpleGlobalTriggersReducer(state.globalTriggers, action),
     };
 }

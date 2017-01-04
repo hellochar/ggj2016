@@ -40,6 +40,15 @@ export interface IState {
      * Which screen to show.
      */
     readonly screen: Screen;
+
+    /**
+     * Global flags that control when to show certain UI elements (such as when you first enter a new level).
+     */
+    readonly globalTriggers: IGlobalTriggers;
+}
+
+export interface IGlobalTriggers {
+    seenIntro: boolean;
 }
 
 export type Screen = "play" | "user-died" | "user-won";

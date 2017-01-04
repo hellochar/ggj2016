@@ -1,3 +1,4 @@
+import { Dialog } from "@blueprintjs/core";
 import * as _ from "lodash";
 import * as React from "react";
 import * as Redux from "redux";
@@ -10,6 +11,7 @@ import { PureLevel } from "components/level";
 import { IState } from "state";
 
 import "./game.less";
+import { setGlobalTrigger } from "../action/simpleUpdaters";
 
 export interface IGameProps {
     dispatch: Redux.Dispatch<IState>;
@@ -50,6 +52,7 @@ export class PureGame extends React.Component<IGameProps, {}> {
 
         return (
             <div className="rg-game">
+                { this.maybeRenderIntroScreen() }
                 <div className="rg-viewport">
                     <PureLevel
                         center={user.position}
@@ -59,6 +62,38 @@ export class PureGame extends React.Component<IGameProps, {}> {
                 <HeadsUpDisplay />
             </div>
         );
+    }
+
+    private maybeRenderIntroScreen() {
+        if (!this.props.state.globalTriggers.seenIntro) {
+            return <Dialog
+                autoFocus={true}
+                canEscapeKeyClose={true}
+                canOutsideClickClose={true}
+                enforceFocus={true}
+                hasBackdrop={true}
+                isOpen={true}
+                title="Retrieve your Grandma's Wedding Ring"
+                onClose={this.handleIntroScreenClosed}
+                isCloseButtonShown={true}>
+                    <h3 className="rg-intro-screen-grandma">Gradma Image</h3>
+                    <p className="rg-intro-screen-text">
+                        My dear grandson, I've lost my <span className="rg-text-highlight-item">Wedding Ring</span> in
+                        the caves! Would you retrieve that for me? It should be about, oh, <strong>200 feet</strong> down.
+                        Be careful though, the depths of the cave could be dangerous! Be sure to
+                        <span className="rg-text-highlight-warmth"> wear warm clothes</span>,
+                        <span className="rg-text-highlight-food"> eat enough food</span>, and
+                        <span className="rg-text-highlight-sleep"> sleep well</span>.
+                        I'll bake you some cookies when you return.
+                    </p>
+                </Dialog>;
+        } else {
+            return null;
+        }
+    }
+
+    private handleIntroScreenClosed = () => {
+        this.props.dispatch(setGlobalTrigger("seenIntro", true));
     }
 }
 

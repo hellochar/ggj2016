@@ -4,7 +4,7 @@ export default function descriptionForEntity(type: EntityType) {
     switch (type) {
         case "user": return "An aspiring adventurer.";
         case "mercury": return "A cave-dweller, not so different from you and I.";
-        case "ring": return "The fabled Ring of Norsogoth. Who knows what would happen when it's worn?";
+        case "ring": return "The fabled Ring of Norsgoloth. Who knows what would happen when it's worn?";
         case "tree":
             return "Sorrow is knowledge, those that know the most must mourn the deepest, the tree of knowledge is not the tree of life.";
         case "fruit": return "The roots of education are bitter, but the fruit is sweet.";

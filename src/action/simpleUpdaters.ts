@@ -9,7 +9,8 @@ IEntityUpdateAction |
 IEntityDeleteAction |
 IUpdateLevelAction |
 ISetScreenAction |
-IRotateTurnOrderAction;
+IRotateTurnOrderAction |
+ISetGlobalTriggerAction;
 
 export interface IEntityUpdateAction {
     entity: Entity;
@@ -58,10 +59,25 @@ export function rotateTurnOrder(): IRotateTurnOrderAction {
     return { type: "RotateTurnOrder" };
 }
 
+export interface ISetGlobalTriggerAction {
+    type: "SetGlobalTrigger";
+    name: "seenIntro";
+    value: boolean;
+}
+
+export function setGlobalTrigger(name: "seenIntro", value: boolean) {
+    return {
+        type: "SetGlobalTrigger",
+        name,
+        value,
+    };
+}
+
 export function isSimpleUpdaterAction(action: IAction): action is SimpleUpdaterAction {
     return action.type === "EntityUpdate"
         || action.type === "EntityDelete"
         || action.type === "UpdateLevel"
         || action.type === "SetScreen"
-        || action.type === "RotateTurnOrder";
+        || action.type === "RotateTurnOrder"
+        || action.type === "SetGlobalTrigger";
 }
