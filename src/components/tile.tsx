@@ -6,6 +6,7 @@ import { ITile, TileType } from "model/";
 
 import "./tile.less";
 import { IPavedFloorTile } from "../model/tile";
+import * as _ from "lodash";
 
 export interface ITileProps {
     x: number;
@@ -75,6 +76,10 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
     private getIElement(className: string, style: React.CSSProperties = {}) {
         style.top = this.props.y * CELL_SIZE;
         style.left = this.props.x * CELL_SIZE;
-        return <i className={className} style={style} />;
+        return <i className={className} title={getNameForTile(this.props.tile)} style={style} />;
     }
+}
+
+function getNameForTile(tile: ITile) {
+    return _.capitalize(tile.type);
 }
