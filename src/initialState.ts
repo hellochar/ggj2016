@@ -41,20 +41,20 @@ export function buildInitialState(): IState {
     };
     entitiesToAdd.push(user);
     const level0 = new Level("0", generateMap(center, COLOR_THEMES.DARK_GRAY), [ user.id ]);
-    entitiesToAdd.push(...level0.addTrees());
-    entitiesToAdd.push(...level0.addVillage());
+    // entitiesToAdd.push(...level0.addTrees());
+    // entitiesToAdd.push(...level0.addVillage());
     const newLevel0 = level0.cloneShallowVisibility();
     newLevel0.giveVision(center, 7);
     const levels = {
         0: newLevel0,
     };
     const levelOrder = ["0"];
-    for (let depth = 1; depth < 3; depth += 1) {
+    for (let depth = 1; depth < 10; depth += 1) {
         const id = depth.toString();
         const newMap = generateMap(levels[depth - 1].map.getDownstairsPosition(), _.sample(COLOR_THEMES));
         const currentLevel = new Level(id, newMap, []);
-        entitiesToAdd.push(...currentLevel.addVillage());
-        entitiesToAdd.push(...currentLevel.addTrees());
+        // entitiesToAdd.push(...currentLevel.addVillage());
+        // entitiesToAdd.push(...currentLevel.addTrees());
         levels[id] = currentLevel;
         levelOrder.push(id);
     }
