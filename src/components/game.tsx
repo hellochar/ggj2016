@@ -70,7 +70,7 @@ export class PureGame extends React.Component<IGameProps, {}> {
                 className="rg-intro-screen"
                 autoFocus={true}
                 canEscapeKeyClose={true}
-                canOutsideClickClose={true}
+                canOutsideClickClose={false}
                 enforceFocus={true}
                 hasBackdrop={true}
                 isOpen={true}
@@ -85,16 +85,17 @@ export class PureGame extends React.Component<IGameProps, {}> {
                         <strong> 200 feet down</strong>.
                         Be careful though, the depths of the Caves could be dangerous! Be sure to:
                         <ul>
-                        <li><span className="rg-text-highlight-warmth">maintain warmth</span>,</li>
-                        <li><span className="rg-text-highlight-food">eat food</span>, and</li>
-                        <li><span className="rg-text-highlight-sleep">sleep well</span>.</li>
+                        <li><span className="rg-text-highlight-food">eat food</span>,</li>
+                        <li><span className="rg-text-highlight-warmth">stay warm</span>,</li>
+                        <li><span className="rg-text-highlight-sleep">sleep well</span>, and</li>
+                        <li><span className="rg-text-highlight-health">avoid injury</span>.</li>
                         </ul>
                         I'll bake you some cookies when you return.
                     </p>
                     <button
                         className="pt-button pt-intent-primary rg-intro-screen-button-accept"
                         onClick={this.handleIntroScreenClosed}>
-                        I'll get your ring, Grandma!
+                        I'll get your ring, Grandma! (Esc)
                     </button>
                 </Dialog>;
         } else {
