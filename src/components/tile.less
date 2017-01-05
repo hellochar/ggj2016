@@ -28,6 +28,14 @@
     }
 }
 
+.rg-tile-wall {
+    // center the block in the cell
+    &:before {
+        position: relative;
+        top: 1px;
+    }
+}
+
 .rg-tile-dirt {
     background-color: lighten(desaturate(@sepia1, 32%), 33%);
     color: lighten(desaturate(@sepia1, 30%), 25%);

@@ -40,7 +40,7 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
         const { tile } = this.props;
         switch (tile.type) {
             case TileType.PAVED_FLOOR: return this.renderPavedFloor(tile);
-            case TileType.WALL: return this.renderFontAwesomeIcon("fa-stop");
+            case TileType.WALL: return this.renderFontAwesomeIcon("fa-stop rg-tile-wall");
             case TileType.DOWNSTAIRS: return this.renderFontAwesomeIcon("fa-chevron-down");
             case TileType.UPSTAIRS: return this.renderFontAwesomeIcon("fa-chevron-up");
             case TileType.WATER: return this.renderSimpleTile("rg-tile-water");
