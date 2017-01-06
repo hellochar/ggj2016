@@ -10,5 +10,6 @@ export default function descriptionForEntity(type: EntityType) {
         case "fruit": return "The roots of education are bitter, but the fruit is sweet.";
         case "house": return "Have nothing in your house that you do not know to be useful, or believe to be beautiful.";
         case "axe": return "Your trusty axe! Cuts down trees in one turn and does 3 damage to foes.";
+        case "pickaxe": return "A traditional mining tool with a hard metal head attached to a wooden handle. Effective at breaking rock.";
     }
 }

@@ -25,13 +25,14 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
 
     private getEntityClassnames(entity: Entity): string {
         switch (entity.type) {
-            case "user": return "fa-user";
-            case "mercury": return "fa-mercury";
-            case "ring": return "fa-circle-o-notch";
-            case "tree": return "fa-tree";
-            case "fruit": return "fa-lemon-o";
-            case "house": return "fa-home";
-            case "axe": return "fa-gavel";
+            case "user": return "fa fa-user";
+            case "mercury": return "fa fa-mercury";
+            case "ring": return "fa fa-circle-o-notch";
+            case "tree": return "fa fa-tree";
+            case "fruit": return "fa fa-lemon-o";
+            case "house": return "fa fa-home";
+            case "axe": return "fa fa-gavel";
+            case "pickaxe": return "rg-entity-pickaxe";
         }
     }
 
@@ -74,7 +75,7 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
                 value={entity.health / entity.maxHealth} />
             : null;
 
-        const element = <i className={classnames("rg-entity-element", "fa", this.getEntityClassnames(entity))} />;
+        const element = <i className={classnames("rg-entity-element", this.getEntityClassnames(entity))} />;
         return (
             <div className={containerClasses}>
                 { healthMeter }

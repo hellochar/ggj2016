@@ -148,8 +148,8 @@ export interface IInventory {
 export type Entity = Item | Actor | IHouse;
 export type EntityType = ItemType | ActorType | "house";
 
-export type Item = IRing | IFruit | IAxe;
-export type ItemType = "ring" | "fruit" | "axe";
+export type Item = IRing | IFruit | IAxe | IPickaxe;
+export type ItemType = "ring" | "fruit" | "axe" | "pickaxe";
 
 export function isItem(e: Entity) {
     return e.type === "fruit" || e.type === "ring" || e.type === "axe";
@@ -214,6 +214,10 @@ export interface IFruit extends IBaseEntity, IHasPosition {
 
 export interface IAxe extends IBaseEntity, IHasPosition {
     type: "axe";
+}
+
+export interface IPickaxe extends IBaseEntity, IHasPosition {
+    type: "pickaxe";
 }
 
 export interface ITree extends IBaseActor {
