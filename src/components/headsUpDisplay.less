@@ -5,54 +5,61 @@
     position: relative;
     background: fade(@black, 25%);
     padding: 10px;
+}
 
-    .rg-hud-name {
-        font-weight: bold;
+.rg-hud-status-bar {
+    display: flex;
+    flex-direction: row;
+}
+
+.rg-hud-name {
+    flex: 1 1 auto;
+}
+
+.rg-hud-health {
+    flex: 1 1 auto;
+
+    &.good {
+        color: green;
     }
 
-    .rg-hud-health {
-        padding-left: 10px;
-        margin: 0;
-
-        &.good {
-            color: green;
-        }
-
-        &.ok {
-            color: yellow;
-        }
-
-        &.bad {
-            color: red;
-        }
+    &.ok {
+        color: yellow;
     }
 
-    .rg-hud-hunger {
-        padding-left: 5px;
-    }
-
-    .rg-hud-floor {
-        float: right;
-    }
-
-    .rg-hud-inventory {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    .rg-hud-item {
-        display: inline-block;
-        // padding: 2px;
-        margin: 5px;
-        box-shadow: 0 0 1px 2px fade(@gray2, 80%);
-        background: fade(@gray2, 80%);
-        position: relative;
-    }
-
-    .rg-hud-item-empty {
-        .rg-map-cell-mixin();
-
-        opacity: 0.2;
+    &.bad {
+        color: red;
     }
 }
 
+.rg-hud-satiation {
+    flex: 1 1 auto;
+}
+
+.rg-hud-temperature {
+    flex: 1 1 auto;
+}
+
+.rg-hud-energy {
+    flex: 1 1 auto;
+}
+
+.rg-hud-inventory {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.rg-hud-item {
+    display: inline-block;
+    // padding: 2px;
+    margin: 5px;
+    box-shadow: 0 0 1px 2px fade(@gray2, 80%);
+    background: fade(@gray2, 80%);
+    position: relative;
+}
+
+.rg-hud-item-empty {
+    .rg-map-cell-mixin();
+
+    opacity: 0.2;
+}

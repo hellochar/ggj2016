@@ -1,3 +1,5 @@
+
+import { Hotkey, Hotkeys, HotkeysTarget, Collapse } from "@blueprintjs/core";
 import * as classnames from "classnames";
 import * as _ from "lodash";
 import * as React from "react";
@@ -18,7 +20,16 @@ interface IPureHeadsUpDisplayProps {
     userFloor: number;
 }
 
-export class PureHeadsUpDisplay extends React.PureComponent<IPureHeadsUpDisplayProps, {}> {
+interface IPureHeadsUpDisplayState {
+    inventoryOpen: boolean;
+}
+
+@HotkeysTarget
+export class PureHeadsUpDisplay extends React.PureComponent<IPureHeadsUpDisplayProps, IPureHeadsUpDisplayState> {
+    public state: IPureHeadsUpDisplayState = {
+        inventoryOpen: false,
+    };
+
     public handleItemDoubleClick(itemId: string) {
         const action: IUseItemAction = {
             itemId,
@@ -28,8 +39,8 @@ export class PureHeadsUpDisplay extends React.PureComponent<IPureHeadsUpDisplayP
     }
 
     public render() {
-        const { user: entity } = this.props;
-        const healthPercentage = entity.health / entity.maxHealth;
+        const { user } = this.props;
+        const healthPercentage = user.health / user.maxHealth;
         const healthIndicatorClassnames = classnames("rg-hud-health", {
             "good": healthPercentage >= 0.7,
             "ok": healthPercentage < 0.7 && healthPercentage >= 0.2,
@@ -38,29 +49,31 @@ export class PureHeadsUpDisplay extends React.PureComponent<IPureHeadsUpDisplayP
 
         return (
             <div className="rg-hud">
-                <div>
-                    <span className="rg-hud-name">{entity.name}</span>
-                    <span className={healthIndicatorClassnames}>{entity.health} / {entity.maxHealth}</span>
-                    <span className="rg-hud-hunger">fullness: {_.round(entity.satiation * 100)}%</span>
-                    <span className="rg-hud-temperature">Warmth: {entity.temperature} &deg;C</span>
-                    <span className="rg-hud-energy">Energy: {_.round(entity.energy * 100)}%</span>
+                <div className="rg-hud-status-bar">
+                    <div className="rg-hud-name">{user.name}</div>
+                    <span className={healthIndicatorClassnames}>HP: {user.health} / {user.maxHealth}</span>
+                    <span className="rg-hud-satiation">fullness: {_.round(user.satiation * 100)}%</span>
+                    <span className="rg-hud-temperature">Warmth: {user.temperature} &deg;C</span>
+                    <span className="rg-hud-energy">Energy: {_.round(user.energy * 100)}%</span>
                     <span className="rg-hud-floor">Caves, {(this.props.userFloor + 1) * 20} feet down</span>
                 </div>
-                { this.renderInventory() }
+                { this.maybeRenderInventory() }
             </div>
         );
     }
 
-    private renderInventory() {
+    private maybeRenderInventory() {
         const { user } = this.props;
         return (
-            <div className="rg-hud-inventory">
-                {
-                    _.range(0, user.inventory.maxSize).map((index) =>
-                        this.maybeRenderItem(index)
-                    )
-                }
-            </div>
+            <Collapse isOpen={this.state.inventoryOpen}>
+                <div className="rg-hud-inventory">
+                    {
+                        _.range(0, user.inventory.maxSize).map((index) =>
+                            this.maybeRenderItem(index)
+                        )
+                    }
+                </div>
+            </Collapse>
         );
     }
 
@@ -81,6 +94,23 @@ export class PureHeadsUpDisplay extends React.PureComponent<IPureHeadsUpDisplayP
             { itemElement }
         </div>;
     }
+
+    public renderHotkeys() {
+        return <Hotkeys>
+            <Hotkey
+                combo="i"
+                global
+                label="Toggle Inventory"
+                onKeyDown={ this.handleIKeyPressed }
+            />
+        </Hotkeys>;
+    }
+
+    private handleIKeyPressed = () => {
+        this.setState({
+            inventoryOpen: !this.state.inventoryOpen
+        });
+    };
 }
 
 // given the state, return the user's Item Entities.
@@ -91,7 +121,8 @@ function getUserItemsFromState(state: IState) {
 }
 
 // cache getUserItemsFromState to only return a different object reference from the previous call
-// if evaluation of this instance doesn't shallow equal the previous one
+// if evaluation of this instance doesn't shallow equal the previous one. This avoid unnecessary
+// renders of the HeadsUpDisplay component.
 const cachedGetUserItemsFromState = (() => {
     let previousValue: Item[];
     return (state: IState) => {
