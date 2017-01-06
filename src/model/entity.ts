@@ -148,10 +148,10 @@ export interface IInventory {
 }
 
 export type Entity = Item | Actor | IHouse;
-export type EntityType = ItemType | ActorType | "house";
+export type EntityType = Entity["type"];
 
 export type Item = IRing | IFruit | IAxe | IPickaxe;
-export type ItemType = "ring" | "fruit" | "axe" | "pickaxe";
+export type ItemType = Item["type"];
 
 export function isItem(e: Entity): e is Item {
     return e.type === "fruit" || e.type === "ring" || e.type === "axe" || e.type === "pickaxe";
@@ -164,9 +164,9 @@ export interface IBaseActor extends IBaseEntity, IHasPosition { }
  * that actor's turn.
  */
 export type Actor = IUser | IMercury | ITree;
-export type ActorType = "user" | "mercury" | "tree";
+export type ActorType = Actor["type"];
 
-export function isActor(e: Entity) {
+export function isActor(e: Entity): e is Actor {
     return e.type === "user" || e.type === "mercury" || e.type === "tree";
 }
 
