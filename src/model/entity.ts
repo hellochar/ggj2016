@@ -102,6 +102,8 @@ export interface IBaseEntity {
     id: string;
 }
 
+export interface IBaseItem extends IBaseEntity, IHasPosition {}
+
 export interface IHasHealth {
     /**
      * Health of this entity.
@@ -151,8 +153,8 @@ export type EntityType = ItemType | ActorType | "house";
 export type Item = IRing | IFruit | IAxe | IPickaxe;
 export type ItemType = "ring" | "fruit" | "axe" | "pickaxe";
 
-export function isItem(e: Entity) {
-    return e.type === "fruit" || e.type === "ring" || e.type === "axe";
+export function isItem(e: Entity): e is Item {
+    return e.type === "fruit" || e.type === "ring" || e.type === "axe" || e.type === "pickaxe";
 }
 
 export interface IBaseActor extends IBaseEntity, IHasPosition { }
@@ -204,29 +206,25 @@ export interface IMercury extends IBaseActor, IHasHealth, IHasInventory {
     type: "mercury";
 }
 
-export interface IRing extends IBaseEntity, IHasPosition {
+export interface IRing extends IBaseItem {
     type: "ring";
 }
 
-export interface IFruit extends IBaseEntity, IHasPosition {
+export interface IFruit extends IBaseItem {
     type: "fruit";
 }
 
-export interface IAxe extends IBaseEntity, IHasPosition {
+export interface IAxe extends IBaseItem {
     type: "axe";
 }
 
-export interface IPickaxe extends IBaseEntity, IHasPosition {
+export interface IPickaxe extends IBaseItem {
     type: "pickaxe";
 }
 
 export interface ITree extends IBaseActor {
     type: "tree";
 }
-
-// export interface ILeaf extends IBaseEntity, IHasHealth, IHasPosition {
-//     type: "leaf";
-// }
 
 export interface IHouse extends IBaseEntity, IHasPosition {
     type: "house";
