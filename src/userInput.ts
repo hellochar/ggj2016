@@ -19,10 +19,10 @@ import {
  */
 interface IUserActionKeyMapping {
     // [key: string]: ModelAction.Action;
-    KeyW?: IMoveAction;
-    KeyA?: IMoveAction;
-    KeyS?: IMoveAction;
-    KeyD?: IMoveAction;
+    KeyW?: IMoveAction | IUseItemTargettedAction;
+    KeyA?: IMoveAction | IUseItemTargettedAction;
+    KeyS?: IMoveAction | IUseItemTargettedAction;
+    KeyD?: IMoveAction | IUseItemTargettedAction;
     KeyQ?: IGoUpstairsAction;
     KeyE?: IGoDownstairsAction;
     KeyG?: IPickUpItemAction;
@@ -62,7 +62,7 @@ export function decideUserAction(state: IState, event: KeyboardEvent): Action | 
         },
     };
 
-    _.each(DIRECTIONAL_MOVE_ACTIONS, (action, key) => {
+    _.each(DIRECTIONAL_MOVE_ACTIONS, (action, key: keyof typeof DIRECTIONAL_MOVE_ACTIONS) => {
         if (key === undefined) {
             throw new Error("key should never be undefined");
         }
