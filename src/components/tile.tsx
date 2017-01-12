@@ -1,3 +1,4 @@
+import { Tooltip, Collapse } from "@blueprintjs/core";
 import * as classnames from "classnames";
 import * as React from "react";
 
@@ -16,7 +17,19 @@ export interface ITileProps {
     explored: boolean;
 }
 
-export class Tile extends React.PureComponent<ITileProps, {}> {
+export interface ITileState {
+    expanded: boolean;
+}
+
+export class Tile extends React.PureComponent<ITileProps, ITileState> {
+    public state: ITileState = {
+        expanded: false,
+    };
+
+    private handleTileClick = () => {
+        this.setState({expanded: !this.state.expanded});
+    };
+
     public render() {
         const { visible, explored } = this.props;
 
@@ -30,10 +43,49 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
     }
 
     private renderTile(visibilityClass: string) {
-        const tileElement = this.getRenderTileElement();
-        return React.cloneElement(tileElement, {
-            className: classnames(tileElement.props.className, visibilityClass),
+        const baseTile = this.getRenderTileElement();
+        const tile = React.cloneElement(baseTile, {
+            className: classnames(baseTile.props.className, visibilityClass),
+            onClick: this.handleTileClick,
         });
+
+        return <Tooltip content={this.getTooltipContent()} tooltipClassName="pt-minimal">
+            {tile}
+        </Tooltip>;
+    }
+
+    private getTooltipContent() {
+        return <div>
+            <strong>{getNameForTile(this.props.tile)}</strong>
+            <Collapse isOpen={this.state.expanded}>
+                { this.getExpandedTooltip() }
+            </Collapse>
+        </div>;
+    }
+
+    private getExpandedTooltip() {
+        switch (this.props.tile.type) {
+            case TileType.DIRT:
+                return "Rock particles, minerals, and organic matter that together support life.";
+            case TileType.DOWNSTAIRS:
+                return <div>
+                    <p>An opening in the ground that descends deeper into the Caves.</p>
+                    <p>Press E while on this tile to descend a level.</p>
+                </div>;
+            case TileType.GRASS:
+                return "Soft, comfortable plants grow wild over the soil.";
+            case TileType.PAVED_FLOOR:
+                return "A smoothed and cut slab of stone, laid on the floor. Easy to walk on.";
+            case TileType.UPSTAIRS:
+                return <div>
+                    <p>An outcropping of earth that rises closer to the surface.</p>
+                    <p> Press Q while on this tile to ascend a level.</p>
+                </div>;
+            case TileType.WALL:
+                return "A hard, impassable piece of stone.";
+            case TileType.WATER:
+                return "Water that has made its way into the Caves. It will be cold and sluggish to move through.";
+        }
     }
 
     private getRenderTileElement() {
@@ -76,10 +128,10 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
     private getIElement(className: string, style: React.CSSProperties = {}) {
         style.top = this.props.y * CELL_SIZE;
         style.left = this.props.x * CELL_SIZE;
-        return <i className={className} title={getNameForTile(this.props.tile)} style={style} />;
+        return <i className={className} style={style} />;
     }
 }
 
 function getNameForTile(tile: ITile) {
-    return _.capitalize(tile.type);
+    return _.startCase(_.lowerCase(tile.type));
 }
