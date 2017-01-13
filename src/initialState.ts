@@ -9,7 +9,7 @@ import { IState } from "state";
 export function buildInitialState(): IState {
     const entitiesToAdd: Entity.Entity[] = [];
 
-    const center = {x: 30, y: 15};
+    const center = {x: 30, y: 30};
 
     const fruit: Entity.IFruit = {
         type: "fruit",

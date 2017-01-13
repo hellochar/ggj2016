@@ -18,7 +18,7 @@ import * as _ from "lodash";
  */
 export function generateMap(upstairs: IPosition, colorTheme: string[]): Map {
     const width = 60;
-    const height = 30;
+    const height = 60;
     let map = generateRandomCaveStructure(width, height, colorTheme);
     fillInMap(map, upstairs);
     return map;

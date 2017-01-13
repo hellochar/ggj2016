@@ -26,7 +26,7 @@ export default class WizardMain extends React.Component<{}, IWizardMainState> {
     private getNewMapSamples(value: string | undefined) {
         if (value == null || value === "--All--") {
             const mapSamples = _.transform(GENERATION_ALGORITHMS, (allAlgorithmSamples, algorithm, name) => {
-                const map = generateCaveStructure(60, 30, COLOR_THEMES.DARK_GRAY, algorithm());
+                const map = generateCaveStructure(60, 60, COLOR_THEMES.DARK_GRAY, algorithm());
 
                 fillInMap(map, {x: _.random(3, map.width - 4), y: _.random(3, map.height - 4)});
                 allAlgorithmSamples[name!] = map;
@@ -35,7 +35,7 @@ export default class WizardMain extends React.Component<{}, IWizardMainState> {
             return mapSamples;
         } else {
             const mapSamples = _.range(0, 5).map((index) => {
-                const map = generateCaveStructure(60, 30, COLOR_THEMES.DARK_GRAY, GENERATION_ALGORITHMS[value]());
+                const map = generateCaveStructure(60, 60, COLOR_THEMES.DARK_GRAY, GENERATION_ALGORITHMS[value]());
 
                 fillInMap(map, {x: _.random(3, map.width - 4), y: _.random(3, map.height - 4)});
                 return map;
