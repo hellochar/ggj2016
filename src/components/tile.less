@@ -1,5 +1,6 @@
 @import "../commons";
 
+// adds 20ms per action in recalculating styles!
 .rg-tile {
     .rg-map-cell-mixin();
 
@@ -18,6 +19,7 @@
     }
 }
 
+// all these :before selectors (here and below) add 25ms per action in recalculating styles!
 .rg-tile-paved-floor {
     color: rgba(1,1,1, 0.20);
 
