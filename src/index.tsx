@@ -1,6 +1,20 @@
 import "react-hot-loader/patch";
 
-let seed = 1;
+let seed: number | null = null;
+
+const queryParamMatch = window.location.search.slice(1).match(/seed=(\d+)/);
+if (queryParamMatch != null) {
+    seed = parseInt(queryParamMatch[1], 10);
+}
+
+function isNumeric(n: any): n is number {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+if (!isNumeric(seed)) {
+    seed = Date.now();
+}
+
 function random() {
     const x = Math.sin(seed++ + 0.59322) * 10000;
     return x - Math.floor(x);
