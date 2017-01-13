@@ -1,5 +1,13 @@
 import "react-hot-loader/patch";
 
+let seed = 1;
+function random() {
+    const x = Math.sin(seed++ + 0.59322) * 10000;
+    return x - Math.floor(x);
+}
+
+Math.random = random;
+
 import * as _ from "lodash";
 import * as Perf from "react-addons-perf";
 import * as ReactDOM from "react-dom";
