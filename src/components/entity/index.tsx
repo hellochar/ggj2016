@@ -1,13 +1,12 @@
 import * as classnames from "classnames";
 import * as _ from "lodash";
 import * as React from "react";
-import { Intent, Position, Popover, PopoverInteractionKind, ProgressBar } from "@blueprintjs/core";
+import { Intent, ProgressBar } from "@blueprintjs/core";
 
-import { isItem, isActor, Entity, EntityType, hasHealth } from "model/";
+import { isItem, isActor, Entity, hasHealth } from "model/";
 import { CELL_SIZE } from "components/commons";
 
 import "./entity.less";
-import descriptionForEntity from "./descriptions";
 
 export interface IEntityProps {
     entity: Entity;
@@ -16,7 +15,7 @@ export interface IEntityProps {
 }
 
 export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
-    private nameForEntity(entity: Entity) {
+    public nameForEntity(entity: Entity) {
         switch (entity.type) {
             case "user": return entity.name;
             default: return _.capitalize(entity.type);
@@ -77,47 +76,10 @@ export class EntityComponent extends React.PureComponent<IEntityProps, {}> {
 
         const element = <i className={classnames("rg-entity-element", this.getEntityClassnames(entity))} />;
         return (
-            <div className={containerClasses}>
+            <div className={containerClasses} onDoubleClick={onDoubleClick}>
                 { healthMeter }
                 { element }
-                <EntityPopover name={this.nameForEntity(entity)} onDoubleClick={onDoubleClick} type={entity.type} />
             </div>
         );
-    }
-}
-
-interface IEntityPopoverProps {
-    name: string;
-    type: EntityType;
-    onDoubleClick?: () => void;
-}
-
-/**
- * Component for the Popover of an Entity. Refactored into a PureComponent to minimize updates, since Blueprint Popovers
- * force synchronous layout in their DOM update callback, which can add upwards of 30ms delay to an action.
- */
-class EntityPopover extends React.PureComponent<IEntityPopoverProps, {}> {
-    public render() {
-        const popoverContent = (
-            <div>
-                <h3 className="rg-entity-popover-title">
-                    {this.props.name}
-                </h3>
-                <div className="rg-entity-popover-description">
-                    {descriptionForEntity(this.props.type)}
-                </div>
-            </div>
-        );
-
-        return <Popover className="rg-entity-popover"
-                        content={popoverContent}
-                        popoverClassName="pt-popover-content-sizing"
-                        interactionKind={PopoverInteractionKind.HOVER}
-                        hoverCloseDelay={0}
-                        hoverOpenDelay={200}
-                        position={Position.TOP_LEFT}
-                        useSmartPositioning={true}>
-                <div className="rg-entity-popover-target" onDoubleClick={this.props.onDoubleClick}></div>
-            </Popover>;
     }
 }
