@@ -2,18 +2,16 @@
 
 // adds 20ms per action in recalculating styles!
 .rg-tile {
-    .rg-map-cell-mixin();
-
+    width: @cell-size;
+    height: @cell-size;
+    font-size: @cell-size;
     background: white;
-    display: inline-block;
     font-style: normal;
-    overflow: hidden;
+    line-height: 1;
     position: absolute;
-    transition: opacity 0.15s, @hover-transition;
+    text-align: center;
 
     &:hover {
-        // transform: scale(1.2);
-        // box-shadow: 0 0 5px 8px fade(@black, 15%);
         border: 0.5px solid @black;
         z-index: 1;
     }
@@ -22,30 +20,11 @@
 // all these :before selectors (here and below) add 25ms per action in recalculating styles!
 .rg-tile-paved-floor {
     color: rgba(1,1,1, 0.20);
-
-    // center the square-o in the cell
-    &:before {
-        position: relative;
-        top: 1.2px;
-    }
-}
-
-.rg-tile-wall {
-    // center the block in the cell
-    &:before {
-        position: relative;
-        top: 1px;
-    }
 }
 
 .rg-tile-dirt {
     background-color: lighten(desaturate(@sepia1, 32%), 33%);
     color: lighten(desaturate(@sepia1, 30%), 25%);
-
-    &:before {
-        // •
-        content: "\2022";
-    }
 }
 
 .rg-tile-remembered {
@@ -63,10 +42,6 @@
     // animation-timing-function: linear;
     // animation-iteration-count: infinite;
     // animation-direction: alternate;
-
-    &::before {
-        content: "~";
-    }
 
     @keyframes water-wave {
         from {
@@ -86,6 +61,8 @@
     @grass-color: lighten(desaturate(@green1, 30%), 20%);
     background: @grass-bg-color;
     color: @grass-color;
+    font-size: 21px;
+    line-height: 2.2;
 
     + .rg-tile-grass {
         background: lighten(@grass-bg-color, 10%);
@@ -95,11 +72,5 @@
     &:nth-child(3n) {
         // background: darken(@grass-bg-color, 10%);
         color: darken(@grass-color, 10%);
-    }
-
-    &:before {
-        content: "෴";
-        transform: translate(-20%, 0) scale(0.66);
-        display: inline-block;
     }
 }

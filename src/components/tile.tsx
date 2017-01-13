@@ -87,8 +87,20 @@ export class Tile extends React.PureComponent<ITileProps, ITileState> {
     }
 
     private getIElement(className: string, style: React.CSSProperties = {}) {
-        style.top = this.props.y * CELL_SIZE;
-        style.left = this.props.x * CELL_SIZE;
-        return <i className={className} style={style} />;
+        const baseStyle: React.CSSProperties = {
+            transform: `translate(${this.props.x * CELL_SIZE}px, ${this.props.y * CELL_SIZE}px)`,
+        };
+        _.defaults(style, baseStyle);
+
+        const child = (() => {
+            switch (this.props.tile.type) {
+                case TileType.DIRT: return "•";
+                case TileType.WATER: return "~";
+                case TileType.GRASS: return "෴";
+                default: return null;
+            }
+        })();
+
+        return <i className={className} style={style}>{child}</i>;
     }
 }
