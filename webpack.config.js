@@ -65,8 +65,11 @@ var config = {
 
 if (webpackShared.isProduction) {
   config.plugins.push(new webpack.optimize.UglifyJsPlugin({
-     compress: {
-        warnings: false
+    compress: {
+      warnings: false
+    },
+    output: {
+      ascii_only: true
     }
   }));
   config.plugins.push(new webpack.DefinePlugin({
